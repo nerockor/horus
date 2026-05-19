@@ -1,0 +1,269 @@
+import { useSpring, animated, config } from '@react-spring/web'
+import { Menu, Phone, MapPin, Calendar, X, Trash2, CheckCircle2 } from 'lucide-react'
+import { useState } from 'react'
+
+export default function Overlay({ activeBookings = [], onCancelBooking, view = 'landing', setView }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  // Animación para el menú lateral
+  const menuSpring = useSpring({
+    transform: isOpen ? 'translateX(0%)' : 'translateX(100%)',
+    config: config.gentle
+  })
+
+  // Animación para el logo/cabecera
+  const headerSpring = useSpring({
+    from: { opacity: 0, y: -50 },
+    to: { opacity: 1, y: 0 },
+    delay: 500
+  })
+
+  return (
+    <div className="overlay-container" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none',
+      zIndex: 10,
+      color: 'white',
+      padding: '2rem',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between'
+    }}>
+      {/* Header */}
+      <animated.header style={{
+        ...headerSpring,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        pointerEvents: 'auto'
+      }}>
+        {/* Clickable Logo serving as Router */}
+        <div 
+          onClick={() => setView(view === 'landing' ? 'booking' : 'landing')}
+          style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 'bold', 
+            letterSpacing: '2px', 
+            color: '#ffd700', 
+            fontFamily: 'Outfit, sans-serif',
+            cursor: 'pointer',
+            transition: 'all 0.3s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            userSelect: 'none'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.textShadow = '0 0 15px rgba(255,215,0,0.6)'
+            e.currentTarget.style.transform = 'scale(1.02)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.textShadow = 'none'
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          <span>HORUS TRAVEL</span>
+          <span style={{ 
+            fontSize: '0.65rem', 
+            color: view === 'landing' ? '#2dd4bf' : '#ffd700', 
+            background: view === 'landing' ? 'rgba(45, 212, 191, 0.12)' : 'rgba(255, 215, 0, 0.12)', 
+            border: view === 'landing' ? '1px solid rgba(45, 212, 191, 0.3)' : '1px solid rgba(255, 215, 0, 0.3)',
+            padding: '0.2rem 0.5rem', 
+            borderRadius: '6px', 
+            letterSpacing: '0.05em',
+            fontWeight: 'bold'
+          }}>
+            {view === 'landing' ? '➔ RESERVAR' : '➔ INICIO'}
+          </span>
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {activeBookings.length > 0 && (
+            <div style={{
+              background: 'rgba(45, 212, 191, 0.15)',
+              border: '1px solid rgba(45, 212, 191, 0.4)',
+              color: '#2dd4bf',
+              padding: '0.4rem 0.8rem',
+              borderRadius: '20px',
+              fontSize: '0.8rem',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem'
+            }}>
+              <CheckCircle2 size={14} />
+              {activeBookings.length} {activeBookings.length === 1 ? 'Reserva' : 'Reservas'}
+            </div>
+          )}
+          
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              color: 'white', 
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '50%',
+              backgroundColor: isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255,215,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
+              border: isOpen ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid transparent'
+            }}
+          >
+            {isOpen ? <X size={24} color="#ef4444" /> : <Menu size={24} />}
+          </button>
+        </div>
+      </animated.header>
+
+      {/* Menú Lateral (Mis Reservas) */}
+      <animated.div style={{
+        ...menuSpring,
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        width: '380px',
+        height: '100%',
+        background: 'rgba(10, 15, 24, 0.96)',
+        backdropFilter: 'blur(20px)',
+        borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+        padding: '5rem 1.5rem 2rem 1.5rem',
+        pointerEvents: 'auto',
+        zIndex: 11,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        boxShadow: '-10px 0 30px rgba(0,0,0,0.5)'
+      }}>
+        <div>
+          <h3 style={{ 
+            color: '#ffd700', 
+            fontFamily: 'Outfit, sans-serif', 
+            fontSize: '1.2rem', 
+            letterSpacing: '1px',
+            marginBottom: '0.5rem',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            paddingBottom: '0.75rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <span>MIS RESERVAS</span>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 'normal' }}>
+              Verificadas
+            </span>
+          </h3>
+
+          {activeBookings.length === 0 ? (
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', opacity: 0.6 }}>
+              <Calendar size={40} color="rgba(255,255,255,0.2)" style={{ marginBottom: '1rem' }} />
+              <p style={{ fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>
+                No tienes reservas confirmadas todavía.
+              </p>
+              <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', margin: 0 }}>
+                Haz click en "HORUS TRAVEL" o en el logo para ir al buscador de viajes, verificar el checklist y registrar tu itinerario.
+              </p>
+            </div>
+          ) : (
+            <div className="sidebar-reservations-list">
+              {activeBookings.map((booking) => (
+                <div key={booking.id} className="sidebar-reservation-card">
+                  <span className="sidebar-res-badge verified">VERIFICADO</span>
+                  <div className="sidebar-res-title">{booking.title}</div>
+                  <div className="sidebar-res-meta">{booking.description}</div>
+                  <div className="sidebar-res-meta" style={{ opacity: 0.5 }}>{booking.meta}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                    <div className="sidebar-res-price">{booking.price}</div>
+                    <button
+                      onClick={() => onCancelBooking(booking.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'rgba(239, 68, 68, 0.6)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0.3rem',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#ef4444'
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'rgba(239, 68, 68, 0.6)'
+                        e.currentTarget.style.background = 'none'
+                      }}
+                      title="Cancelar Reserva"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: '#2dd4bf', opacity: 0.8, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                    <span>✓</span> Verificado el {booking.verifiedAt}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Contact and Help Box */}
+        <div style={{ 
+          background: 'rgba(255, 215, 0, 0.03)', 
+          border: '1px solid rgba(255, 215, 0, 0.15)', 
+          borderRadius: '12px',
+          padding: '1.25rem',
+          marginTop: '2rem'
+        }}>
+          <h4 style={{ color: '#ffd700', margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif' }}>
+            ¿NECESITAS AYUDA?
+          </h4>
+          <p style={{ fontSize: '0.75rem', opacity: 0.7, margin: '0 0 0.75rem 0', lineHeight: '1.4' }}>
+            Contacta a un agente especialista en viajes antigravitacionales de Horus.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
+              <Phone size={12} color="#ffd700" />
+              <span>+54 9 11 5555-4321</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
+              <MapPin size={12} color="#ffd700" />
+              <span>Giza Plateau, Egipto</span>
+            </div>
+          </div>
+        </div>
+      </animated.div>
+
+      {/* Footer / Status Bar */}
+      <footer style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-end',
+        pointerEvents: 'auto'
+      }}>
+        <div style={{ fontSize: '0.8rem', opacity: 0.5 }}>
+          LAT: 29.9792° N | LONG: 31.1342° E
+        </div>
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>ALTITUD</div>
+            <div style={{ color: '#ffd700' }}>3,500 FT</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>ESTADO</div>
+            <div style={{ color: '#44ff44' }}>VUELO ESTABLE</div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
