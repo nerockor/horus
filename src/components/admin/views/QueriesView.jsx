@@ -15,7 +15,8 @@ export default function QueriesView() {
           contact: 'juan.perez@example.com',
           message: 'Hola, quería consultar sobre el paquete a Madrid. ¿Tienen disponibilidad para la segunda semana de junio?',
           date: '19/05/2026, 10:15',
-          status: 'Pendiente'
+          status: 'Pendiente',
+          category: 'paquetes'
         },
         {
           id: 'q-2',
@@ -23,7 +24,8 @@ export default function QueriesView() {
           contact: '+54 11 5555-1234',
           message: 'Buenas tardes. ¿El seguro de viaje Assist Card cubre emergencias de deportes extremos?',
           date: '18/05/2026, 16:45',
-          status: 'Contestada'
+          status: 'Contestada',
+          category: 'assist_card'
         }
       ]
       localStorage.setItem('horus_queries', JSON.stringify(mockQueries))
@@ -63,6 +65,7 @@ export default function QueriesView() {
           <thead>
             <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
               <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Fecha</th>
+              <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Categoría</th>
               <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Cliente</th>
               <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Contacto</th>
               <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Consulta</th>
@@ -73,12 +76,13 @@ export default function QueriesView() {
           <tbody>
             {queries.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay consultas pendientes.</td>
+                <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay consultas pendientes.</td>
               </tr>
             ) : (
               queries.map(q => (
                 <tr key={q.id} style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: q.status === 'Pendiente' ? '#fffbeb' : 'transparent' }}>
                   <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748b', whiteSpace: 'nowrap' }}>{q.date}</td>
+                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#3b82f6', fontWeight: '600', textTransform: 'capitalize' }}>{q.category || 'General'}</td>
                   <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b', fontWeight: '500' }}>{q.clientName}</td>
                   <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>

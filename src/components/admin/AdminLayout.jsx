@@ -8,7 +8,7 @@ export default function AdminLayout({ user, onLogout, children }) {
     { path: '/admin', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'vendedor'] },
     { path: '/admin/reservas', label: 'Reservas y Pagos', icon: CalendarDays, roles: ['admin', 'vendedor'] },
     { path: '/admin/consultas', label: 'Consultas', icon: MessageSquare, roles: ['admin', 'vendedor'] },
-    { path: '/admin/paquetes', label: 'Paquetes', icon: Package, roles: ['admin', 'vendedor'] },
+    { path: '/admin/paquetes', label: 'Servicios / Ofertas', icon: Package, roles: ['admin', 'vendedor'] },
     { path: '/admin/usuarios', label: 'Usuarios Vendedores', icon: Users, roles: ['admin'] },
     { path: '/admin/contenido', label: 'Imágenes y Contenido', icon: ImageIcon, roles: ['admin', 'vendedor'] },
   ]

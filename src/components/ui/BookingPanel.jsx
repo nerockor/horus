@@ -161,301 +161,57 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     setTimeout(() => {
       setSearching(false)
       
-      // Seed realistic search results depending on the active category
+      // Search results depending on the active category
       const mockResults = []
       const c = activeCategory
       
-      if (c === 'vuelos') {
-        mockResults.push(
-          {
-            id: 'vuelo-1',
-            title: `Iberia IB6844 - Vuelo Directo`,
-            description: `${formData.origin} ➔ ${formData.destination} | Cabina: ${formData.classType === 'Todas' ? 'Turista' : formData.classType}`,
-            meta: `Salida: ${formData.departureDate} (12:35) - Llegada: (05:20 +1)`,
-            price: formData.currency.includes('USD') ? 'U$S 1,240' : '$ 1,240,000',
-            category: 'vuelos',
-            promoted: true,
-            checklistDetails: {
-              baggage: '1 bolso de mano (40x30x20cm) + 1 carry-on de 10kg incluido.',
-              identity: 'Requiere pasaporte vigente con al menos 6 meses de validez.',
-              cancelation: 'Cancelación gratuita hasta 72hs antes del vuelo en tarifa flexible.'
-            }
-          },
-          {
-            id: 'vuelo-2',
-            title: `Air Europa UX42 - 1 Escala (Asunción)`,
-            description: `${formData.origin} ➔ ${formData.destination} | Escala de 1h 45m`,
-            meta: `Salida: ${formData.departureDate} (14:15) - Llegada: (09:10 +1)`,
-            price: formData.currency.includes('USD') ? 'U$S 1,120' : '$ 1,120,000',
-            category: 'vuelos',
-            promoted: false,
-            checklistDetails: {
-              baggage: 'Solo bolso de mano de 8kg. Equipaje en bodega con cargo extra.',
-              identity: 'Requiere pasaporte vigente y visa de tránsito si corresponde.',
-              cancelation: 'Permite 1 cambio de fecha abonando penalidad + diferencia de tarifa.'
-            }
-          },
-          {
-            id: 'vuelo-3',
-            title: `LATAM LA702 - 1 Escala (San Pablo)`,
-            description: `${formData.origin} ➔ ${formData.destination} | Escala de 2h 10m`,
-            meta: `Salida: ${formData.departureDate} (08:10) - Llegada: (04:30 +1)`,
-            price: formData.currency.includes('USD') ? 'U$S 980' : '$ 980,000',
-            category: 'vuelos',
-            promoted: false,
-            checklistDetails: {
-              baggage: '1 carry-on de 10kg incluido + bolso de mano.',
-              identity: 'Pasaporte vigente y Declaración Jurada Sanitaria.',
-              cancelation: 'No reembolsable. Solo cambios de fecha con penalidad.'
-            }
-          }
-        )
-      } else if (c === 'alojamientos') {
-        mockResults.push(
-          {
-            id: 'alojamiento-1',
-            title: `Grand Horus Luxury Hotel & Spa`,
-            description: `Habitación Deluxe con vista panorámica | Desayuno Buffet Incluido`,
-            meta: `Ubicación céntrica en ${formData.destination || 'Orlando'} | ${formData.hotelGuests}`,
-            price: formData.currency.includes('USD') ? 'U$S 220 / noche' : '$ 220,000 / noche',
-            category: 'alojamientos',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Check-in: 15:00. Check-out: 11:00. Estacionamiento gratuito.',
-              identity: 'Requiere tarjeta de crédito física para depósito en garantía.',
-              cancelation: 'Cancelación 100% reembolsable hasta 24hs antes del check-in.'
-            }
-          },
-          {
-            id: 'alojamiento-2',
-            title: `Aura Minimalist Suites`,
-            description: `Estudio moderno con cocina completa y balcón privado`,
-            meta: `Barrio residencial de diseño | ${formData.hotelGuests}`,
-            price: formData.currency.includes('USD') ? 'U$S 135 / noche' : '$ 135,000 / noche',
-            category: 'alojamientos',
-            promoted: false,
-            checklistDetails: {
-              baggage: 'Código de acceso digital. Recepción virtual 24hs.',
-              identity: 'Requiere completar pre check-in online con foto de DNI/Pasaporte.',
-              cancelation: 'Cancelación sin cargo hasta 5 días antes.'
-            }
-          }
-        )
-      } else if (c === 'paquetes') {
-        let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-        if (storedPackages.length === 0) {
-          storedPackages = [
-            {
-              id: 'p-buzios',
-              name: 'Paquetes a Búzios',
-              location: 'Búzios, Brasil',
-              startDate: '2026-06-01',
-              endDate: '2026-06-15',
-              duration: '9 Días / 8 Noches',
-              imageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80',
-              price: '866891',
-              bonus: '12',
-              targetAudience: 'Familiares'
-            },
-            {
-              id: 'p-paris',
-              name: 'París Soñado',
-              location: 'París, Francia',
-              startDate: '2026-06-10',
-              endDate: '2026-06-25',
-              duration: '7 Días / 6 Noches',
-              imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
-              price: '1850000',
-              bonus: '15',
-              targetAudience: 'Solo adultos'
-            },
-            {
-              id: 'p-disney',
-              name: 'Disney Mágico Familiar',
-              location: 'Orlando, EE.UU.',
-              startDate: '2026-07-01',
-              endDate: '2026-07-20',
-              duration: '10 Días / 9 Noches',
-              imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
-              price: '2400000',
-              bonus: '5',
-              targetAudience: 'Familiares'
-            },
-            {
-              id: 'p-rio',
-              name: 'Río de Janeiro Express',
-              location: 'Río de Janeiro, Brasil',
-              startDate: '2026-05-25',
-              endDate: '2026-06-05',
-              duration: '6 Días / 5 Noches',
-              imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=600&q=80',
-              price: '650000',
-              bonus: '10',
-              targetAudience: 'Familiares'
-            },
-            {
-              id: 'p-madrid',
-              name: 'Madrid Cultural',
-              location: 'Madrid, España',
-              startDate: '2026-06-15',
-              endDate: '2026-06-30',
-              duration: '8 Días / 7 Noches',
-              imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=600&q=80',
-              price: '1450000',
-              bonus: '8',
-              targetAudience: 'Solo adultos'
-            }
-          ]
-          localStorage.setItem('horus_packages', JSON.stringify(storedPackages))
-        }
+      let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+      let filtered = storedPackages.filter(p => p.category === c)
+      
+      filtered.forEach(p => {
+        const discount = parseFloat(p.bonus || '0')
+        const originalPrice = parseFloat(p.price || '0')
+        const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
 
-        storedPackages.forEach(p => {
-          const discount = parseFloat(p.bonus || '0')
-          const originalPrice = parseFloat(p.price || '0')
-          const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
-
-          mockResults.push({
-            id: p.id,
-            title: p.name,
-            description: `Vuelo + Hotel incluido en ${p.location}`,
-            meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
-            price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
-            originalPriceRaw: originalPrice,
-            finalPriceRaw: finalPrice,
-            discountRaw: discount,
-            durationRaw: p.duration,
-            imageUrlRaw: p.imageUrl,
-            locationRaw: p.location,
-            audienceRaw: p.targetAudience,
-            category: 'paquetes',
-            promoted: discount > 0,
-            checklistDetails: {
-              baggage: 'Incluye equipaje de mano y equipaje de bodega despachado por persona.',
-              identity: 'Todos los pasajeros deben contar con DNI o Pasaporte vigente.',
-              cancelation: 'Políticas flexibles sujetas a cambios y disponibilidad hotelera.'
-            }
-          })
+        mockResults.push({
+          id: p.id,
+          title: p.name,
+          description: `Servicio en ${p.location}`,
+          meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
+          price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+          originalPriceRaw: originalPrice,
+          finalPriceRaw: finalPrice,
+          discountRaw: discount,
+          durationRaw: p.duration,
+          imageUrlRaw: p.imageUrl,
+          locationRaw: p.location,
+          audienceRaw: p.targetAudience,
+          category: p.category,
+          promoted: discount > 0,
+          checklistDetails: {
+            baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+            identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+            cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+          }
         })
-      } else if (c === 'actividades') {
-        mockResults.push(
-          {
-            id: 'actividad-1',
-            title: `Tour Guiado Arqueológico Horus VIP`,
-            description: `Incluye accesos rápidos sin filas, guía historiador y transporte privado`,
-            meta: `Destino: ${formData.destination || 'El Cairo'} | Salida: ${formData.departureDate}`,
-            price: formData.currency.includes('USD') ? 'U$S 85' : '$ 85,000',
-            category: 'actividades',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Calzado cómodo obligatorio. Agua mineral y sombrilla provistas.',
-              identity: 'Presentar ticket digital en el móvil en el punto de encuentro.',
-              cancelation: 'Cancelación con devolución del 100% hasta 48hs antes.'
-            }
-          }
-        )
-      } else if (c === 'assistcard') {
-        mockResults.push(
-          {
-            id: 'seguro-1',
-            title: `Assist Card AC 150 Premium`,
-            description: `Cobertura médica hasta U$S 150,000, asistencia odontológica y pérdida de equipaje`,
-            meta: `Destino: ${formData.destination || 'Mundo'} | Edades: ${formData.ages} | Plan: ${formData.insurancePlan}`,
-            price: formData.currency.includes('USD') ? 'U$S 95' : '$ 95,000',
-            category: 'assistcard',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Compensación por demora de equipaje de hasta U$S 800.',
-              identity: 'El voucher digital se emitirá al nombre y DNI indicados.',
-              cancelation: 'Modificable en fechas antes del día de inicio de vigencia.'
-            }
-          }
-        )
-      } else if (c === 'autos') {
-        mockResults.push(
-          {
-            id: 'auto-1',
-            title: `Toyota Corolla o similar (Mediano automatico)`,
-            description: `Alquiler con Hertz | Kilometraje Ilimitado | Seguro CDW básico`,
-            meta: `Retiro: ${formData.origin || 'Aeropuerto'} - Devolución: ${formData.destination || 'Aeropuerto'}`,
-            price: formData.currency.includes('USD') ? 'U$S 45 / día' : '$ 45,000 / día',
-            category: 'autos',
-            promoted: false,
-            checklistDetails: {
-              baggage: 'Espacio para 2 valijas grandes + 2 bolsos. Política de combustible: Lleno a Lleno.',
-              identity: 'Conductor mayor de 25 años con licencia vigente internacional y tarjeta de crédito.',
-              cancelation: 'Cancelación gratuita hasta 24hs antes del retiro.'
-            }
-          }
-        )
-      } else if (c === 'disney') {
-        mockResults.push(
-          {
-            id: 'disney-1',
-            title: `Pase Walt Disney World: ${formData.disneyDays} Park Hopper`,
-            description: `Acceso ilimitado a Magic Kingdom, Epcot, Hollywood Studios y Animal Kingdom en el mismo día`,
-            meta: `Inicio: ${formData.departureDate} | Tipo: ${formData.ticketType}`,
-            price: formData.currency.includes('USD') ? 'U$S 590' : '$ 590,000',
-            category: 'disney',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'No se permiten bolsos de más de 61x38x46cm ni cochecitos de gran tamaño.',
-              identity: 'Requiere vincular los tickets en la app My Disney Experience mediante el código provisto.',
-              cancelation: 'Tickets de Disney no reembolsables ni transferibles.'
-            }
-          }
-        )
-      } else if (c === 'universal') {
-        mockResults.push(
-          {
-            id: 'universal-1',
-            title: `Universal Orlando Resort: Pase 3-Park Explorer`,
-            description: `Acceso a Universal Studios, Islands of Adventure y Volcano Bay por 14 días consecutivos`,
-            meta: `Validez a partir del: ${formData.departureDate}`,
-            price: formData.currency.includes('USD') ? 'U$S 410' : '$ 410,000',
-            category: 'universal',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Lockers gratuitos de corta duración disponibles en las atracciones principales.',
-              identity: 'Presentar DNI con foto que coincida con el nombre impreso en el ticket al ingresar.',
-              cancelation: 'Tickets nominativos y no reembolsables una vez emitidos.'
-            }
-          }
-        )
-      } else if (c === 'circuitos') {
-        mockResults.push(
-          {
-            id: 'circuito-1',
-            title: `Circuito Imperial: Praga, Viena y Budapest`,
-            description: `Itinerario guiado de 10 días | Hoteles 4 estrellas con media pensión`,
-            meta: `Mes de salida: ${formData.tourMonth} | Duración: ${formData.tourDuration}`,
-            price: formData.currency.includes('USD') ? 'U$S 1,890' : '$ 1,890,000',
-            category: 'circuitos',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Máximo 1 maleta de 20kg por persona en el portaequipajes del autobús.',
-              identity: 'Requiere pasaporte con validez mayor a 90 días respecto a la salida de Europa.',
-              cancelation: 'Cancelación sin penalidad hasta 30 días antes del inicio del viaje.'
-            }
-          }
-        )
-      } else if (c === 'cruceros') {
-        mockResults.push(
-          {
-            id: 'crucero-1',
-            title: `Caribe de Ensueño en Icon of the Seas`,
-            description: `Crucero de 7 noches saliendo desde Miami | Cabina: ${formData.cabins}`,
-            meta: `Naviera: ${formData.cruiseLine} | Mes de salida: ${formData.tourMonth || 'Mayo 2026'}`,
-            price: formData.currency.includes('USD') ? 'U$S 1,480' : '$ 1,480,000',
-            category: 'cruceros',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Maletas etiquetadas serán entregadas en el camarote. Vestimenta formal para noche de gala.',
-              identity: 'Pasaporte con validez de 6 meses + visado de EE.UU. (ESTA) obligatorio.',
-              cancelation: 'Gastos de cancelación aplicables según anticipación al zarpe.'
-            }
-          }
-        )
-      }
+      })
+
+      // Always append a "Consulta Personalizada" card at the end
+      mockResults.push({
+        id: `custom-query-${c}`,
+        title: `¿No encontrás lo que buscás?`,
+        description: `Hacé una consulta personalizada para la categoría ${c.toUpperCase()} y un agente te contactará a la brevedad con una cotización a tu medida.`,
+        meta: `Respuesta rápida (Menos de 24hs)`,
+        price: 'A cotizar',
+        category: c,
+        promoted: false,
+        isCustomQuery: true,
+        checklistDetails: {
+          baggage: 'A coordinar con el agente de ventas.',
+          identity: 'Los datos requeridos se informarán en la cotización.',
+          cancelation: 'Condiciones sujetas al servicio que contrates.'
+        }
+      })
       
       setResults(mockResults)
     }, 1500)
@@ -488,11 +244,11 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     const allChecked = Object.values(checklist).every(val => val === true)
     if (!allChecked) return
 
-    const isPackage = selectedResult.category === 'paquetes'
-    const finalPriceVal = isPackage 
+    const hasRawPrice = selectedResult.finalPriceRaw !== undefined
+    const finalPriceVal = hasRawPrice 
       ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}` 
       : selectedResult.price
-    const finalDesc = isPackage
+    const finalDesc = hasRawPrice
       ? `${selectedResult.description} | Pasajeros: ${passengerCount}`
       : selectedResult.description
 
@@ -520,18 +276,19 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     localStorage.setItem('horus_bookings', JSON.stringify([newBooking, ...existingBookings]))
 
     // Add query to Admin Panel
-    if (isPackage) {
-      const newQuery = {
-        id: `q-p-${Date.now()}`,
-        clientName: `Reserva / Consulta Cliente`,
-        contact: `Sugerido por buscador`,
-        message: `Consulta de paquete "${selectedResult.title}" para ${passengerCount} pasajeros. Total cotizado: ${finalPriceVal}.`,
-        date: new Date().toLocaleString('es-ES'),
-        status: 'Pendiente'
-      }
-      const existingQueries = JSON.parse(localStorage.getItem('horus_queries') || '[]')
-      localStorage.setItem('horus_queries', JSON.stringify([newQuery, ...existingQueries]))
+    const newQuery = {
+      id: `q-p-${Date.now()}`,
+      clientName: `Reserva / Consulta Cliente`,
+      contact: `Sugerido por buscador`,
+      message: selectedResult.isCustomQuery
+        ? `Solicita consulta personalizada para la categoría ${selectedResult.category.toUpperCase()}.`
+        : `Consulta por "${selectedResult.title}" para ${passengerCount} pasajeros. Total cotizado: ${finalPriceVal}.`,
+      date: new Date().toLocaleString('es-ES'),
+      status: 'Pendiente',
+      category: selectedResult.category
     }
+    const existingQueries = JSON.parse(localStorage.getItem('horus_queries') || '[]')
+    localStorage.setItem('horus_queries', JSON.stringify([newQuery, ...existingQueries]))
 
     setSelectedResult(null) // close popup
     

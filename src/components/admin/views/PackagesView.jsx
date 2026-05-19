@@ -4,7 +4,7 @@ import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign, Clock, Ima
 export default function PackagesView() {
   const [packages, setPackages] = useState([])
   
-  // Form states
+  const [category, setCategory] = useState('paquetes')
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -22,6 +22,7 @@ export default function PackagesView() {
       const mockPackages = [
         {
           id: 'p-buzios',
+          category: 'paquetes',
           name: 'Paquetes a Búzios',
           location: 'Búzios, Brasil',
           startDate: '2026-06-01',
@@ -34,6 +35,7 @@ export default function PackagesView() {
         },
         {
           id: 'p-paris',
+          category: 'paquetes',
           name: 'París Soñado',
           location: 'París, Francia',
           startDate: '2026-06-10',
@@ -46,6 +48,7 @@ export default function PackagesView() {
         },
         {
           id: 'p-disney',
+          category: 'paquetes',
           name: 'Disney Mágico Familiar',
           location: 'Orlando, EE.UU.',
           startDate: '2026-07-01',
@@ -58,6 +61,7 @@ export default function PackagesView() {
         },
         {
           id: 'p-rio',
+          category: 'paquetes',
           name: 'Río de Janeiro Express',
           location: 'Río de Janeiro, Brasil',
           startDate: '2026-05-25',
@@ -70,6 +74,7 @@ export default function PackagesView() {
         },
         {
           id: 'p-madrid',
+          category: 'paquetes',
           name: 'Madrid Cultural',
           location: 'Madrid, España',
           startDate: '2026-06-15',
@@ -94,6 +99,7 @@ export default function PackagesView() {
 
     const newPackage = {
       id: `p-${Date.now()}`,
+      category,
       name,
       location,
       startDate,
@@ -132,18 +138,39 @@ export default function PackagesView() {
   return (
     <div>
       <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Package size={24} /> Gestión de Paquetes
+        <Package size={24} /> Gestión de Servicios y Ofertas
       </h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
         {/* Form to create package */}
         <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
           <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Plus size={18} style={{ color: '#2563eb' }} /> Nuevo Paquete
+            <Plus size={18} style={{ color: '#2563eb' }} /> Nueva Oferta
           </h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Nombre del Paquete</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Categoría</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', backgroundColor: 'white', boxSizing: 'border-box' }}
+                required
+              >
+                <option value="alojamientos">Alojamientos</option>
+                <option value="vuelos">Vuelos</option>
+                <option value="paquetes">Paquetes</option>
+                <option value="actividades">Actividades</option>
+                <option value="assist_card">Assist Card</option>
+                <option value="autos">Autos</option>
+                <option value="disney">Disney</option>
+                <option value="universal">Universal</option>
+                <option value="circuitos">Circuitos</option>
+                <option value="cruceros">Cruceros</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Nombre de la Oferta</label>
               <input 
                 type="text" 
                 value={name}
@@ -281,6 +308,7 @@ export default function PackagesView() {
             <thead>
               <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Nombre</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Categoría</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Destino</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Duración</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Precio Final</th>
@@ -291,7 +319,7 @@ export default function PackagesView() {
             <tbody>
               {packages.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay paquetes creados.</td>
+                  <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay paquetes creados.</td>
                 </tr>
               ) : (
                 packages.map(p => {
@@ -306,6 +334,9 @@ export default function PackagesView() {
                           <img src={p.imageUrl} alt="" style={{ width: '40px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
                           {p.name}
                         </div>
+                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#334155', textTransform: 'capitalize' }}>
+                        {p.category}
                       </td>
                       <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#334155' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
