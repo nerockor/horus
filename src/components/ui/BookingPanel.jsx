@@ -61,6 +61,11 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   const [results, setResults] = useState(null)
   const [selectedResult, setSelectedResult] = useState(null)
 
+  // Get latest created package/service for active category to show as quick access
+  const storedPackagesList = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+  const categoryPackagesList = storedPackagesList.filter(p => (p.category || 'paquetes') === activeCategory)
+  const latestPkg = categoryPackagesList.length > 0 ? categoryPackagesList[categoryPackagesList.length - 1] : null
+
   // Package inquiry calculator states
   const [calcPackage, setCalcPackage] = useState(null)
   const [passengerCount, setPassengerCount] = useState(2)
@@ -135,6 +140,22 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     }))
   }, [])
 
+  // Update default destination and fields based on the latest package of the active category
+  useEffect(() => {
+    const storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    const categoryPackages = storedPackages.filter(p => (p.category || 'paquetes') === activeCategory)
+    
+    if (categoryPackages.length > 0) {
+      const latest = categoryPackages[categoryPackages.length - 1]
+      setFormData(prev => ({
+        ...prev,
+        destination: latest.location || latest.name || prev.destination,
+        departureDate: latest.startDate || prev.departureDate,
+        returnDate: latest.endDate || prev.returnDate,
+      }))
+    }
+  }, [activeCategory])
+
   // Swap function for Flight/Package origin & destination
   const handleSwap = () => {
     setFormData(prev => ({
@@ -154,7 +175,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
 
   // Generate simulated search results
   const handleSearchSubmit = (e) => {
-    e.preventDefault()
+    if (e && e.preventDefault) e.preventDefault()
     setSearching(true)
     setResults(null)
     
@@ -167,6 +188,15 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
       
       let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
       let filtered = storedPackages.filter(p => (p.category || 'paquetes') === c)
+
+      // Filter by destination search query if typed
+      const searchDest = formData.destination.trim().toLowerCase()
+      if (searchDest) {
+        filtered = filtered.filter(p => 
+          (p.location && p.location.toLowerCase().includes(searchDest)) ||
+          (p.name && p.name.toLowerCase().includes(searchDest))
+        )
+      }
       
       filtered.forEach(p => {
         const discount = parseFloat(p.bonus || '0')
@@ -1191,6 +1221,117 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
             </>
           )}
         </form>
+        {latestPkg && (
+          <div style={{ 
+            marginTop: '1.25rem', 
+            paddingTop: '0.85rem', 
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)', 
+            fontSize: '0.85rem', 
+            color: 'rgba(255,255,255,0.7)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.6rem',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: '#ffd700', fontWeight: '600' }}>
+              ★ Acceso rápido recomendado:
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  destination: latestPkg.location || latestPkg.name,
+                  departureDate: latestPkg.startDate || prev.departureDate,
+                  returnDate: latestPkg.endDate || prev.returnDate,
+                }));
+                
+                // Automatically run handleSearchSubmit
+                setSearching(true);
+                setResults(null);
+                
+                setTimeout(() => {
+                  setSearching(false);
+                  const mockResults = [];
+                  const c = activeCategory;
+                  
+                  let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]');
+                  let filtered = storedPackages.filter(p => (p.category || 'paquetes') === c);
+
+                  const searchDest = (latestPkg.location || latestPkg.name).trim().toLowerCase();
+                  if (searchDest) {
+                    filtered = filtered.filter(p => 
+                      (p.location && p.location.toLowerCase().includes(searchDest)) ||
+                      (p.name && p.name.toLowerCase().includes(searchDest))
+                    );
+                  }
+
+                  filtered.forEach(p => {
+                    const discount = parseFloat(p.bonus || '0');
+                    const originalPrice = parseFloat(p.price || '0');
+                    const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice;
+
+                    mockResults.push({
+                      id: p.id,
+                      title: p.name,
+                      description: `Servicio en ${p.location}`,
+                      meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
+                      price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+                      originalPriceRaw: originalPrice,
+                      finalPriceRaw: finalPrice,
+                      discountRaw: discount,
+                      durationRaw: p.duration,
+                      imageUrlRaw: p.imageUrl,
+                      locationRaw: p.location,
+                      audienceRaw: p.targetAudience,
+                      category: p.category || 'paquetes',
+                      promoted: discount > 0,
+                      checklistDetails: {
+                        baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+                        identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+                        cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+                      }
+                    });
+                  });
+
+                  mockResults.push({
+                    id: `custom-query-${c}`,
+                    title: `¿No encontrás lo que buscás?`,
+                    description: `Hacé una consulta personalizada para la categoría ${c.toUpperCase()} y un agente te contactará a la brevedad con una cotización a tu medida.`,
+                    meta: `Respuesta rápida (Menos de 24hs)`,
+                    price: 'A cotizar',
+                    category: c,
+                    promoted: false,
+                    isCustomQuery: true,
+                    checklistDetails: {
+                      baggage: 'A coordinar con el agente de ventas.',
+                      identity: 'Los datos requeridos se informarán en la cotización.',
+                      cancelation: 'Condiciones sujetas al servicio que contrates.'
+                    }
+                  });
+
+                  setResults(mockResults);
+                }, 1000);
+              }}
+              style={{
+                background: 'rgba(255, 215, 0, 0.12)',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
+                color: '#ffd700',
+                padding: '0.3rem 0.8rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 'bold',
+                transition: 'all 0.2s',
+                fontFamily: 'Outfit, sans-serif'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.12)'}
+            >
+              {latestPkg.name} (Destino: {latestPkg.location || 'Consultar'})
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 3. Micro-animación de carga */}
