@@ -166,7 +166,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
       const c = activeCategory
       
       let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-      let filtered = storedPackages.filter(p => p.category === c)
+      let filtered = storedPackages.filter(p => (p.category || 'paquetes') === c)
       
       filtered.forEach(p => {
         const discount = parseFloat(p.bonus || '0')
@@ -186,7 +186,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
           imageUrlRaw: p.imageUrl,
           locationRaw: p.location,
           audienceRaw: p.targetAudience,
-          category: p.category,
+          category: p.category || 'paquetes',
           promoted: discount > 0,
           checklistDetails: {
             baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
@@ -1212,24 +1212,30 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
             
             <div className="results-grid">
               {results.map((result) => {
-                if (result.category === 'paquetes') {
+                if (!result.isCustomQuery) {
                   return (
                     <div key={result.id} className="despegar-package-card">
                       <div className="despegar-img-container">
-                        <img src={result.imageUrlRaw} alt={result.title} className="despegar-img" />
-                        <div className="despegar-duration-badge">{result.durationRaw.toUpperCase()}</div>
+                        <img src={result.imageUrlRaw || 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80'} alt={result.title} className="despegar-img" />
+                        <div className="despegar-duration-badge">{(result.durationRaw || 'Consultar').toUpperCase()}</div>
                       </div>
                       <div className="despegar-content">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span className="despegar-label">PAQUETE</span>
+                          <span className="despegar-label">{result.category ? result.category.toUpperCase() : 'PAQUETE'}</span>
                           <div className="despegar-rating-container">
                             <span className="despegar-rating-badge">8.8</span>
                             <span className="despegar-stars">★★★</span>
                           </div>
                         </div>
                         <h5 className="despegar-title">{result.title}</h5>
-                        <p className="despegar-location">Saliendo desde Buenos Aires</p>
-                        <p className="despegar-includes">Hotel + Vuelo</p>
+                        <p className="despegar-location">Saliendo desde {result.locationRaw || 'Buenos Aires'}</p>
+                        <p className="despegar-includes">
+                          {result.category === 'paquetes' ? 'Hotel + Vuelo' : 
+                           result.category === 'vuelos' ? 'Vuelo Directo / Escalas' :
+                           result.category === 'alojamientos' ? 'Estadía Completa' : 
+                           result.category === 'actividades' ? 'Actividad / Tour' : 
+                           `${result.category ? result.category.charAt(0).toUpperCase() + result.category.slice(1) : 'Servicio Especial'}`}
+                        </p>
                         
                         <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
                           <span className="despegar-tag purple">Oferta Imbatible</span>
@@ -1294,13 +1300,14 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                   <div 
                     key={result.id} 
                     className={`result-item-card ${result.promoted ? 'promoted' : ''}`}
+                    style={{ background: 'linear-gradient(135deg, rgba(45, 212, 191, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%)', borderColor: 'rgba(45, 212, 191, 0.3)' }}
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span className="card-header-badge">{result.category}</span>
+                        <span className="card-header-badge" style={{ backgroundColor: 'rgba(45, 212, 191, 0.2)', color: '#2dd4bf' }}>CONSULTA PERSONALIZADA</span>
                         {result.verified && (
                           <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                            ✓ Verificado
+                            ✓ Enviada
                           </span>
                         )}
                       </div>
@@ -1311,16 +1318,17 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                     
                     <div className="card-price-container">
                       <div>
-                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Precio Final</span>
-                        <div className="card-price-value">{result.price}</div>
+                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Cotización</span>
+                        <div className="card-price-value" style={{ color: '#2dd4bf' }}>{result.price}</div>
                       </div>
                       <button 
                         type="button" 
                         onClick={() => handleVerifyOpen(result)}
                         className="card-verify-btn"
+                        style={{ backgroundColor: '#2dd4bf', color: '#0a0f18' }}
                         disabled={result.verified}
                       >
-                        {result.verified ? 'Verificado' : 'Verificar'}
+                        {result.verified ? 'Consulta Enviada' : 'Consultar Ahora'}
                       </button>
                     </div>
                   </div>
@@ -1355,9 +1363,9 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
               </p>
             </div>
 
-            {selectedResult.category === 'paquetes' && (
+            {selectedResult.finalPriceRaw !== undefined && (
               <div style={{ padding: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>Cantidad de Pasajeros:</label>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>Cantidad de Pasajeros / Personas:</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <button 
                     type="button" 
@@ -1378,10 +1386,10 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
             <div style={{ padding: '1rem', background: 'rgba(255, 215, 0, 0.05)', border: '1px solid rgba(255, 215, 0, 0.15)', borderRadius: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: '#ffd700', fontWeight: '600' }}>
-                  {selectedResult.category === 'paquetes' ? 'Importe Total Estimado:' : 'Importe a Confirmar:'}
+                  {selectedResult.finalPriceRaw !== undefined ? 'Importe Total Estimado:' : 'Importe a Confirmar:'}
                 </span>
                 <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
-                  {selectedResult.category === 'paquetes' 
+                  {selectedResult.finalPriceRaw !== undefined 
                     ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
                     : selectedResult.price
                   }

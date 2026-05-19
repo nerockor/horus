@@ -160,7 +160,7 @@ export default function PackagesView() {
                 <option value="vuelos">Vuelos</option>
                 <option value="paquetes">Paquetes</option>
                 <option value="actividades">Actividades</option>
-                <option value="assist_card">Assist Card</option>
+                <option value="assistcard">Assist Card</option>
                 <option value="autos">Autos</option>
                 <option value="disney">Disney</option>
                 <option value="universal">Universal</option>
