@@ -637,7 +637,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   return (
     <div className="booking-panel-wrapper">
       {/* 1. Categorías Menu Bar */}
-      <div className="booking-glass-card" style={{ padding: '0.5rem 1rem' }}>
+      <div className="booking-glass-card sticky-category-container" style={{ padding: '0.5rem 1rem' }}>
         <div className="category-nav-bar">
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon

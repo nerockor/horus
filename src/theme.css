@@ -1,0 +1,37 @@
+/* theme.css - Paleta de colores Tropical Verano */
+
+:root {
+  /* Colores de la captura de pantalla */
+  --palette-terracotta-red: #9c2317;
+  --palette-vivid-orange: #d96b20;
+  --palette-tangerine: #f29221;
+  --palette-golden-yellow: #fac02e;
+  --palette-warm-ivory: #f1ebe1;
+  --palette-warm-sand: #caa985;
+  
+  --palette-warm-brown: #854f28;
+  --palette-coffee-brown: #593c20;
+  --palette-sage-teal: #64a39f;
+  --palette-deep-ocean-blue: #2c5364;
+  --palette-navy-slate: #1d2c33;
+  --palette-charcoal-black: #0a0f12;
+
+  /* Mapeo del sistema de diseño de Horus */
+  --oyster-white: var(--palette-warm-ivory);
+  --sea-blue: var(--palette-deep-ocean-blue);
+  --sea-blue-glow: rgba(44, 83, 100, 0.15);
+  
+  --vivid-red: var(--palette-terracotta-red);
+  --vivid-red-glow: rgba(156, 35, 23, 0.15);
+  
+  --gold: var(--palette-golden-yellow);
+  --gold-glow: rgba(250, 192, 46, 0.4);
+  
+  --dark-text: var(--palette-navy-slate);
+  --light-text: #fefdfb;
+  
+  /* Gradientes de verano */
+  --gradient-tropical: linear-gradient(135deg, var(--palette-terracotta-red), var(--palette-vivid-orange));
+  --gradient-sunset: linear-gradient(135deg, var(--palette-vivid-orange), var(--palette-golden-yellow));
+  --gradient-ocean: linear-gradient(135deg, var(--palette-deep-ocean-blue), var(--palette-sage-teal));
+}

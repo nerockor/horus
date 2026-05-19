@@ -1,16 +1,5 @@
 /* App.css - Tropical Summer Design System & Golden Animations */
-
-:root {
-  --oyster-white: #faf6f0;
-  --sea-blue: #0284c7;
-  --sea-blue-glow: rgba(2, 132, 199, 0.15);
-  --vivid-red: #e11d48;
-  --vivid-red-glow: rgba(225, 29, 72, 0.15);
-  --gold: #ffd700;
-  --gold-glow: rgba(255, 215, 0, 0.4);
-  --dark-text: #0f2d4a;
-  --light-text: #fdfbf7;
-}
+@import "./theme.css";
 
 /* Base Wrapper for Tropical Theme */
 .tropical-app-wrapper {
@@ -86,6 +75,21 @@
   border-color: rgba(2, 132, 199, 0.25) !important;
   box-shadow: 0 24px 60px rgba(15, 45, 74, 0.1), 
               inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Sticky Category Tab Container */
+.sticky-category-container {
+  position: sticky !important;
+  top: 0px !important;
+  z-index: 40 !important;
+  background: rgba(241, 235, 225, 0.96) !important; /* Warm ivory con opacidad */
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 2px solid rgba(44, 83, 100, 0.15) !important;
+  box-shadow: 0 10px 30px rgba(29, 44, 51, 0.08) !important;
+  margin-bottom: 1.5rem !important;
+  border-radius: 0 0 12px 12px !important;
+  transition: all 0.3s ease !important;
 }
 
 /* Navigation Overrides */
