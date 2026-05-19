@@ -1,22 +1,8 @@
-import { useSpring, animated, config } from '@react-spring/web'
 import { Menu, Phone, MapPin, Calendar, X, Trash2, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Overlay({ activeBookings = [], onCancelBooking, view = 'landing', setView }) {
   const [isOpen, setIsOpen] = useState(false)
-
-  // Animación para el menú lateral
-  const menuSpring = useSpring({
-    transform: isOpen ? 'translateX(0%)' : 'translateX(100%)',
-    config: config.gentle
-  })
-
-  // Animación para el logo/cabecera
-  const headerSpring = useSpring({
-    from: { opacity: 0, y: -50 },
-    to: { opacity: 1, y: 0 },
-    delay: 500
-  })
 
   return (
     <div className="overlay-container" style={{
@@ -34,8 +20,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
       justifyContent: 'space-between'
     }}>
       {/* Header */}
-      <animated.header style={{
-        ...headerSpring,
+      <header style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -120,11 +105,12 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             {isOpen ? <X size={24} color="#ef4444" /> : <Menu size={24} />}
           </button>
         </div>
-      </animated.header>
+      </header>
 
       {/* Menú Lateral (Mis Reservas) */}
-      <animated.div style={{
-        ...menuSpring,
+      <div style={{
+        transform: isOpen ? 'translateX(0%)' : 'translateX(100%)',
+        transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
         position: 'fixed',
         top: 0,
         right: 0,
@@ -241,7 +227,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             </div>
           </div>
         </div>
-      </animated.div>
+      </div>
 
       {/* Footer / Status Bar */}
       <footer style={{ 

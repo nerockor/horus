@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import Scene from './components/3d/Scene'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
 
@@ -30,10 +29,6 @@ function App() {
 
   return (
     <div style={{ width: '100vw', position: 'relative' }}>
-      {/* Capa 3D de fondo fijada */}
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0 }}>
-        <Scene />
-      </div>
 
       {/* Capa de Interfaz */}
       <Overlay 
@@ -126,22 +121,7 @@ function App() {
               >
                 Ingresar al Buscador
               </button>
-              
-              <div style={{
-                marginTop: '4rem',
-                fontSize: '0.75rem',
-                color: 'rgba(255,255,255,0.4)',
-                fontFamily: 'Inter, sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <span>↓</span> O haz scroll para explorar las islas 3D
-              </div>
             </section>
-            
-            {/* Espacio para la animación de Scroll en la Landing Page */}
-            <div style={{ height: '300vh' }}></div>
           </>
         ) : (
           /* Seccion de Buscador (Página Independiente) */
