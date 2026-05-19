@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
+import AdminApp from './components/admin/AdminApp'
 
-function App() {
+function PublicApp() {
   const [activeBookings, setActiveBookings] = useState([])
   const [view, setView] = useState('landing') // 'landing' or 'booking'
 
@@ -177,4 +179,11 @@ function App() {
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/admin/*" element={<AdminApp />} />
+      <Route path="/*" element={<PublicApp />} />
+    </Routes>
+  )
+}

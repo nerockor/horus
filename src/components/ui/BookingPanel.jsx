@@ -422,6 +422,11 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     }
 
     onAddBooking(newBooking)
+
+    // Save to localStorage for Admin Panel
+    const existingBookings = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
+    localStorage.setItem('horus_bookings', JSON.stringify([newBooking, ...existingBookings]))
+
     setSelectedResult(null) // close popup
     
     // Add success flag to search results list
