@@ -1721,15 +1721,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                           disabled={result.verified}
                           style={{
                             width: '100%',
-                            padding: '0.6rem',
-                            border: 'none',
-                            borderRadius: '6px',
-                            backgroundColor: result.verified ? '#475569' : '#ffd700',
-                            color: result.verified ? '#94a3b8' : '#0a0f18',
-                            fontWeight: 'bold',
-                            cursor: result.verified ? 'default' : 'pointer',
                             marginTop: '0.75rem',
-                            fontSize: '0.85rem'
                           }}
                         >
                           {result.verified ? 'Verificado' : 'Consultar'}
@@ -1768,7 +1760,6 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                         type="button" 
                         onClick={() => handleVerifyOpen(result)}
                         className="card-verify-btn"
-                        style={{ backgroundColor: '#2dd4bf', color: '#0a0f18' }}
                         disabled={result.verified}
                       >
                         {result.verified ? 'Consulta Enviada' : 'Consultar Ahora'}
@@ -1918,12 +1909,6 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
               className="search-submit-btn"
               style={{
                 width: '100%',
-                justifyContent: 'center',
-                background: isConfirmDisabled ? 'rgba(255, 255, 255, 0.05)' : 'linear-gradient(135deg, #10b981, #059669)',
-                color: isConfirmDisabled ? 'rgba(255, 255, 255, 0.25)' : '#ffffff',
-                boxShadow: isConfirmDisabled ? 'none' : '0 4px 15px rgba(16, 185, 129, 0.3)',
-                cursor: isConfirmDisabled ? 'not-allowed' : 'pointer',
-                border: isConfirmDisabled ? '1px solid rgba(255,255,255,0.05)' : 'none'
               }}
             >
               <CheckSquare size={18} />
