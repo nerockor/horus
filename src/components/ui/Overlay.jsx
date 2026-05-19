@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 export default function Overlay({ activeBookings = [], onCancelBooking, view = 'landing', setView }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [showContactForm, setShowContactForm] = useState(false)
 
   return (
     <div className="overlay-container" style={{
@@ -234,10 +235,115 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'flex-end',
-        pointerEvents: 'auto'
+        pointerEvents: 'auto',
+        position: 'relative'
       }}>
-        <div style={{ fontSize: '0.8rem', opacity: 0.5 }}>
-          LAT: 29.9792° N | LONG: 31.1342° E
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
+          {/* Floating Contact/Query Button and Form */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowContactForm(!showContactForm)}
+              style={{
+                background: '#ffd700',
+                color: '#0a0f18',
+                border: 'none',
+                padding: '0.4rem 0.8rem',
+                borderRadius: '8px',
+                fontSize: '0.8rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontFamily: 'Inter, sans-serif'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              ✉ Consultar a un Agente
+            </button>
+
+            {showContactForm && (
+              <div style={{
+                position: 'absolute',
+                bottom: '2.5rem',
+                left: 0,
+                width: '300px',
+                backgroundColor: 'rgba(10, 15, 24, 0.95)',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                zIndex: 100,
+                backdropFilter: 'blur(10px)'
+              }}>
+                <h4 style={{ margin: 0, color: '#ffd700', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif' }}>Enviar Consulta</h4>
+                <input 
+                  type="text" 
+                  placeholder="Tu Nombre" 
+                  id="query-name"
+                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem' }}
+                  required
+                />
+                <input 
+                  type="text" 
+                  placeholder="Email o Teléfono" 
+                  id="query-contact"
+                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem' }}
+                  required
+                />
+                <textarea 
+                  placeholder="¿En qué podemos ayudarte?" 
+                  id="query-message"
+                  rows="3"
+                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem', resize: 'none' }}
+                  required
+                ></textarea>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => {
+                      const nameInput = document.getElementById('query-name');
+                      const contactInput = document.getElementById('query-contact');
+                      const messageInput = document.getElementById('query-message');
+                      
+                      if (!nameInput.value || !contactInput.value || !messageInput.value) {
+                        alert('Por favor completa todos los campos.');
+                        return;
+                      }
+
+                      const newQuery = {
+                        id: `q-${Date.now()}`,
+                        clientName: nameInput.value,
+                        contact: contactInput.value,
+                        message: messageInput.value,
+                        date: new Date().toLocaleString('es-ES'),
+                        status: 'Pendiente'
+                      };
+
+                      const existing = JSON.parse(localStorage.getItem('horus_queries') || '[]');
+                      localStorage.setItem('horus_queries', JSON.stringify([newQuery, ...existing]));
+                      
+                      alert('Consulta enviada con éxito. Un agente te responderá pronto.');
+                      setShowContactForm(false);
+                    }}
+                    style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: 'none', backgroundColor: '#ffd700', color: '#0a0f18', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}
+                  >
+                    Enviar
+                  </button>
+                  <button
+                    onClick={() => setShowContactForm(false)}
+                    style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', fontSize: '0.8rem', cursor: 'pointer' }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div style={{ fontSize: '0.8rem', opacity: 0.5 }}>
+            LAT: 29.9792° N | LONG: 31.1342° E
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '2rem' }}>
           <div style={{ textAlign: 'right' }}>

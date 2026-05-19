@@ -6,6 +6,8 @@ import DashboardView from './views/DashboardView'
 import BookingsView from './views/BookingsView'
 import UsersView from './views/UsersView'
 import ContentView from './views/ContentView'
+import QueriesView from './views/QueriesView'
+import PackagesView from './views/PackagesView'
 
 export default function AdminApp() {
   const [user, setUser] = useState(null)
@@ -38,6 +40,8 @@ export default function AdminApp() {
       <Routes>
         <Route path="/" element={<DashboardView />} />
         <Route path="/reservas" element={<BookingsView />} />
+        <Route path="/consultas" element={<QueriesView />} />
+        <Route path="/paquetes" element={<PackagesView />} />
         {user.role === 'admin' && (
           <Route path="/usuarios" element={<UsersView />} />
         )}

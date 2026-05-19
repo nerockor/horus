@@ -1,0 +1,270 @@
+import { useState, useEffect } from 'react'
+import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign } from 'lucide-react'
+
+export default function PackagesView() {
+  const [packages, setPackages] = useState([])
+  
+  // Form states
+  const [name, setName] = useState('')
+  const [location, setLocation] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [price, setPrice] = useState('')
+  const [bonus, setBonus] = useState('')
+  const [targetAudience, setTargetAudience] = useState('Solo adultos')
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    // Seed some mock packages if empty
+    if (data.length === 0) {
+      const mockPackages = [
+        {
+          id: 'p-1',
+          name: 'Escapada Romántica a París',
+          location: 'París, Francia',
+          startDate: '2026-06-01',
+          endDate: '2026-06-15',
+          price: '1850',
+          bonus: '15',
+          targetAudience: 'Solo adultos'
+        },
+        {
+          id: 'p-2',
+          name: 'Disney Mágico Familiar',
+          location: 'Orlando, EE.UU.',
+          startDate: '2026-07-10',
+          endDate: '2026-08-20',
+          price: '3400',
+          bonus: '10',
+          targetAudience: 'Familiares'
+        }
+      ]
+      localStorage.setItem('horus_packages', JSON.stringify(mockPackages))
+      setPackages(mockPackages)
+    } else {
+      setPackages(data)
+    }
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!name || !location || !startDate || !endDate || !price) return
+
+    const newPackage = {
+      id: `p-${Date.now()}`,
+      name,
+      location,
+      startDate,
+      endDate,
+      price,
+      bonus: bonus || '0',
+      targetAudience
+    }
+
+    const updated = [newPackage, ...packages]
+    setPackages(updated)
+    localStorage.setItem('horus_packages', JSON.stringify(updated))
+
+    // Reset fields
+    setName('')
+    setLocation('')
+    setStartDate('')
+    setEndDate('')
+    setPrice('')
+    setBonus('')
+    setTargetAudience('Solo adultos')
+  }
+
+  const deletePackage = (id) => {
+    if (confirm('¿Seguro que deseas eliminar este paquete?')) {
+      const updated = packages.filter(p => p.id !== id)
+      setPackages(updated)
+      localStorage.setItem('horus_packages', JSON.stringify(updated))
+    }
+  }
+
+  return (
+    <div>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Package size={24} /> Gestión de Paquetes
+      </h1>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
+        {/* Form to create package */}
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Plus size={18} style={{ color: '#2563eb' }} /> Nuevo Paquete
+          </h3>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Nombre del Paquete</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej. Caribe de Ensueño"
+                style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                required
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Locación / Destino</label>
+              <div style={{ position: 'relative' }}>
+                <MapPin size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
+                <input 
+                  type="text" 
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Ej. Cancún, México"
+                  style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Inicio Promo</label>
+                <input 
+                  type="date" 
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Fin Promo</label>
+                <input 
+                  type="date" 
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Precio (USD)</label>
+                <div style={{ position: 'relative' }}>
+                  <DollarSign size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
+                  <input 
+                    type="number" 
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="1200"
+                    style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Bonificación (%)</label>
+                <div style={{ position: 'relative' }}>
+                  <Percent size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
+                  <input 
+                    type="number" 
+                    value={bonus}
+                    onChange={(e) => setBonus(e.target.value)}
+                    placeholder="10"
+                    style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Público Objetivo</label>
+              <select
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+              >
+                <option value="Solo adultos">Solo adultos</option>
+                <option value="Familiares">Familiares</option>
+              </select>
+            </div>
+
+            <button 
+              type="submit"
+              style={{ backgroundColor: '#2563eb', color: 'white', padding: '0.75rem', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem', transition: 'background-color 0.2s' }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+            >
+              Crear Paquete
+            </button>
+          </form>
+        </div>
+
+        {/* List of packages */}
+        <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Nombre</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Destino</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Fechas Promo</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Precio Final</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Público</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {packages.length === 0 ? (
+                <tr>
+                  <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay paquetes creados.</td>
+                </tr>
+              ) : (
+                packages.map(p => {
+                  const discount = parseFloat(p.bonus || '0');
+                  const originalPrice = parseFloat(p.price || '0');
+                  const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice;
+
+                  return (
+                    <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b', fontWeight: '600' }}>{p.name}</td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#334155' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <MapPin size={14} style={{ color: '#64748b' }} /> {p.location}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem' }}>
+                          <Calendar size={14} /> {p.startDate} al {p.endDate}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                        <div style={{ fontWeight: '700', color: '#10b981' }}>U$S {finalPrice.toFixed(0)}</div>
+                        {discount > 0 && (
+                          <div style={{ fontSize: '0.75rem', color: '#ef4444', textDecoration: 'line-through' }}>
+                            U$S {p.price} (-{p.bonus}%)
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#475569' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Users size={14} style={{ color: '#64748b' }} /> {p.targetAudience}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem' }}>
+                        <button 
+                          onClick={() => deletePackage(p.id)}
+                          style={{ padding: '0.5rem 1rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '500' }}
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
