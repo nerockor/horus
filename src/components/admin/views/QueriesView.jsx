@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Check, Trash2, Mail, MessageSquare } from 'lucide-react'
+import { Check, Trash2, Mail, MessageSquare, UserPlus } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function QueriesView() {
   const [queries, setQueries] = useState([])
@@ -102,7 +103,7 @@ export default function QueriesView() {
                       {q.status}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
                         onClick={() => toggleStatus(q.id)}
@@ -120,6 +121,22 @@ export default function QueriesView() {
                       >
                         <Check size={14} />
                       </button>
+                      <Link
+                        to={`/admin/clientes?prefill_name=${encodeURIComponent(q.clientName)}&prefill_contact=${encodeURIComponent(q.contact)}`}
+                        title="Crear Ficha de Pasajero"
+                        style={{
+                          padding: '0.375rem',
+                          backgroundColor: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <UserPlus size={14} />
+                      </Link>
                       <button
                         onClick={() => deleteQuery(q.id)}
                         title="Eliminar consulta"

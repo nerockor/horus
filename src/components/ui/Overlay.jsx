@@ -14,7 +14,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
       height: '100%',
       pointerEvents: 'none',
       zIndex: 10,
-      color: 'white',
+      color: '#0f2d4a',
       padding: '2rem',
       display: 'flex',
       flexDirection: 'column',
@@ -34,7 +34,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             fontSize: '1.5rem', 
             fontWeight: 'bold', 
             letterSpacing: '2px', 
-            color: '#ffd700', 
+            color: '#0f2d4a', 
             fontFamily: 'Outfit, sans-serif',
             cursor: 'pointer',
             transition: 'all 0.3s',
@@ -44,7 +44,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             userSelect: 'none'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.textShadow = '0 0 15px rgba(255,215,0,0.6)'
+            e.currentTarget.style.textShadow = '0 0 15px rgba(2,132,199,0.3)'
             e.currentTarget.style.transform = 'scale(1.02)'
           }}
           onMouseLeave={(e) => {
@@ -55,11 +55,11 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
           <span>HORUS TRAVEL</span>
           <span style={{ 
             fontSize: '0.65rem', 
-            color: view === 'landing' ? '#2dd4bf' : '#ffd700', 
-            background: view === 'landing' ? 'rgba(45, 212, 191, 0.12)' : 'rgba(255, 215, 0, 0.12)', 
-            border: view === 'landing' ? '1px solid rgba(45, 212, 191, 0.3)' : '1px solid rgba(255, 215, 0, 0.3)',
-            padding: '0.2rem 0.5rem', 
-            borderRadius: '6px', 
+            color: view === 'landing' ? 'white' : '#0284c7', 
+            background: view === 'landing' ? 'var(--vivid-red)' : 'rgba(2, 132, 199, 0.12)', 
+            border: view === 'landing' ? '1px solid var(--vivid-red)' : '1px solid rgba(2, 132, 199, 0.3)',
+            padding: '0.25rem 0.6rem', 
+            borderRadius: '20px', 
             letterSpacing: '0.05em',
             fontWeight: 'bold'
           }}>
@@ -70,9 +70,9 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {activeBookings.length > 0 && (
             <div style={{
-              background: 'rgba(45, 212, 191, 0.15)',
-              border: '1px solid rgba(45, 212, 191, 0.4)',
-              color: '#2dd4bf',
+              background: 'rgba(2, 132, 199, 0.12)',
+              border: '1px solid rgba(2, 132, 199, 0.4)',
+              color: '#0284c7',
               padding: '0.4rem 0.8rem',
               borderRadius: '20px',
               fontSize: '0.8rem',
@@ -91,11 +91,11 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             style={{ 
               background: 'none', 
               border: 'none', 
-              color: 'white', 
+              color: isOpen ? '#ef4444' : '#0f2d4a', 
               cursor: 'pointer',
               padding: '10px',
               borderRadius: '50%',
-              backgroundColor: isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255,215,0,0.1)',
+              backgroundColor: isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(2, 132, 199, 0.08)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -117,40 +117,40 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
         right: 0,
         width: '380px',
         height: '100%',
-        background: 'rgba(10, 15, 24, 0.96)',
+        background: 'rgba(253, 251, 247, 0.98)',
         backdropFilter: 'blur(20px)',
-        borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+        borderLeft: '1px solid rgba(2, 132, 199, 0.15)',
         padding: '5rem 1.5rem 2rem 1.5rem',
         pointerEvents: 'auto',
         zIndex: 11,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        boxShadow: '-10px 0 30px rgba(0,0,0,0.5)'
+        boxShadow: '-10px 0 30px rgba(15, 45, 74, 0.08)'
       }}>
         <div>
           <h3 style={{ 
-            color: '#ffd700', 
+            color: '#0f2d4a', 
             fontFamily: 'Outfit, sans-serif', 
             fontSize: '1.2rem', 
             letterSpacing: '1px',
             marginBottom: '0.5rem',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            borderBottom: '1px solid rgba(2, 132, 199, 0.15)',
             paddingBottom: '0.75rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
             <span>MIS RESERVAS</span>
-            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 'normal' }}>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(15, 45, 74, 0.5)', fontWeight: 'normal' }}>
               Verificadas
             </span>
           </h3>
 
           {activeBookings.length === 0 ? (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', opacity: 0.6 }}>
-              <Calendar size={40} color="rgba(255,255,255,0.2)" style={{ marginBottom: '1rem' }} />
-              <p style={{ fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#0f2d4a' }}>
+              <Calendar size={40} color="rgba(2, 132, 199, 0.3)" style={{ marginBottom: '1rem' }} />
+              <p style={{ fontSize: '0.9rem', lineHeight: '1.5', margin: 0, fontWeight: '500' }}>
                 No tienes reservas confirmadas todavía.
               </p>
               <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', margin: 0 }}>
@@ -164,7 +164,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
                   <span className="sidebar-res-badge verified">VERIFICADO</span>
                   <div className="sidebar-res-title">{booking.title}</div>
                   <div className="sidebar-res-meta">{booking.description}</div>
-                  <div className="sidebar-res-meta" style={{ opacity: 0.5 }}>{booking.meta}</div>
+                  <div className="sidebar-res-meta" style={{ opacity: 0.6 }}>{booking.meta}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
                     <div className="sidebar-res-price">{booking.price}</div>
                     <button
@@ -194,7 +194,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
                       <Trash2 size={16} />
                     </button>
                   </div>
-                  <div style={{ fontSize: '0.65rem', color: '#2dd4bf', opacity: 0.8, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#0284c7', opacity: 0.9, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
                     <span>✓</span> Verificado el {booking.verifiedAt}
                   </div>
                 </div>
@@ -205,26 +205,27 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
 
         {/* Contact and Help Box */}
         <div style={{ 
-          background: 'rgba(255, 215, 0, 0.03)', 
-          border: '1px solid rgba(255, 215, 0, 0.15)', 
+          background: 'rgba(2, 132, 199, 0.05)', 
+          border: '1px solid rgba(2, 132, 199, 0.15)', 
           borderRadius: '12px',
           padding: '1.25rem',
-          marginTop: '2rem'
+          marginTop: '2rem',
+          color: '#0f2d4a'
         }}>
-          <h4 style={{ color: '#ffd700', margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif' }}>
+          <h4 style={{ color: '#0284c7', margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif', fontWeight: '700' }}>
             ¿NECESITAS AYUDA?
           </h4>
-          <p style={{ fontSize: '0.75rem', opacity: 0.7, margin: '0 0 0.75rem 0', lineHeight: '1.4' }}>
-            Contacta a un agente especialista en viajes antigravitacionales de Horus.
+          <p style={{ fontSize: '0.75rem', opacity: 0.8, margin: '0 0 0.75rem 0', lineHeight: '1.4' }}>
+            Contacta a un agente especialista en viajes de Horus.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-              <Phone size={12} color="#ffd700" />
-              <span>+54 9 11 5555-4321</span>
+              <Phone size={12} color="#0284c7" />
+              <span style={{ fontWeight: '500' }}>+54 9 11 5555-4321</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-              <MapPin size={12} color="#ffd700" />
-              <span>Giza Plateau, Egipto</span>
+              <MapPin size={12} color="#0284c7" />
+              <span style={{ fontWeight: '500' }}>Giza Plateau, Egipto</span>
             </div>
           </div>
         </div>
@@ -244,19 +245,26 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             <button
               onClick={() => setShowContactForm(!showContactForm)}
               style={{
-                background: '#ffd700',
-                color: '#0a0f18',
+                background: 'linear-gradient(135deg, #ffd700, #ffb700)',
+                color: '#0f2d4a',
                 border: 'none',
-                padding: '0.4rem 0.8rem',
+                padding: '0.5rem 1rem',
                 borderRadius: '8px',
                 fontSize: '0.8rem',
                 fontWeight: 'bold',
                 cursor: 'pointer',
+                boxShadow: '0 4px 10px rgba(255, 215, 0, 0.3)',
                 transition: 'all 0.2s',
                 fontFamily: 'Inter, sans-serif'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 15px rgba(255, 215, 0, 0.45)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 4px 10px rgba(255, 215, 0, 0.3)'
+              }}
             >
               ✉ Consultar a un Agente
             </button>
@@ -264,40 +272,40 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
             {showContactForm && (
               <div style={{
                 position: 'absolute',
-                bottom: '2.5rem',
+                bottom: '3rem',
                 left: 0,
-                width: '300px',
-                backgroundColor: 'rgba(10, 15, 24, 0.95)',
-                border: '1px solid rgba(255, 215, 0, 0.3)',
-                borderRadius: '12px',
+                width: '320px',
+                backgroundColor: 'rgba(253, 251, 247, 0.98)',
+                border: '1px solid rgba(2, 132, 199, 0.25)',
+                borderRadius: '16px',
                 padding: '1.25rem',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                boxShadow: '0 15px 35px rgba(15,45,74,0.15)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.75rem',
                 zIndex: 100,
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(20px)'
               }}>
-                <h4 style={{ margin: 0, color: '#ffd700', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif' }}>Enviar Consulta</h4>
+                <h4 style={{ margin: 0, color: '#0f2d4a', fontSize: '0.95rem', fontFamily: 'Outfit, sans-serif', fontWeight: '700' }}>Enviar Consulta</h4>
                 <input 
                   type="text" 
                   placeholder="Tu Nombre" 
                   id="query-name"
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem' }}
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid rgba(2,132,199,0.2)', backgroundColor: 'white', color: '#0f2d4a', fontSize: '0.8rem', outline: 'none' }}
                   required
                 />
                 <input 
                   type="text" 
                   placeholder="Email o Teléfono" 
                   id="query-contact"
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem' }}
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid rgba(2,132,199,0.2)', backgroundColor: 'white', color: '#0f2d4a', fontSize: '0.8rem', outline: 'none' }}
                   required
                 />
                 <textarea 
                   placeholder="¿En qué podemos ayudarte?" 
                   id="query-message"
                   rows="3"
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', fontSize: '0.8rem', resize: 'none' }}
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid rgba(2,132,199,0.2)', backgroundColor: 'white', color: '#0f2d4a', fontSize: '0.8rem', resize: 'none', outline: 'none' }}
                   required
                 ></textarea>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -327,13 +335,15 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
                       alert('Consulta enviada con éxito. Un agente te responderá pronto.');
                       setShowContactForm(false);
                     }}
-                    style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: 'none', backgroundColor: '#ffd700', color: '#0a0f18', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: 'none', backgroundColor: '#e11d48', color: 'white', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#be123c'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#e11d48'}
                   >
                     Enviar
                   </button>
                   <button
                     onClick={() => setShowContactForm(false)}
-                    style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', fontSize: '0.8rem', cursor: 'pointer' }}
+                    style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid rgba(15,45,74,0.2)', backgroundColor: 'transparent', color: '#0f2d4a', fontSize: '0.8rem', cursor: 'pointer' }}
                   >
                     Cancelar
                   </button>
@@ -341,18 +351,18 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
               </div>
             )}
           </div>
-          <div style={{ fontSize: '0.8rem', opacity: 0.5 }}>
+          <div style={{ fontSize: '0.8rem', opacity: 0.8, color: '#0f2d4a', fontWeight: '500' }}>
             LAT: 29.9792° N | LONG: 31.1342° E
           </div>
         </div>
         <div style={{ display: 'flex', gap: '2rem' }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>ALTITUD</div>
-            <div style={{ color: '#ffd700' }}>3,500 FT</div>
+            <div style={{ fontSize: '0.7rem', opacity: 0.6, color: '#0f2d4a', fontWeight: '600' }}>ALTITUD</div>
+            <div style={{ color: '#e11d48', fontWeight: 'bold' }}>3,500 FT</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>ESTADO</div>
-            <div style={{ color: '#44ff44' }}>VUELO ESTABLE</div>
+            <div style={{ fontSize: '0.7rem', opacity: 0.6, color: '#0f2d4a', fontWeight: '600' }}>ESTADO</div>
+            <div style={{ color: '#0284c7', fontWeight: 'bold' }}>VUELO ESTABLE</div>
           </div>
         </div>
       </footer>

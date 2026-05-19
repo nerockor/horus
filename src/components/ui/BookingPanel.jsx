@@ -55,6 +55,253 @@ const CATEGORIES = [
   { id: 'cruceros', label: 'Cruceros', icon: Ship },
 ]
 
+const SEED_PACKAGES = [
+  // 1. Paquetes
+  {
+    id: 'p-buzios',
+    category: 'paquetes',
+    name: 'Paquetes a Búzios',
+    location: 'Búzios, Brasil',
+    startDate: '2026-06-01',
+    endDate: '2026-06-15',
+    duration: '9 Días / 8 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80',
+    price: '866891',
+    bonus: '12',
+    targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-paris',
+    category: 'paquetes',
+    name: 'París Soñado',
+    location: 'París, Francia',
+    startDate: '2026-06-10',
+    endDate: '2026-06-25',
+    duration: '7 Días / 6 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
+    price: '1850000',
+    bonus: '15',
+    targetAudience: 'Solo adultos'
+  },
+  {
+    id: 'p-disney-pack',
+    category: 'paquetes',
+    name: 'Disney Mágico Familiar',
+    location: 'Orlando, EE.UU.',
+    startDate: '2026-07-01',
+    endDate: '2026-07-20',
+    duration: '10 Días / 9 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+    price: '2400000',
+    bonus: '5',
+    targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-rio',
+    category: 'paquetes',
+    name: 'Río de Janeiro Express',
+    location: 'Río de Janeiro, Brasil',
+    startDate: '2026-05-25',
+    endDate: '2026-06-05',
+    duration: '6 Días / 5 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=600&q=80',
+    price: '650000',
+    bonus: '10',
+    targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-madrid-pack',
+    category: 'paquetes',
+    name: 'Madrid Cultural',
+    location: 'Madrid, España',
+    startDate: '2026-06-15',
+    endDate: '2026-06-30',
+    duration: '8 Días / 7 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=600&q=80',
+    price: '1450000',
+    bonus: '8',
+    targetAudience: 'Solo adultos'
+  },
+  // 2. Vuelos
+  {
+    id: 'p-vuelo-miami',
+    category: 'vuelos',
+    name: 'Vuelo Directo a Miami',
+    location: 'Miami, EE.UU.',
+    startDate: '2026-06-01',
+    endDate: '2026-06-15',
+    duration: 'Vuelo Directo (Ida y Vuelta)',
+    imageUrl: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80',
+    price: '980000',
+    bonus: '10',
+    targetAudience: 'Solo adultos'
+  },
+  {
+    id: 'p-vuelo-madrid',
+    category: 'vuelos',
+    name: 'Vuelo Madrid con Escala',
+    location: 'Madrid, España',
+    startDate: '2026-06-10',
+    endDate: '2026-06-25',
+    duration: '1 Parada (Ida y Vuelta)',
+    imageUrl: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=600&q=80',
+    price: '1350000',
+    bonus: '5',
+    targetAudience: 'Solo adultos'
+  },
+  // 3. Alojamientos
+  {
+    id: 'p-aloj-copa',
+    category: 'alojamientos',
+    name: 'Copacabana Palace Hotel',
+    location: 'Río de Janeiro, Brasil',
+    startDate: '2026-05-25',
+    endDate: '2026-06-05',
+    duration: 'Estadía Completa por Noche',
+    imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80',
+    price: '280000',
+    bonus: '15',
+    targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-aloj-giza',
+    category: 'alojamientos',
+    name: 'Hilton Pyramids View Resort',
+    location: 'El Cairo, Egipto',
+    startDate: '2026-06-05',
+    endDate: '2026-06-12',
+    duration: 'Habitación Premium vista Pirámides',
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=600&q=80',
+    price: '320000',
+    bonus: '8',
+    targetAudience: 'Solo adultos'
+  },
+  // 4. Actividades
+  {
+    id: 'p-act-giza',
+    category: 'actividades',
+    name: 'Excursión Privada Pirámides & Esfinge',
+    location: 'Giza, Egipto',
+    startDate: '2026-05-20',
+    endDate: '2026-06-20',
+    duration: 'Día Completo con Guía Privado',
+    imageUrl: 'https://images.unsplash.com/photo-1503177119275-0aa32b31d468?auto=format&fit=crop&w=600&q=80',
+    price: '85000',
+    bonus: '0',
+    targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-act-venecia',
+    category: 'actividades',
+    name: 'Paseo en Góndola & Cena Veneciana',
+    location: 'Venecia, Italia',
+    startDate: '2026-06-01',
+    endDate: '2026-06-15',
+    duration: '4 Horas de Excursión',
+    imageUrl: 'https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?auto=format&fit=crop&w=600&q=80',
+    price: '140000',
+    bonus: '10',
+    targetAudience: 'Solo adultos'
+  },
+  // 5. Assist Card
+  {
+    id: 'p-assist-150',
+    category: 'assistcard',
+    name: 'Asistencia Premium AC 150',
+    location: 'Europa y Resto del Mundo',
+    startDate: '2026-05-15',
+    endDate: '2026-12-31',
+    duration: 'Cobertura Anual Multiviajes',
+    imageUrl: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80',
+    price: '95000',
+    bonus: '20',
+    targetAudience: 'Familiares'
+  },
+  // 6. Autos
+  {
+    id: 'p-car-explorer',
+    category: 'autos',
+    name: 'Alquiler SUV Ford Explorer',
+    location: 'Orlando, EE.UU.',
+    startDate: '2026-06-01',
+    endDate: '2026-06-30',
+    duration: 'Por Día - Kilometraje Libre',
+    imageUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80',
+    price: '75000',
+    bonus: '5',
+    targetAudience: 'Familiares'
+  },
+  // 7. Disney
+  {
+    id: 'p-disney-tix',
+    category: 'disney',
+    name: 'Pase Magia de Disney 4 Parques',
+    location: 'Orlando, EE.UU.',
+    startDate: '2026-05-15',
+    endDate: '2026-10-15',
+    duration: '4 Días de Acceso Completo',
+    imageUrl: 'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?auto=format&fit=crop&w=600&q=80',
+    price: '650000',
+    bonus: '10',
+    targetAudience: 'Familiares'
+  },
+  // 8. Universal
+  {
+    id: 'p-univ-tix',
+    category: 'universal',
+    name: 'Universal Explorer: 3 Parques al precio de 2',
+    location: 'Orlando, EE.UU.',
+    startDate: '2026-05-15',
+    endDate: '2026-10-15',
+    duration: 'Pase de 14 Días Consecutivos',
+    imageUrl: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=600&q=80',
+    price: '580000',
+    bonus: '12',
+    targetAudience: 'Familiares'
+  },
+  // 9. Circuitos
+  {
+    id: 'p-circ-egipto',
+    category: 'circuitos',
+    name: 'Egipto Clásico & Crucero por el Nilo',
+    location: 'El Cairo / Nilo, Egipto',
+    startDate: '2026-09-10',
+    endDate: '2026-09-25',
+    duration: '10 Días / 9 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1503177119275-0aa32b31d468?auto=format&fit=crop&w=600&q=80',
+    price: '2450000',
+    bonus: '15',
+    targetAudience: 'Solo adultos'
+  },
+  {
+    id: 'p-circ-europa',
+    category: 'circuitos',
+    name: 'Europa Imperial Soñada',
+    location: 'Madrid, París, Roma',
+    startDate: '2026-06-05',
+    endDate: '2026-06-25',
+    duration: '15 Días / 14 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
+    price: '3890000',
+    bonus: '10',
+    targetAudience: 'Solo adultos'
+  },
+  // 10. Cruceros
+  {
+    id: 'p-cruc-royal',
+    category: 'cruceros',
+    name: 'Crucero Caribe: Bahamas & Perfect Day',
+    location: 'Miami / Bahamas',
+    startDate: '2026-06-15',
+    endDate: '2026-06-22',
+    duration: '8 Días / 7 Noches Royal Caribbean',
+    imageUrl: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=600&q=80',
+    price: '1850000',
+    bonus: '8',
+    targetAudience: 'Familiares'
+  }
+]
+
 export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   const [activeCategory, setActiveCategory] = useState('vuelos')
   const [searching, setSearching] = useState(false)
@@ -140,9 +387,16 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     }))
   }, [])
 
-  // Update default destination and fields based on the latest package of the active category
+  // Update default destination and fields based on the latest package of the active category, and load previews automatically
   useEffect(() => {
-    const storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    
+    // Seed database with mock packages if it's empty
+    if (storedPackages.length === 0) {
+      storedPackages = SEED_PACKAGES
+      localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
+    }
+
     const categoryPackages = storedPackages.filter(p => (p.category || 'paquetes') === activeCategory)
     
     if (categoryPackages.length > 0) {
@@ -154,6 +408,55 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
         returnDate: latest.endDate || prev.returnDate,
       }))
     }
+
+    // Load preview results immediately for the active category
+    const mockResults = []
+    categoryPackages.forEach(p => {
+      const discount = parseFloat(p.bonus || '0')
+      const originalPrice = parseFloat(p.price || '0')
+      const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
+
+      mockResults.push({
+        id: p.id,
+        title: p.name,
+        description: `Servicio en ${p.location}`,
+        meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
+        price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+        originalPriceRaw: originalPrice,
+        finalPriceRaw: finalPrice,
+        discountRaw: discount,
+        durationRaw: p.duration,
+        imageUrlRaw: p.imageUrl,
+        locationRaw: p.location,
+        audienceRaw: p.targetAudience,
+        category: p.category || 'paquetes',
+        promoted: discount > 0,
+        checklistDetails: {
+          baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+          identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+          cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+        }
+      })
+    })
+
+    // Append custom query option
+    mockResults.push({
+      id: `custom-query-${activeCategory}`,
+      title: `¿No encontrás lo que buscás?`,
+      description: `Hacé una consulta personalizada para la categoría ${activeCategory.toUpperCase()} y un agente te contactará a la brevedad con una cotización a tu medida.`,
+      meta: `Respuesta rápida (Menos de 24hs)`,
+      price: 'A cotizar',
+      category: activeCategory,
+      promoted: false,
+      isCustomQuery: true,
+      checklistDetails: {
+        baggage: 'A coordinar con el agente de ventas.',
+        identity: 'Los datos requeridos se informarán en la cotización.',
+        cancelation: 'Condiciones sujetas al servicio que contrates.'
+      }
+    })
+
+    setResults(mockResults)
   }, [activeCategory])
 
   // Swap function for Flight/Package origin & destination
@@ -343,7 +646,6 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                 key={cat.id}
                 onClick={() => {
                   setActiveCategory(cat.id)
-                  setResults(null)
                 }}
                 className={`category-tab ${activeCategory === cat.id ? 'active' : ''}`}
               >

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
 import AdminApp from './components/admin/AdminApp'
+import './App.css'
 
 function PublicApp() {
   const [activeBookings, setActiveBookings] = useState([])
@@ -29,8 +30,33 @@ function PublicApp() {
     setActiveBookings((prev) => prev.filter((b) => b.id !== bookingId))
   }
 
+  // Create floating golden sparks
+  const sparks = Array.from({ length: 15 }).map((_, i) => {
+    const size = Math.random() * 8 + 4 // 4px to 12px
+    const left = Math.random() * 100 // 0% to 100%
+    const duration = Math.random() * 12 + 8 // 8s to 20s
+    const delay = Math.random() * 10 // 0s to 10s
+    return (
+      <div 
+        key={i} 
+        className="gold-spark" 
+        style={{
+          '--spark-size': `${size}px`,
+          '--spark-left': `${left}%`,
+          '--spark-dur': `${duration}s`,
+          '--spark-delay': `${delay}s`
+        }}
+      />
+    )
+  })
+
   return (
-    <div style={{ width: '100vw', position: 'relative' }}>
+    <div className="tropical-app-wrapper" style={{ width: '100vw', position: 'relative' }}>
+
+      {/* Animated Golden Sparks */}
+      <div className="golden-sparks-bg">
+        {sparks}
+      </div>
 
       {/* Capa de Interfaz */}
       <Overlay 
@@ -55,13 +81,13 @@ function PublicApp() {
               <h1 
                 onClick={() => setView('booking')}
                 style={{ 
-                  color: '#ffd700', 
+                  color: '#e11d48', // Vivid Red
                   fontSize: '5rem', 
                   fontFamily: 'Outfit, sans-serif',
                   fontWeight: 800,
                   textTransform: 'uppercase', 
                   letterSpacing: '0.6rem',
-                  textShadow: '0 0 45px rgba(255, 215, 0, 0.4)',
+                  textShadow: '0 0 25px rgba(255, 215, 0, 0.4)',
                   margin: 0,
                   pointerEvents: 'auto',
                   cursor: 'pointer',
@@ -69,25 +95,28 @@ function PublicApp() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)'
-                  e.currentTarget.style.textShadow = '0 0 60px rgba(255, 215, 0, 0.6)'
+                  e.currentTarget.style.color = '#0284c7' // Sea Blue on hover
+                  e.currentTarget.style.textShadow = '0 0 45px rgba(255, 215, 0, 0.6)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)'
-                  e.currentTarget.style.textShadow = '0 0 45px rgba(255, 215, 0, 0.4)'
+                  e.currentTarget.style.color = '#e11d48'
+                  e.currentTarget.style.textShadow = '0 0 25px rgba(255, 215, 0, 0.4)'
                 }}
                 title="Click para Reservar"
               >
                 Horus
               </h1>
               <p style={{ 
-                color: 'white', 
+                color: '#0f2d4a', // Deep sea blue
                 fontSize: '1rem', 
                 letterSpacing: '0.2rem', 
-                opacity: 0.6, 
+                opacity: 0.8, 
                 marginTop: '1rem',
-                textShadow: '0 0 10px rgba(0,0,0,0.5)',
+                textShadow: '0 1px 1px rgba(255,255,255,0.5)',
                 textTransform: 'uppercase',
-                fontFamily: 'Outfit, sans-serif'
+                fontFamily: 'Outfit, sans-serif',
+                fontWeight: '600'
               }}>
                 Reserva & Verificación Antigravitacional
               </p>
@@ -97,28 +126,29 @@ function PublicApp() {
                 style={{
                   pointerEvents: 'auto',
                   marginTop: '2.5rem',
-                  fontSize: '0.8rem',
-                  color: '#2dd4bf',
-                  border: '1px solid rgba(45, 212, 191, 0.25)',
-                  padding: '0.6rem 1.2rem',
-                  borderRadius: '20px',
-                  background: 'rgba(45, 212, 191, 0.05)',
+                  fontSize: '0.85rem',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '30px',
+                  background: 'linear-gradient(135deg, #0284c7, #e11d48)', // Sea blue & vivid red
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   fontFamily: 'Inter, sans-serif',
                   cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(2, 132, 199, 0.2), 0 0 0 2px #ffd700', // Gold border glow
                   transition: 'all 0.3s'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(45, 212, 191, 0.15)'
-                  e.currentTarget.style.borderColor = '#2dd4bf'
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #e11d48, #0284c7)'
                   e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(225, 29, 72, 0.3), 0 0 0 3px #ffd700'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(45, 212, 191, 0.05)'
-                  e.currentTarget.style.borderColor = 'rgba(45, 212, 191, 0.25)'
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #0284c7, #e11d48)'
                   e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(2, 132, 199, 0.2), 0 0 0 2px #ffd700'
                 }}
               >
                 Ingresar al Buscador
@@ -145,26 +175,28 @@ function PublicApp() {
               <button
                 onClick={() => setView('landing')}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.7)',
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  border: '1px solid rgba(2, 132, 199, 0.2)',
+                  color: '#0f2d4a',
                   padding: '0.5rem 1rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
+                  fontWeight: '600',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
                   transition: 'all 0.2s',
                   fontFamily: 'Inter, sans-serif'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+                  e.currentTarget.style.background = 'var(--sea-blue)'
                   e.currentTarget.style.color = '#ffffff'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)'
+                  e.currentTarget.style.color = '#0f2d4a'
                 }}
               >
                 ← Volver al Inicio
