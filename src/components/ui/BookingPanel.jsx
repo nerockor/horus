@@ -60,6 +60,12 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   const [searching, setSearching] = useState(false)
   const [results, setResults] = useState(null)
   const [selectedResult, setSelectedResult] = useState(null)
+
+  // Package inquiry calculator states
+  const [calcPackage, setCalcPackage] = useState(null)
+  const [passengerCount, setPassengerCount] = useState(2)
+  const [calcClientName, setCalcClientName] = useState('')
+  const [calcClientContact, setCalcClientContact] = useState('')
   
   // Checklist verification states
   const [checklist, setChecklist] = useState({
@@ -236,22 +242,100 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
           }
         )
       } else if (c === 'paquetes') {
-        mockResults.push(
-          {
-            id: 'paquete-1',
-            title: `Paquete Completo Premium: Vuelo + Hotel`,
-            description: `Vuelo directo Iberia + 7 Noches en Grand Horus Luxury Hotel`,
-            meta: `Itinerario: ${formData.origin} ➔ ${formData.destination} | ${formData.hotelGuests}`,
-            price: formData.currency.includes('USD') ? 'U$S 2,540 / pers.' : '$ 2,540,000 / pers.',
-            category: 'paquetes',
-            promoted: true,
-            checklistDetails: {
-              baggage: 'Vuelo con carry-on 10kg + equipaje despachado 23kg. Traslados aeropuerto/hotel incluidos.',
-              identity: 'Completar datos de todos los pasajeros exactamente como en pasaportes.',
-              cancelation: 'Seguro de cancelación flexible incluido por causas de fuerza mayor.'
+        let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+        if (storedPackages.length === 0) {
+          storedPackages = [
+            {
+              id: 'p-buzios',
+              name: 'Paquetes a Búzios',
+              location: 'Búzios, Brasil',
+              startDate: '2026-06-01',
+              endDate: '2026-06-15',
+              duration: '9 Días / 8 Noches',
+              imageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80',
+              price: '866891',
+              bonus: '12',
+              targetAudience: 'Familiares'
+            },
+            {
+              id: 'p-paris',
+              name: 'París Soñado',
+              location: 'París, Francia',
+              startDate: '2026-06-10',
+              endDate: '2026-06-25',
+              duration: '7 Días / 6 Noches',
+              imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
+              price: '1850000',
+              bonus: '15',
+              targetAudience: 'Solo adultos'
+            },
+            {
+              id: 'p-disney',
+              name: 'Disney Mágico Familiar',
+              location: 'Orlando, EE.UU.',
+              startDate: '2026-07-01',
+              endDate: '2026-07-20',
+              duration: '10 Días / 9 Noches',
+              imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+              price: '2400000',
+              bonus: '5',
+              targetAudience: 'Familiares'
+            },
+            {
+              id: 'p-rio',
+              name: 'Río de Janeiro Express',
+              location: 'Río de Janeiro, Brasil',
+              startDate: '2026-05-25',
+              endDate: '2026-06-05',
+              duration: '6 Días / 5 Noches',
+              imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=600&q=80',
+              price: '650000',
+              bonus: '10',
+              targetAudience: 'Familiares'
+            },
+            {
+              id: 'p-madrid',
+              name: 'Madrid Cultural',
+              location: 'Madrid, España',
+              startDate: '2026-06-15',
+              endDate: '2026-06-30',
+              duration: '8 Días / 7 Noches',
+              imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=600&q=80',
+              price: '1450000',
+              bonus: '8',
+              targetAudience: 'Solo adultos'
             }
-          }
-        )
+          ]
+          localStorage.setItem('horus_packages', JSON.stringify(storedPackages))
+        }
+
+        storedPackages.forEach(p => {
+          const discount = parseFloat(p.bonus || '0')
+          const originalPrice = parseFloat(p.price || '0')
+          const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
+
+          mockResults.push({
+            id: p.id,
+            title: p.name,
+            description: `Vuelo + Hotel incluido en ${p.location}`,
+            meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
+            price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+            originalPriceRaw: originalPrice,
+            finalPriceRaw: finalPrice,
+            discountRaw: discount,
+            durationRaw: p.duration,
+            imageUrlRaw: p.imageUrl,
+            locationRaw: p.location,
+            audienceRaw: p.targetAudience,
+            category: 'paquetes',
+            promoted: discount > 0,
+            checklistDetails: {
+              baggage: 'Incluye equipaje de mano y equipaje de bodega despachado por persona.',
+              identity: 'Todos los pasajeros deben contar con DNI o Pasaporte vigente.',
+              cancelation: 'Políticas flexibles sujetas a cambios y disponibilidad hotelera.'
+            }
+          })
+        })
       } else if (c === 'actividades') {
         mockResults.push(
           {
@@ -404,12 +488,20 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     const allChecked = Object.values(checklist).every(val => val === true)
     if (!allChecked) return
 
+    const isPackage = selectedResult.category === 'paquetes'
+    const finalPriceVal = isPackage 
+      ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}` 
+      : selectedResult.price
+    const finalDesc = isPackage
+      ? `${selectedResult.description} | Pasajeros: ${passengerCount}`
+      : selectedResult.description
+
     const newBooking = {
       id: `${selectedResult.id}-${Date.now()}`,
       title: selectedResult.title,
-      description: selectedResult.description,
+      description: finalDesc,
       meta: selectedResult.meta,
-      price: selectedResult.price,
+      price: finalPriceVal,
       category: selectedResult.category,
       verifiedAt: new Date().toLocaleDateString('es-ES', {
         day: '2-digit',
@@ -426,6 +518,20 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
     // Save to localStorage for Admin Panel
     const existingBookings = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
     localStorage.setItem('horus_bookings', JSON.stringify([newBooking, ...existingBookings]))
+
+    // Add query to Admin Panel
+    if (isPackage) {
+      const newQuery = {
+        id: `q-p-${Date.now()}`,
+        clientName: `Reserva / Consulta Cliente`,
+        contact: `Sugerido por buscador`,
+        message: `Consulta de paquete "${selectedResult.title}" para ${passengerCount} pasajeros. Total cotizado: ${finalPriceVal}.`,
+        date: new Date().toLocaleString('es-ES'),
+        status: 'Pendiente'
+      }
+      const existingQueries = JSON.parse(localStorage.getItem('horus_queries') || '[]')
+      localStorage.setItem('horus_queries', JSON.stringify([newQuery, ...existingQueries]))
+    }
 
     setSelectedResult(null) // close popup
     
@@ -1348,41 +1454,121 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
             </h4>
             
             <div className="results-grid">
-              {results.map((result) => (
-                <div 
-                  key={result.id} 
-                  className={`result-item-card ${result.promoted ? 'promoted' : ''}`}
-                >
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="card-header-badge">{result.category}</span>
-                      {result.verified && (
-                        <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                          ✓ Verificado
-                        </span>
-                      )}
+              {results.map((result) => {
+                if (result.category === 'paquetes') {
+                  return (
+                    <div key={result.id} className="despegar-package-card">
+                      <div className="despegar-img-container">
+                        <img src={result.imageUrlRaw} alt={result.title} className="despegar-img" />
+                        <div className="despegar-duration-badge">{result.durationRaw.toUpperCase()}</div>
+                      </div>
+                      <div className="despegar-content">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span className="despegar-label">PAQUETE</span>
+                          <div className="despegar-rating-container">
+                            <span className="despegar-rating-badge">8.8</span>
+                            <span className="despegar-stars">★★★</span>
+                          </div>
+                        </div>
+                        <h5 className="despegar-title">{result.title}</h5>
+                        <p className="despegar-location">Saliendo desde Buenos Aires</p>
+                        <p className="despegar-includes">Hotel + Vuelo</p>
+                        
+                        <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
+                          <span className="despegar-tag purple">Oferta Imbatible</span>
+                          {result.discountRaw > 0 && (
+                            <span className="despegar-tag green">
+                              Ahorrás $ {(result.originalPriceRaw - result.finalPriceRaw).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                            </span>
+                          )}
+                          {result.verified && (
+                            <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
+                              ✓ Verificado
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="despegar-price-section">
+                          <span className="despegar-price-label">Precio final por persona</span>
+                          {result.discountRaw > 0 && (
+                            <span className="despegar-old-price">$ {result.originalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
+                          )}
+                          <div className="despegar-final-price">
+                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>$ </span>
+                            {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                          </div>
+                          <p className="despegar-tax-notice">No vas a pagar Percepción RG5617</p>
+                        </div>
+
+                        <div className="despegar-points-footer">
+                          <span className="despegar-passport-icon">🎟</span>
+                          <span>Pasaporte Horus: Sumarías <strong>{(result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
+                        </div>
+
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            setPassengerCount(2);
+                            handleVerifyOpen(result);
+                          }}
+                          className="despegar-consult-btn"
+                          disabled={result.verified}
+                          style={{
+                            width: '100%',
+                            padding: '0.6rem',
+                            border: 'none',
+                            borderRadius: '6px',
+                            backgroundColor: result.verified ? '#475569' : '#ffd700',
+                            color: result.verified ? '#94a3b8' : '#0a0f18',
+                            fontWeight: 'bold',
+                            cursor: result.verified ? 'default' : 'pointer',
+                            marginTop: '0.75rem',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          {result.verified ? 'Verificado' : 'Consultar'}
+                        </button>
+                      </div>
                     </div>
-                    <h5 className="card-main-title">{result.title}</h5>
-                    <p className="card-detail-text" style={{ fontWeight: '500', color: '#ffffff' }}>{result.description}</p>
-                    <p className="card-detail-text" style={{ fontSize: '0.8rem', opacity: 0.7 }}>{result.meta}</p>
-                  </div>
-                  
-                  <div className="card-price-container">
+                  )
+                }
+
+                return (
+                  <div 
+                    key={result.id} 
+                    className={`result-item-card ${result.promoted ? 'promoted' : ''}`}
+                  >
                     <div>
-                      <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Precio Final</span>
-                      <div className="card-price-value">{result.price}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className="card-header-badge">{result.category}</span>
+                        {result.verified && (
+                          <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                            ✓ Verificado
+                          </span>
+                        )}
+                      </div>
+                      <h5 className="card-main-title">{result.title}</h5>
+                      <p className="card-detail-text" style={{ fontWeight: '500', color: '#ffffff' }}>{result.description}</p>
+                      <p className="card-detail-text" style={{ fontSize: '0.8rem', opacity: 0.7 }}>{result.meta}</p>
                     </div>
-                    <button 
-                      type="button" 
-                      onClick={() => handleVerifyOpen(result)}
-                      className="card-verify-btn"
-                      disabled={result.verified}
-                    >
-                      {result.verified ? 'Verificado' : 'Verificar'}
-                    </button>
+                    
+                    <div className="card-price-container">
+                      <div>
+                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Precio Final</span>
+                        <div className="card-price-value">{result.price}</div>
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => handleVerifyOpen(result)}
+                        className="card-verify-btn"
+                        disabled={result.verified}
+                      >
+                        {result.verified ? 'Verificado' : 'Verificar'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
@@ -1412,10 +1598,37 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
               </p>
             </div>
 
+            {selectedResult.category === 'paquetes' && (
+              <div style={{ padding: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>Cantidad de Pasajeros:</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setPassengerCount(prev => Math.max(1, prev - 1))}
+                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                  >-</button>
+                  <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{passengerCount}</span>
+                  <button 
+                    type="button" 
+                    onClick={() => setPassengerCount(prev => prev + 1)}
+                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                  >+</button>
+                  <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: $ {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
+                </div>
+              </div>
+            )}
+
             <div style={{ padding: '1rem', background: 'rgba(255, 215, 0, 0.05)', border: '1px solid rgba(255, 215, 0, 0.15)', borderRadius: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', color: '#ffd700', fontWeight: '600' }}>Importe a Confirmar:</span>
-                <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>{selectedResult.price}</span>
+                <span style={{ fontSize: '0.8rem', color: '#ffd700', fontWeight: '600' }}>
+                  {selectedResult.category === 'paquetes' ? 'Importe Total Estimado:' : 'Importe a Confirmar:'}
+                </span>
+                <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
+                  {selectedResult.category === 'paquetes' 
+                    ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
+                    : selectedResult.price
+                  }
+                </span>
               </div>
             </div>
 

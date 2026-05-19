@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign } from 'lucide-react'
+import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign, Clock, Image as ImageIcon } from 'lucide-react'
 
 export default function PackagesView() {
   const [packages, setPackages] = useState([])
@@ -9,6 +9,8 @@ export default function PackagesView() {
   const [location, setLocation] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [duration, setDuration] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const [price, setPrice] = useState('')
   const [bonus, setBonus] = useState('')
   const [targetAudience, setTargetAudience] = useState('Solo adultos')
@@ -19,24 +21,64 @@ export default function PackagesView() {
     if (data.length === 0) {
       const mockPackages = [
         {
-          id: 'p-1',
-          name: 'Escapada Romántica a París',
-          location: 'París, Francia',
+          id: 'p-buzios',
+          name: 'Paquetes a Búzios',
+          location: 'Búzios, Brasil',
           startDate: '2026-06-01',
           endDate: '2026-06-15',
-          price: '1850',
+          duration: '9 Días / 8 Noches',
+          imageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80',
+          price: '866891',
+          bonus: '12',
+          targetAudience: 'Familiares'
+        },
+        {
+          id: 'p-paris',
+          name: 'París Soñado',
+          location: 'París, Francia',
+          startDate: '2026-06-10',
+          endDate: '2026-06-25',
+          duration: '7 Días / 6 Noches',
+          imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
+          price: '1850000',
           bonus: '15',
           targetAudience: 'Solo adultos'
         },
         {
-          id: 'p-2',
+          id: 'p-disney',
           name: 'Disney Mágico Familiar',
           location: 'Orlando, EE.UU.',
-          startDate: '2026-07-10',
-          endDate: '2026-08-20',
-          price: '3400',
+          startDate: '2026-07-01',
+          endDate: '2026-07-20',
+          duration: '10 Días / 9 Noches',
+          imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+          price: '2400000',
+          bonus: '5',
+          targetAudience: 'Familiares'
+        },
+        {
+          id: 'p-rio',
+          name: 'Río de Janeiro Express',
+          location: 'Río de Janeiro, Brasil',
+          startDate: '2026-05-25',
+          endDate: '2026-06-05',
+          duration: '6 Días / 5 Noches',
+          imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=600&q=80',
+          price: '650000',
           bonus: '10',
           targetAudience: 'Familiares'
+        },
+        {
+          id: 'p-madrid',
+          name: 'Madrid Cultural',
+          location: 'Madrid, España',
+          startDate: '2026-06-15',
+          endDate: '2026-06-30',
+          duration: '8 Días / 7 Noches',
+          imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=600&q=80',
+          price: '1450000',
+          bonus: '8',
+          targetAudience: 'Solo adultos'
         }
       ]
       localStorage.setItem('horus_packages', JSON.stringify(mockPackages))
@@ -48,7 +90,7 @@ export default function PackagesView() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!name || !location || !startDate || !endDate || !price) return
+    if (!name || !location || !startDate || !endDate || !price || !duration || !imageUrl) return
 
     const newPackage = {
       id: `p-${Date.now()}`,
@@ -56,6 +98,8 @@ export default function PackagesView() {
       location,
       startDate,
       endDate,
+      duration,
+      imageUrl,
       price,
       bonus: bonus || '0',
       targetAudience
@@ -70,6 +114,8 @@ export default function PackagesView() {
     setLocation('')
     setStartDate('')
     setEndDate('')
+    setDuration('')
+    setImageUrl('')
     setPrice('')
     setBonus('')
     setTargetAudience('Solo adultos')
@@ -102,7 +148,7 @@ export default function PackagesView() {
                 type="text" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ej. Caribe de Ensueño"
+                placeholder="Ej. Paquetes a Búzios"
                 style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
                 required
               />
@@ -116,7 +162,37 @@ export default function PackagesView() {
                   type="text" 
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Ej. Cancún, México"
+                  placeholder="Ej. Búzios, Brasil"
+                  style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Duración</label>
+              <div style={{ position: 'relative' }}>
+                <Clock size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
+                <input 
+                  type="text" 
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="Ej. 9 Días / 8 Noches"
+                  style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Imagen URL</label>
+              <div style={{ position: 'relative' }}>
+                <ImageIcon size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
+                <input 
+                  type="url" 
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
                   style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
                   required
                 />
@@ -148,14 +224,14 @@ export default function PackagesView() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Precio (USD)</label>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Precio (ARS/USD)</label>
                 <div style={{ position: 'relative' }}>
                   <DollarSign size={16} style={{ position: 'absolute', left: '10px', top: '10px', color: '#9ca3af' }} />
                   <input 
                     type="number" 
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    placeholder="1200"
+                    placeholder="866891"
                     style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
                     required
                   />
@@ -169,7 +245,7 @@ export default function PackagesView() {
                     type="number" 
                     value={bonus}
                     onChange={(e) => setBonus(e.target.value)}
-                    placeholder="10"
+                    placeholder="12"
                     style={{ width: '100%', padding: '0.625rem 0.625rem 0.625rem 2.25rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
                   />
                 </div>
@@ -206,7 +282,7 @@ export default function PackagesView() {
               <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Nombre</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Destino</th>
-                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Fechas Promo</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Duración</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Precio Final</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Público</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Acciones</th>
@@ -225,22 +301,23 @@ export default function PackagesView() {
 
                   return (
                     <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b', fontWeight: '600' }}>{p.name}</td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b', fontWeight: '600' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <img src={p.imageUrl} alt="" style={{ width: '40px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
+                          {p.name}
+                        </div>
+                      </td>
                       <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#334155' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                           <MapPin size={14} style={{ color: '#64748b' }} /> {p.location}
                         </span>
                       </td>
-                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem' }}>
-                          <Calendar size={14} /> {p.startDate} al {p.endDate}
-                        </span>
-                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#64748b' }}>{p.duration}</td>
                       <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
-                        <div style={{ fontWeight: '700', color: '#10b981' }}>U$S {finalPrice.toFixed(0)}</div>
+                        <div style={{ fontWeight: '700', color: '#10b981' }}>$ {finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</div>
                         {discount > 0 && (
                           <div style={{ fontSize: '0.75rem', color: '#ef4444', textDecoration: 'line-through' }}>
-                            U$S {p.price} (-{p.bonus}%)
+                            $ {originalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })} (-{p.bonus}%)
                           </div>
                         )}
                       </td>

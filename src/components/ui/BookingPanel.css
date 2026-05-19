@@ -761,3 +761,187 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
   from { transform: translateY(30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Despegar-style Card CSS */
+.despegar-package-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.despegar-package-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+}
+
+.despegar-img-container {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.despegar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.despegar-package-card:hover .despegar-img {
+  transform: scale(1.05);
+}
+
+.despegar-duration-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(4px);
+}
+
+.despegar-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.despegar-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.08em;
+}
+
+.despegar-rating-container {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.despegar-rating-badge {
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+.despegar-stars {
+  color: #f59e0b;
+  font-size: 0.8rem;
+}
+
+.despegar-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0.5rem 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.despegar-location {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.despegar-includes {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.despegar-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.despegar-tag.purple {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.despegar-tag.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.despegar-price-section {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.despegar-price-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.despegar-old-price {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.despegar-final-price {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin: 0.15rem 0;
+}
+
+.despegar-tax-notice {
+  font-size: 0.65rem;
+  color: #16a34a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.despegar-points-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.4rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+.despegar-passport-icon {
+  font-size: 0.85rem;
+}
+
+.despegar-consult-btn {
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.despegar-consult-btn:hover:not(:disabled) {
+  background-color: #f5c400 !important;
+}
+
+.despegar-consult-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
