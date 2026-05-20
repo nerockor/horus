@@ -637,7 +637,7 @@ export default function ClientsView() {
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <tr style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
                     <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Pasajero</th>
                     <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Contacto</th>
                     <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Nº Pasaporte</th>
@@ -835,17 +835,17 @@ export default function ClientsView() {
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f8fafc', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ffffff', paddingBottom: '0.5rem' }}>
                   <span style={{ color: '#64748b' }}>Número de Pasaporte:</span>
                   <span style={{ fontWeight: 'bold', fontFamily: 'monospace' }}>{selectedClient.passportNumber || 'No Registrado'}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f8fafc', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ffffff', paddingBottom: '0.5rem' }}>
                   <span style={{ color: '#64748b' }}>Fecha de Emisión:</span>
                   <span style={{ fontWeight: '500' }}>
                     {selectedClient.passportIssueDate ? new Date(selectedClient.passportIssueDate).toLocaleDateString('es-ES') : 'No Registrada'}
                   </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f8fafc', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ffffff', paddingBottom: '0.5rem' }}>
                   <span style={{ color: '#64748b' }}>Fecha de Vencimiento:</span>
                   <span style={{ fontWeight: 'bold', color: getPassportStatus(selectedClient.passportExpiryDate).color }}>
                     {selectedClient.passportExpiryDate ? new Date(selectedClient.passportExpiryDate).toLocaleDateString('es-ES') : 'No Registrada'}
@@ -891,7 +891,7 @@ export default function ClientsView() {
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f8fafc', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #ffffff', paddingBottom: '0.5rem' }}>
                   <PlaneTakeoff size={16} style={{ color: '#64748b' }} />
                   <div>
                     <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>Programa de Viajero Frecuente</span>
@@ -901,7 +901,7 @@ export default function ClientsView() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f8fafc', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #ffffff', paddingBottom: '0.5rem' }}>
                   <Utensils size={16} style={{ color: '#64748b' }} />
                   <div>
                     <span style={{ color: '#64748b', fontSize: '0.75rem', display: 'block' }}>Restricciones Alimenticias</span>
@@ -946,7 +946,7 @@ export default function ClientsView() {
                 return (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {linkedQueries.map(q => (
-                      <div key={q.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', backgroundColor: '#f8fafc' }}>
+                      <div key={q.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', backgroundColor: '#ffffff' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>{q.date}</span>
                           <span style={{
@@ -1058,7 +1058,7 @@ export default function ClientsView() {
 
                 {/* Form to add manual trip history */}
                 <form onSubmit={handleAddManualTrip} style={{
-                  backgroundColor: '#f8fafc',
+                  backgroundColor: '#ffffff',
                   border: '1px solid #e2e8f0',
                   borderRadius: '8px',
                   padding: '1rem',

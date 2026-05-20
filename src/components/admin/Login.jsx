@@ -31,7 +31,7 @@ export default function Login({ onLogin }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#f3f4f6',
+      backgroundColor: '#ffffff',
       fontFamily: 'Inter, sans-serif'
     }}>
       <div style={{

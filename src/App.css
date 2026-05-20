@@ -514,7 +514,7 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 }
 
 .result-item-card:hover {
-  background: #fdfbf7 !important;
+  background: #ffffff !important;
   border-color: var(--sea-blue) !important;
   box-shadow: 0 8px 20px rgba(15, 45, 74, 0.08) !important;
 }

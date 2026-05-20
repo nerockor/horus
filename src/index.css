@@ -3,9 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #060a13;
+  color-scheme: light;
+  color: #1d2c33;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -18,7 +18,7 @@ body {
   padding: 0;
   width: 100vw;
   overflow-x: hidden;
-  background-color: #060a13;
+  background-color: #ffffff;
 }
 
 #root {
