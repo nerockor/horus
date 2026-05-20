@@ -286,6 +286,7 @@ export default function PackagesView() {
   const [price, setPrice] = useState('')
   const [bonus, setBonus] = useState('')
   const [targetAudience, setTargetAudience] = useState('Solo adultos')
+  const [editingId, setEditingId] = useState(null)
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
@@ -301,23 +302,42 @@ export default function PackagesView() {
     e.preventDefault()
     if (!name || !location || !startDate || !endDate || !price || !duration || !imageUrl) return
 
-    const newPackage = {
-      id: `p-${Date.now()}`,
-      category,
-      name,
-      location,
-      startDate,
-      endDate,
-      duration,
-      imageUrl,
-      price,
-      bonus: bonus || '0',
-      targetAudience
-    }
+    const currentUser = JSON.parse(localStorage.getItem('horus_admin_session') || '{}')
+    const author = currentUser.username || 'Sistema'
 
-    const updated = [newPackage, ...packages]
-    setPackages(updated)
-    localStorage.setItem('horus_packages', JSON.stringify(updated))
+    if (editingId) {
+      const updated = packages.map(p => {
+        if (p.id === editingId) {
+          return {
+            ...p, category, name, location, startDate, endDate, duration, imageUrl, price, bonus: bonus || '0', targetAudience,
+            lastModifiedBy: author
+          }
+        }
+        return p
+      })
+      setPackages(updated)
+      localStorage.setItem('horus_packages', JSON.stringify(updated))
+      setEditingId(null)
+    } else {
+      const newPackage = {
+        id: `p-${Date.now()}`,
+        category,
+        name,
+        location,
+        startDate,
+        endDate,
+        duration,
+        imageUrl,
+        price,
+        bonus: bonus || '0',
+        targetAudience,
+        lastModifiedBy: author
+      }
+
+      const updated = [newPackage, ...packages]
+      setPackages(updated)
+      localStorage.setItem('horus_packages', JSON.stringify(updated))
+    }
 
     // Reset fields
     setName('')
@@ -337,6 +357,34 @@ export default function PackagesView() {
       setPackages(updated)
       localStorage.setItem('horus_packages', JSON.stringify(updated))
     }
+  }
+
+  const editPackage = (pkg) => {
+    setEditingId(pkg.id)
+    setCategory(pkg.category || 'paquetes')
+    setName(pkg.name || '')
+    setLocation(pkg.location || '')
+    setStartDate(pkg.startDate || '')
+    setEndDate(pkg.endDate || '')
+    setDuration(pkg.duration || '')
+    setImageUrl(pkg.imageUrl || '')
+    setPrice(pkg.price || '')
+    setBonus(pkg.bonus || '')
+    setTargetAudience(pkg.targetAudience || 'Solo adultos')
+    window.scrollTo(0, 0)
+  }
+  
+  const cancelEdit = () => {
+    setEditingId(null)
+    setName('')
+    setLocation('')
+    setStartDate('')
+    setEndDate('')
+    setDuration('')
+    setImageUrl('')
+    setPrice('')
+    setBonus('')
+    setTargetAudience('Solo adultos')
   }
 
   return (
@@ -495,14 +543,27 @@ export default function PackagesView() {
               </select>
             </div>
 
-            <button 
-              type="submit"
-              style={{ backgroundColor: '#2563eb', color: 'white', padding: '0.75rem', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem', transition: 'background-color 0.2s' }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
-            >
-              Crear Paquete
-            </button>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+              <button 
+                type="submit"
+                style={{ flex: 1, backgroundColor: '#2563eb', color: 'white', padding: '0.75rem', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+              >
+                {editingId ? 'Guardar Cambios' : 'Crear Paquete'}
+              </button>
+              {editingId && (
+                <button 
+                  type="button"
+                  onClick={cancelEdit}
+                  style={{ flex: 1, backgroundColor: '#ef4444', color: 'white', padding: '0.75rem', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#ef4444'}
+                >
+                  Cancelar Edición
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
@@ -534,10 +595,16 @@ export default function PackagesView() {
                   return (
                     <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
                       <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#1e293b', fontWeight: '600' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                           <img src={p.imageUrl} alt="" style={{ width: '40px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
                           {p.name}
                         </div>
+                        {p.lastModifiedBy && (
+                          <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 'normal', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#3b82f6' }}></span>
+                            Últ. mod. por: {p.lastModifiedBy}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#334155', textTransform: 'capitalize' }}>
                         {p.category}
@@ -562,12 +629,20 @@ export default function PackagesView() {
                         </span>
                       </td>
                       <td style={{ padding: '1rem' }}>
-                        <button 
-                          onClick={() => deletePackage(p.id)}
-                          style={{ padding: '0.5rem 1rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '500' }}
-                        >
-                          Eliminar
-                        </button>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button 
+                            onClick={() => editPackage(p)}
+                            style={{ padding: '0.5rem 0.75rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '500' }}
+                          >
+                            Editar
+                          </button>
+                          <button 
+                            onClick={() => deletePackage(p.id)}
+                            style={{ padding: '0.5rem 0.75rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '500' }}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
