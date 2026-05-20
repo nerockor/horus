@@ -70,6 +70,25 @@ const SEED_PACKAGES = [
   },
   // 2. Vuelos
   {
+    id: 'p-vuelo-miami-promo',
+    category: 'vuelos',
+    name: '🌴 ¡MIAMI TE ESPERA! 🌴',
+    location: 'Miami, EE.UU.',
+    startDate: '2026-06-01',
+    endDate: '2026-12-31',
+    duration: 'Ida y Vuelta (Escalas/Directo)',
+    imageUrl: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80',
+    price: '450',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    description: '¿Sueñas con caminar por South Beach, hacer compras en Dolphin Mall o visitar Disney World? Vuela desde Caracas, Barcelona, Maracaibo o Barquisimeto con American Airlines, Laser, Copa o United Airlines. Incluye gestión de documentación y atención 24/7 con Horus Tours.',
+    checklistDetails: {
+      baggage: 'Equipaje de mano y maleta de bodega incluidos según la aerolínea seleccionada (Laser, Copa, American, United).',
+      identity: 'Pasaporte vigente y Visa Americana (B1/B2) obligatoria para el ingreso a EE.UU. Gestión de documentación incluida.',
+      cancelation: 'Tarifa promocional sujeta a disponibilidad de plazas. Cambios de fecha permitidos con penalidad según la regulación de la tarifa aérea.'
+    }
+  },
+  {
     id: 'p-vuelo-miami',
     category: 'vuelos',
     name: 'Vuelo Directo a Miami',
@@ -270,7 +289,7 @@ export default function PackagesView() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g')) {
+    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo')) {
       localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
       setPackages(SEED_PACKAGES)
     } else {

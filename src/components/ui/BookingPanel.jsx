@@ -125,6 +125,25 @@ const SEED_PACKAGES = [
   },
   // 2. Vuelos
   {
+    id: 'p-vuelo-miami-promo',
+    category: 'vuelos',
+    name: '🌴 ¡MIAMI TE ESPERA! 🌴',
+    location: 'Miami, EE.UU.',
+    startDate: '2026-06-01',
+    endDate: '2026-12-31',
+    duration: 'Ida y Vuelta (Escalas/Directo)',
+    imageUrl: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80',
+    price: '450',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    description: '¿Sueñas con caminar por South Beach, hacer compras en Dolphin Mall o visitar Disney World? Vuela desde Caracas, Barcelona, Maracaibo o Barquisimeto con American Airlines, Laser, Copa o United Airlines. Incluye gestión de documentación y atención 24/7 con Horus Tours.',
+    checklistDetails: {
+      baggage: 'Equipaje de mano y maleta de bodega incluidos según la aerolínea seleccionada (Laser, Copa, American, United).',
+      identity: 'Pasaporte vigente y Visa Americana (B1/B2) obligatoria para el ingreso a EE.UU. Gestión de documentación incluida.',
+      cancelation: 'Tarifa promocional sujeta a disponibilidad de plazas. Cambios de fecha permitidos con penalidad según la regulación de la tarifa aérea.'
+    }
+  },
+  {
     id: 'p-vuelo-miami',
     category: 'vuelos',
     name: 'Vuelo Directo a Miami',
@@ -318,7 +337,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   // Get latest created package/service for active category to show as quick access
   const storedPackagesList = (() => {
     let list = JSON.parse(localStorage.getItem('horus_packages') || '[]');
-    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g')) {
+    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g') || !list.some(p => p.id === 'p-vuelo-miami-promo')) {
       list = SEED_PACKAGES;
       localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES));
     }
@@ -1728,7 +1747,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                             <span className="despegar-old-price">$ {result.originalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
                           )}
                           <div className="despegar-final-price">
-                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{result.category === 'conciertos' ? 'USD $' : '$ '}</span>
+                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
                             {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
                           </div>
                           <p className="despegar-tax-notice">No vas a pagar Percepción RG5617</p>
@@ -1736,7 +1755,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
 
                         <div className="despegar-points-footer">
                           <span className="despegar-passport-icon">🎟</span>
-                          <span>Pasaporte Horus: Sumarías <strong>{result.category === 'conciertos' ? (result.finalPriceRaw * 1.5).toFixed(0) : (result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
+                          <span>Pasaporte Horus: Sumarías <strong>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? (result.finalPriceRaw * 1.5).toFixed(0) : (result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
                         </div>
 
                         <button 
@@ -1847,7 +1866,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                       onClick={() => setPassengerCount(prev => prev + 1)}
                       style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
                     >+</button>
-                    <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: {selectedResult.category === 'conciertos' ? 'USD $' : '$ '} {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
+                    <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: {(selectedResult.category === 'conciertos' || selectedResult.finalPriceRaw < 5000) ? 'USD $' : '$ '} {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
                   </div>
                 </div>
               )}
@@ -1859,7 +1878,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                   </span>
                   <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
                     {selectedResult.finalPriceRaw !== undefined 
-                      ? `${selectedResult.category === 'conciertos' ? 'USD $' : '$ '} ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
+                      ? `${(selectedResult.category === 'conciertos' || selectedResult.finalPriceRaw < 5000) ? 'USD $' : '$ '} ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
                       : selectedResult.price
                     }
                   </span>
