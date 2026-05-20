@@ -1790,8 +1790,8 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
       )}
 
       {/* 5. Panel/Checklist de Verificación Detallada */}
-      {isVerifyOpen && (
-        <div className="verification-drawer-backdrop" onClick={handleVerifyClose}>
+      {selectedResult && (
+        <div className="verification-drawer-backdrop" onClick={() => setSelectedResult(null)}>
           <div className="verification-drawer-container" style={{ position: 'relative', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '400px', opacity: 0.03, pointerEvents: 'none', zIndex: 0, color: 'var(--dark-text)' }}>
               𓊵
