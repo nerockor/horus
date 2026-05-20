@@ -217,6 +217,8 @@
 
 .category-tab .category-tab-icon {
   stroke: #ffffff !important;
+  width: 35px !important;
+  height: 35px !important;
 }
 
 .category-tab.active .category-tab-icon {
