@@ -171,6 +171,25 @@ const SEED_PACKAGES = [
   },
   // 3. Alojamientos
   {
+    id: 'p-dubai-vip',
+    category: 'alojamientos',
+    name: '✨ DUBÁI EXCLUSIVO VIP – Burj Khalifa & Desierto ✨',
+    location: 'Dubái, Emiratos Árabes Unidos',
+    startDate: '2026-06-01',
+    endDate: '2026-12-31',
+    duration: '8 Días / 7 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80',
+    price: '1450',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    description: '¿Te imaginas despertar frente al Burj Khalifa, hacer safari en el desierto y perder la noción del tiempo en los mercados de Dubái? Te llevamos desde Caracas con todo resuelto: vuelos con conexiones optimizadas, gestión de visa, hoteles seleccionados, traslados privados, tours y asistencia 24/7.',
+    checklistDetails: {
+      baggage: 'Vuelos ida/vuelta desde Caracas con equipaje de bodega y de mano incluidos en todas las conexiones.',
+      identity: 'Pasaporte vigente por al menos 6 meses. Trámite y costo de visa para Emiratos Árabes Unidos incluidos en el paquete.',
+      cancelation: 'Reserva flexible con cupos limitados por vuelo. Descuentos especiales por early booking y opciones de financiamiento.'
+    }
+  },
+  {
     id: 'p-aloj-copa',
     category: 'alojamientos',
     name: 'Copacabana Palace Hotel',
@@ -337,7 +356,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   // Get latest created package/service for active category to show as quick access
   const storedPackagesList = (() => {
     let list = JSON.parse(localStorage.getItem('horus_packages') || '[]');
-    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g') || !list.some(p => p.id === 'p-vuelo-miami-promo')) {
+    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g') || !list.some(p => p.id === 'p-vuelo-miami-promo') || !list.some(p => p.id === 'p-dubai-vip')) {
       list = SEED_PACKAGES;
       localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES));
     }

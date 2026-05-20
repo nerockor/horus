@@ -116,6 +116,25 @@ const SEED_PACKAGES = [
   },
   // 3. Alojamientos
   {
+    id: 'p-dubai-vip',
+    category: 'alojamientos',
+    name: '✨ DUBÁI EXCLUSIVO VIP – Burj Khalifa & Desierto ✨',
+    location: 'Dubái, Emiratos Árabes Unidos',
+    startDate: '2026-06-01',
+    endDate: '2026-12-31',
+    duration: '8 Días / 7 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80',
+    price: '1450',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    description: '¿Te imaginas despertar frente al Burj Khalifa, hacer safari en el desierto y perder la noción del tiempo en los mercados de Dubái? Te llevamos desde Caracas con todo resuelto: vuelos con conexiones optimizadas, gestión de visa, hoteles seleccionados, traslados privados, tours y asistencia 24/7.',
+    checklistDetails: {
+      baggage: 'Vuelos ida/vuelta desde Caracas con equipaje de bodega y de mano incluidos en todas las conexiones.',
+      identity: 'Pasaporte vigente por al menos 6 meses. Trámite y costo de visa para Emiratos Árabes Unidos incluidos en el paquete.',
+      cancelation: 'Reserva flexible con cupos limitados por vuelo. Descuentos especiales por early booking y opciones de financiamiento.'
+    }
+  },
+  {
     id: 'p-aloj-copa',
     category: 'alojamientos',
     name: 'Copacabana Palace Hotel',
@@ -290,7 +309,7 @@ export default function PackagesView() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo')) {
+    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo') || !data.some(p => p.id === 'p-dubai-vip')) {
       localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
       setPackages(SEED_PACKAGES)
     } else {
