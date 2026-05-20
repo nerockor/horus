@@ -149,19 +149,25 @@ const SEED_PACKAGES = [
     bonus: '10',
     targetAudience: 'Solo adultos'
   },
-  // 5. Assist Card
+  // 5. Conciertos
   {
-    id: 'p-assist-150',
-    category: 'assistcard',
-    name: 'Asistencia Premium AC 150',
-    location: 'Europa y Resto del Mundo',
-    startDate: '2026-05-15',
-    endDate: '2026-12-31',
-    duration: 'Cobertura Anual Multiviajes',
-    imageUrl: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80',
-    price: '95000',
-    bonus: '20',
-    targetAudience: 'Familiares'
+    id: 'p-karol-g',
+    category: 'conciertos',
+    name: '🎤✨ KAROL G – Viajando por el Mundo TROPITOUR – Bogotá ✨🎤',
+    location: 'Bogotá, Colombia',
+    startDate: '2026-12-03',
+    endDate: '2026-12-06',
+    duration: '4 Días / 3 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=600&q=80',
+    price: '735',
+    bonus: '0',
+    targetAudience: '2 Adultos',
+    description: 'Concierto el 04 de diciembre de 2026. Incluye: Vuelos ida y vuelta con Láser Airlines, Hospedaje en NH Royal Urban 26 con desayuno, traslados privados y entrada al concierto (Opciones: Preferencial USD 735, Oriental Baja USD 769, VIP Oriental USD 1110).',
+    checklistDetails: {
+      baggage: 'Vuelos ida/vuelta CCS (08:30) ↔ BOG (09:10) / BOG (10:20) ↔ CCS (13:00). Traslado privado aeropuerto/hotel/aeropuerto.',
+      identity: 'Pasaporte vigente al menos por 6 meses. Entrada nominativa al concierto según la opción de entrada seleccionada.',
+      cancelation: 'Tarifas no reembolsables ni transferibles. Ingreso permitido solo a mayores de 10 años. Menores deben ir acompañados por un adulto (+18).'
+    }
   },
   // 6. Autos
   {
@@ -264,7 +270,7 @@ export default function PackagesView() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-    if (data.length === 0) {
+    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g')) {
       localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
       setPackages(SEED_PACKAGES)
     } else {
@@ -339,7 +345,7 @@ export default function PackagesView() {
                 <option value="vuelos">Vuelos</option>
                 <option value="paquetes">Paquetes</option>
                 <option value="actividades">Actividades</option>
-                <option value="assistcard">Assist Card</option>
+                <option value="conciertos">Conciertos</option>
                 <option value="autos">Autos</option>
                 <option value="disney">Disney</option>
                 <option value="universal">Universal</option>

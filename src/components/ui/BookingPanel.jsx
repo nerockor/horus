@@ -17,7 +17,8 @@ import {
   Calendar, 
   DollarSign, 
   Info,
-  CheckSquare
+  CheckSquare,
+  Music
 } from 'lucide-react'
 import './BookingPanel.css'
 
@@ -47,7 +48,7 @@ const CATEGORIES = [
   { id: 'vuelos', label: 'Vuelos', icon: Plane },
   { id: 'paquetes', label: 'Paquetes', icon: Luggage },
   { id: 'actividades', label: 'Actividades', icon: Ticket },
-  { id: 'assistcard', label: 'Assist Card', icon: Shield },
+  { id: 'conciertos', label: 'Conciertos', icon: Music },
   { id: 'autos', label: 'Autos', icon: Car },
   { id: 'disney', label: 'Disney', icon: DisneyIcon },
   { id: 'universal', label: 'Universal', icon: Globe },
@@ -203,19 +204,25 @@ const SEED_PACKAGES = [
     bonus: '10',
     targetAudience: 'Solo adultos'
   },
-  // 5. Assist Card
+  // 5. Conciertos
   {
-    id: 'p-assist-150',
-    category: 'assistcard',
-    name: 'Asistencia Premium AC 150',
-    location: 'Europa y Resto del Mundo',
-    startDate: '2026-05-15',
-    endDate: '2026-12-31',
-    duration: 'Cobertura Anual Multiviajes',
-    imageUrl: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80',
-    price: '95000',
-    bonus: '20',
-    targetAudience: 'Familiares'
+    id: 'p-karol-g',
+    category: 'conciertos',
+    name: '🎤✨ KAROL G – Viajando por el Mundo TROPITOUR – Bogotá ✨🎤',
+    location: 'Bogotá, Colombia',
+    startDate: '2026-12-03',
+    endDate: '2026-12-06',
+    duration: '4 Días / 3 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=600&q=80',
+    price: '735',
+    bonus: '0',
+    targetAudience: '2 Adultos',
+    description: 'Concierto el 04 de diciembre de 2026. Incluye: Vuelos ida y vuelta con Láser Airlines, Hospedaje en NH Royal Urban 26 con desayuno, traslados privados y entrada al concierto (Opciones: Preferencial USD 735, Oriental Baja USD 769, VIP Oriental USD 1110).',
+    checklistDetails: {
+      baggage: 'Vuelos ida/vuelta CCS (08:30) ↔ BOG (09:10) / BOG (10:20) ↔ CCS (13:00). Traslado privado aeropuerto/hotel/aeropuerto.',
+      identity: 'Pasaporte vigente al menos por 6 meses. Entrada nominativa al concierto según la opción de entrada seleccionada.',
+      cancelation: 'Tarifas no reembolsables ni transferibles. Ingreso permitido solo a mayores de 10 años. Menores deben ir acompañados por un adulto (+18).'
+    }
   },
   // 6. Autos
   {
@@ -309,7 +316,14 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
   const [selectedResult, setSelectedResult] = useState(null)
 
   // Get latest created package/service for active category to show as quick access
-  const storedPackagesList = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+  const storedPackagesList = (() => {
+    let list = JSON.parse(localStorage.getItem('horus_packages') || '[]');
+    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g')) {
+      list = SEED_PACKAGES;
+      localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES));
+    }
+    return list;
+  })()
   const categoryPackagesList = storedPackagesList.filter(p => (p.category || 'paquetes') === activeCategory)
   const latestPkg = categoryPackagesList.length > 0 ? categoryPackagesList[categoryPackagesList.length - 1] : null
 
@@ -1077,22 +1091,23 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
             </>
           )}
 
-          {activeCategory === 'assistcard' && (
+          {activeCategory === 'conciertos' && (
             <>
               <div className="form-header-container">
-                <h3 className="form-title">Viajá protegido con la mejor cobertura internacional.</h3>
+                <h3 className="form-title">Viví los mejores shows y conciertos del mundo.</h3>
                 <div className="form-sub-options">
-                  <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>✔ Cobertura médica, equipaje y Covid-19</span>
+                  <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>✔ Entradas oficiales garantizadas, vuelos, hospedaje y traslados incluidos.</span>
                 </div>
               </div>
 
               <div className="input-row-container">
                 <div className="input-block" style={{ flex: '1.5 1 150px' }}>
-                  <label className="input-block-label">Destino de asistencia</label>
+                  <label className="input-block-label">Destino / Concierto</label>
                   <select className="input-block-value">
-                    <option>Europa & Resto del Mundo</option>
-                    <option>América Latina & Caribe</option>
-                    <option>Estados Unidos & Canadá</option>
+                    <option>Bogotá, Colombia (Karol G)</option>
+                    <option>Buenos Aires, Argentina</option>
+                    <option>Santiago, Chile</option>
+                    <option>Miami, EE.UU.</option>
                   </select>
                 </div>
 
@@ -1117,33 +1132,33 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                 </div>
 
                 <div className="input-block">
-                  <label className="input-block-label">Edades de viajeros</label>
+                  <label className="input-block-label">Pasajeros</label>
                   <input 
                     type="text" 
                     className="input-block-value" 
-                    placeholder="Ej: 28, 30" 
+                    placeholder="Ej: 2 adultos" 
                     value={formData.ages}
                     onChange={(e) => handleChange('ages', e.target.value)}
                   />
                 </div>
 
                 <div className="input-block">
-                  <label className="input-block-label">Plan Sugerido</label>
+                  <label className="input-block-label">Ubicación de Entrada</label>
                   <select 
                     className="input-block-value"
                     value={formData.insurancePlan}
                     onChange={(e) => handleChange('insurancePlan', e.target.value)}
                   >
-                    <option>Básico (AC 60)</option>
-                    <option>Premium (AC 150)</option>
-                    <option>Máximo (AC 250)</option>
+                    <option>Preferencial (De pie)</option>
+                    <option>Oriental Baja (Asiento)</option>
+                    <option>VIP Oriental (De pie)</option>
                   </select>
                 </div>
 
                 <div className="search-button-container">
                   <button type="submit" className="search-submit-btn">
                     <Search size={18} />
-                    Cotizar
+                    Buscar Shows
                   </button>
                 </div>
               </div>
@@ -1713,7 +1728,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                             <span className="despegar-old-price">$ {result.originalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
                           )}
                           <div className="despegar-final-price">
-                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>$ </span>
+                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{result.category === 'conciertos' ? 'USD $' : '$ '}</span>
                             {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
                           </div>
                           <p className="despegar-tax-notice">No vas a pagar Percepción RG5617</p>
@@ -1721,7 +1736,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
 
                         <div className="despegar-points-footer">
                           <span className="despegar-passport-icon">🎟</span>
-                          <span>Pasaporte Horus: Sumarías <strong>{(result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
+                          <span>Pasaporte Horus: Sumarías <strong>{result.category === 'conciertos' ? (result.finalPriceRaw * 1.5).toFixed(0) : (result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
                         </div>
 
                         <button 
@@ -1832,7 +1847,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                       onClick={() => setPassengerCount(prev => prev + 1)}
                       style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
                     >+</button>
-                    <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: $ {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
+                    <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: {selectedResult.category === 'conciertos' ? 'USD $' : '$ '} {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
                   </div>
                 </div>
               )}
@@ -1844,7 +1859,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                   </span>
                   <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
                     {selectedResult.finalPriceRaw !== undefined 
-                      ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
+                      ? `${selectedResult.category === 'conciertos' ? 'USD $' : '$ '} ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
                       : selectedResult.price
                     }
                   </span>
