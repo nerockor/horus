@@ -287,19 +287,99 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
   gap: 0.5rem !important;
 }
 
+/* Casino shine: sweep de luz que cruza el botón al hacer hover */
+.search-submit-btn::before,
+.despegar-consult-btn::before,
+.card-verify-btn::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 60% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.0) 30%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 240, 100, 0.4) 55%,
+    rgba(255, 255, 255, 0.0) 75%,
+    transparent 100%
+  ) !important;
+  transform: skewX(-20deg) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  transition: none !important;
+}
+
+.search-submit-btn:hover:not(:disabled)::before,
+.despegar-consult-btn:hover:not(:disabled)::before,
+.card-verify-btn:hover:not(:disabled)::before {
+  animation: casinoSweep 0.55s ease forwards !important;
+}
+
+/* Casino shine: destellos dorados tipo estrellas */
+.search-submit-btn::after,
+.despegar-consult-btn::after,
+.card-verify-btn::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -3px !important;
+  border-radius: 10px !important;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    #ffe600 8%,
+    transparent 15%,
+    transparent 45%,
+    #ffc800 55%,
+    transparent 62%,
+    transparent 90%,
+    #ff8800 96%,
+    transparent 100%
+  ) !important;
+  filter: blur(4px) !important;
+  opacity: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.search-submit-btn:hover:not(:disabled)::after,
+.despegar-consult-btn:hover:not(:disabled)::after,
+.card-verify-btn:hover:not(:disabled)::after {
+  opacity: 1 !important;
+  animation: casinoGlow 1.5s linear infinite !important;
+}
+
+/* Efecto hover completo (luz + escala + halo exterior) */
 .search-submit-btn:hover:not(:disabled),
 .despegar-consult-btn:hover:not(:disabled),
 .card-verify-btn:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(255, 190, 0, 0.4),
-              inset 0 1px 2px rgba(255,255,255,0.3) !important;
-  transform: translateY(-1px) !important;
-  filter: brightness(1.1) !important;
+  box-shadow: 
+    0 0 8px 2px rgba(255, 220, 0, 0.6),
+    0 0 22px 4px rgba(255, 160, 0, 0.4),
+    0 0 45px 8px rgba(255, 100, 0, 0.2),
+    inset 0 1px 2px rgba(255,255,255,0.4) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  filter: brightness(1.15) saturate(1.2) !important;
 }
 
 .search-submit-btn:active:not(:disabled),
 .despegar-consult-btn:active:not(:disabled),
 .card-verify-btn:active:not(:disabled) {
-  transform: translateY(1px) !important;
+  transform: translateY(1px) scale(0.98) !important;
+  filter: brightness(0.95) !important;
+}
+
+@keyframes casinoSweep {
+  0%   { left: -100%; opacity: 1; }
+  100% { left: 130%;  opacity: 0.5; }
+}
+
+@keyframes casinoGlow {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .search-submit-btn:disabled,
