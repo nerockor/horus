@@ -85,7 +85,7 @@
   /* Fondo azul oscuro con borde de degradado mágico interactivo */
   border: 4px solid transparent !important;
   background: 
-    linear-gradient(var(--sea-blue), var(--sea-blue)) padding-box,
+    linear-gradient(#0053e5, #0056dd) padding-box,
     radial-gradient(
       800px circle at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), 
       var(--gold), 
