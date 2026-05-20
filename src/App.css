@@ -100,6 +100,22 @@
   overflow: visible !important;
 }
 
+.sticky-category-container::before {
+  content: '𓂀 ☥ 𓊵 𓄤 𓂀 ☥ 𓊵 𓄤 𓂀 ☥ 𓊵 𓄤 𓂀 ☥ 𓊵 𓄤 𓂀 ☥ 𓊵 𓄤 𓂀 ☥ 𓊵 𓄤';
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  font-size: 40px;
+  letter-spacing: 30px;
+  color: white;
+  opacity: 0.04;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 0;
+}
+
 /* Navigation Overrides */
 .category-nav-bar {
   border-bottom: none !important;

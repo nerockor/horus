@@ -1667,8 +1667,11 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
               {results.map((result) => {
                 if (!result.isCustomQuery) {
                   return (
-                    <div key={result.id} className="despegar-package-card">
-                      <div className="despegar-img-container">
+                    <div key={result.id} className="despegar-package-card" style={{ position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', bottom: '-20px', right: '-10px', fontSize: '140px', opacity: 0.03, pointerEvents: 'none', zIndex: 0, color: 'var(--dark-text)', lineHeight: 1 }}>
+                        {['☥', '𓊵', '𓄤', '𓂀'][result.id.charCodeAt(result.id.length - 1) % 4]}
+                      </div>
+                      <div className="despegar-img-container" style={{ position: 'relative', zIndex: 1 }}>
                         <img src={result.imageUrlRaw || 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80'} alt={result.title} className="despegar-img" />
                         <div className="despegar-duration-badge">{(result.durationRaw || 'Consultar').toUpperCase()}</div>
                       </div>
@@ -1745,9 +1748,12 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                   <div 
                     key={result.id} 
                     className={`result-item-card ${result.promoted ? 'promoted' : ''}`}
-                    style={{ background: 'linear-gradient(135deg, rgba(45, 212, 191, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%)', borderColor: 'rgba(45, 212, 191, 0.3)' }}
+                    style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(45, 212, 191, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%)', borderColor: 'rgba(45, 212, 191, 0.3)' }}
                   >
-                    <div>
+                    <div style={{ position: 'absolute', bottom: '-20px', right: '-10px', fontSize: '140px', opacity: 0.05, pointerEvents: 'none', zIndex: 0, color: 'var(--sea-blue)', lineHeight: 1 }}>
+                      {['☥', '𓊵', '𓄤', '𓂀'][result.id.charCodeAt(result.id.length - 1) % 4]}
+                    </div>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span className="card-header-badge" style={{ backgroundColor: 'rgba(45, 212, 191, 0.2)', color: '#2dd4bf' }}>CONSULTA PERSONALIZADA</span>
                         {result.verified && (
@@ -1784,146 +1790,153 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
       )}
 
       {/* 5. Panel/Checklist de Verificación Detallada */}
-      {selectedResult && (
-        <div className="verification-drawer-backdrop" onClick={() => setSelectedResult(null)}>
-          <div className="verification-drawer-container" onClick={(e) => e.stopPropagation()}>
-            <div className="verification-drawer-header">
-              <div className="verification-drawer-title">Verificación de Reserva</div>
-              <button className="close-drawer-btn" onClick={() => setSelectedResult(null)}>
-                <X size={18} />
+      {isVerifyOpen && (
+        <div className="verification-drawer-backdrop" onClick={handleVerifyClose}>
+          <div className="verification-drawer-container" style={{ position: 'relative', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '400px', opacity: 0.03, pointerEvents: 'none', zIndex: 0, color: 'var(--dark-text)' }}>
+              𓊵
+            </div>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div className="verification-drawer-header">
+                <div className="verification-drawer-title">Verificación de Reserva</div>
+                <button className="close-drawer-btn" onClick={() => setSelectedResult(null)}>
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div>
+                <div className="card-header-badge" style={{ marginBottom: '0.5rem' }}>{selectedResult.category}</div>
+                <h4 style={{ margin: '0 0 0.5rem 0', fontFamily: 'Outfit, sans-serif', fontSize: '1.2rem' }}>
+                  {selectedResult.title}
+                </h4>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4' }}>
+                  {selectedResult.description}
+                </p>
+                <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
+                  {selectedResult.meta}
+                </p>
+              </div>
+
+              {selectedResult.finalPriceRaw !== undefined && (
+                <div style={{ padding: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>Cantidad de Pasajeros / Personas:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setPassengerCount(prev => Math.max(1, prev - 1))}
+                      style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                    >-</button>
+                    <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{passengerCount}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => setPassengerCount(prev => prev + 1)}
+                      style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                    >+</button>
+                    <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: $ {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ padding: '1rem', background: 'rgba(255, 215, 0, 0.05)', border: '1px solid rgba(255, 215, 0, 0.15)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#ffd700', fontWeight: '600' }}>
+                    {selectedResult.finalPriceRaw !== undefined ? 'Importe Total Estimado:' : 'Importe a Confirmar:'}
+                  </span>
+                  <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
+                    {selectedResult.finalPriceRaw !== undefined 
+                      ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
+                      : selectedResult.price
+                    }
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>
+                  Lista de Verificación Obligatoria:
+                </span>
+                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', margin: '0 0 0.5rem 0' }}>
+                  Por favor, compruebe cada ítem para asegurar que los datos del viaje sean 100% correctos.
+                </p>
+
+                <div className="verification-checklist-container">
+                  {/* Check 1 */}
+                  <div 
+                    className={`verification-check-item ${checklist.identity ? 'checked' : ''}`}
+                    onClick={() => toggleChecklist('identity')}
+                  >
+                    <div className="verify-checkbox-box"></div>
+                    <div>
+                      <div className="verify-check-label">Identificación de Viajeros</div>
+                      <div className="verify-check-desc">{selectedResult.checklistDetails?.identity}</div>
+                    </div>
+                  </div>
+
+                  {/* Check 2 */}
+                  <div 
+                    className={`verification-check-item ${checklist.dates ? 'checked' : ''}`}
+                    onClick={() => toggleChecklist('dates')}
+                  >
+                    <div className="verify-checkbox-box"></div>
+                    <div>
+                      <div className="verify-check-label">Fechas e Itinerario</div>
+                      <div className="verify-check-desc">Coincide con salida el {formData.departureDate} {formData.returnDate ? `y regreso el ${formData.returnDate}` : ''}.</div>
+                    </div>
+                  </div>
+
+                  {/* Check 3 */}
+                  <div 
+                    className={`verification-check-item ${checklist.baggage ? 'checked' : ''}`}
+                    onClick={() => toggleChecklist('baggage')}
+                  >
+                    <div className="verify-checkbox-box"></div>
+                    <div>
+                      <div className="verify-check-label">Políticas de Equipaje y Franquicia</div>
+                      <div className="verify-check-desc">{selectedResult.checklistDetails?.baggage}</div>
+                    </div>
+                  </div>
+
+                  {/* Check 4 */}
+                  <div 
+                    className={`verification-check-item ${checklist.cancelation ? 'checked' : ''}`}
+                    onClick={() => toggleChecklist('cancelation')}
+                  >
+                    <div className="verify-checkbox-box"></div>
+                    <div>
+                      <div className="verify-check-label">Políticas de Cambio y Cancelación</div>
+                      <div className="verify-check-desc">{selectedResult.checklistDetails?.cancelation}</div>
+                    </div>
+                  </div>
+
+                  {/* Check 5 */}
+                  <div 
+                    className={`verification-check-item ${checklist.terms ? 'checked' : ''}`}
+                    onClick={() => toggleChecklist('terms')}
+                  >
+                    <div className="verify-checkbox-box"></div>
+                    <div>
+                      <div className="verify-check-label">Aceptación de Términos y Tarifas</div>
+                      <div className="verify-check-desc">Confirmo que he leído y acepto los términos de intermediación del operador.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleConfirmReservation}
+                disabled={isConfirmDisabled}
+                className="search-submit-btn"
+                style={{
+                  width: '100%',
+                }}
+              >
+                <CheckSquare size={18} />
+                Confirmar y Registrar Reserva
               </button>
             </div>
 
-            <div>
-              <div className="card-header-badge" style={{ marginBottom: '0.5rem' }}>{selectedResult.category}</div>
-              <h4 style={{ margin: '0 0 0.5rem 0', fontFamily: 'Outfit, sans-serif', fontSize: '1.2rem' }}>
-                {selectedResult.title}
-              </h4>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4' }}>
-                {selectedResult.description}
-              </p>
-              <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
-                {selectedResult.meta}
-              </p>
-            </div>
 
-            {selectedResult.finalPriceRaw !== undefined && (
-              <div style={{ padding: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>Cantidad de Pasajeros / Personas:</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <button 
-                    type="button" 
-                    onClick={() => setPassengerCount(prev => Math.max(1, prev - 1))}
-                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
-                  >-</button>
-                  <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{passengerCount}</span>
-                  <button 
-                    type="button" 
-                    onClick={() => setPassengerCount(prev => prev + 1)}
-                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
-                  >+</button>
-                  <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>(Precio por persona: $ {selectedResult.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })})</span>
-                </div>
-              </div>
-            )}
-
-            <div style={{ padding: '1rem', background: 'rgba(255, 215, 0, 0.05)', border: '1px solid rgba(255, 215, 0, 0.15)', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', color: '#ffd700', fontWeight: '600' }}>
-                  {selectedResult.finalPriceRaw !== undefined ? 'Importe Total Estimado:' : 'Importe a Confirmar:'}
-                </span>
-                <span style={{ fontSize: '1.2rem', color: '#ffd700', fontWeight: 'bold' }}>
-                  {selectedResult.finalPriceRaw !== undefined 
-                    ? `$ ${(selectedResult.finalPriceRaw * passengerCount).toLocaleString('es-AR', { maximumFractionDigits: 0 })}`
-                    : selectedResult.price
-                  }
-                </span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>
-                Lista de Verificación Obligatoria:
-              </span>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', margin: '0 0 0.5rem 0' }}>
-                Por favor, compruebe cada ítem para asegurar que los datos del viaje sean 100% correctos.
-              </p>
-
-              <div className="verification-checklist-container">
-                {/* Check 1 */}
-                <div 
-                  className={`verification-check-item ${checklist.identity ? 'checked' : ''}`}
-                  onClick={() => toggleChecklist('identity')}
-                >
-                  <div className="verify-checkbox-box"></div>
-                  <div>
-                    <div className="verify-check-label">Identificación de Viajeros</div>
-                    <div className="verify-check-desc">{selectedResult.checklistDetails?.identity}</div>
-                  </div>
-                </div>
-
-                {/* Check 2 */}
-                <div 
-                  className={`verification-check-item ${checklist.dates ? 'checked' : ''}`}
-                  onClick={() => toggleChecklist('dates')}
-                >
-                  <div className="verify-checkbox-box"></div>
-                  <div>
-                    <div className="verify-check-label">Fechas e Itinerario</div>
-                    <div className="verify-check-desc">Coincide con salida el {formData.departureDate} {formData.returnDate ? `y regreso el ${formData.returnDate}` : ''}.</div>
-                  </div>
-                </div>
-
-                {/* Check 3 */}
-                <div 
-                  className={`verification-check-item ${checklist.baggage ? 'checked' : ''}`}
-                  onClick={() => toggleChecklist('baggage')}
-                >
-                  <div className="verify-checkbox-box"></div>
-                  <div>
-                    <div className="verify-check-label">Políticas de Equipaje y Franquicia</div>
-                    <div className="verify-check-desc">{selectedResult.checklistDetails?.baggage}</div>
-                  </div>
-                </div>
-
-                {/* Check 4 */}
-                <div 
-                  className={`verification-check-item ${checklist.cancelation ? 'checked' : ''}`}
-                  onClick={() => toggleChecklist('cancelation')}
-                >
-                  <div className="verify-checkbox-box"></div>
-                  <div>
-                    <div className="verify-check-label">Políticas de Cambio y Cancelación</div>
-                    <div className="verify-check-desc">{selectedResult.checklistDetails?.cancelation}</div>
-                  </div>
-                </div>
-
-                {/* Check 5 */}
-                <div 
-                  className={`verification-check-item ${checklist.terms ? 'checked' : ''}`}
-                  onClick={() => toggleChecklist('terms')}
-                >
-                  <div className="verify-checkbox-box"></div>
-                  <div>
-                    <div className="verify-check-label">Aceptación de Términos y Tarifas</div>
-                    <div className="verify-check-desc">Confirmo que he leído y acepto los términos de intermediación del operador.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleConfirmReservation}
-              disabled={isConfirmDisabled}
-              className="search-submit-btn"
-              style={{
-                width: '100%',
-              }}
-            >
-              <CheckSquare size={18} />
-              Confirmar y Registrar Reserva
-            </button>
           </div>
         </div>
       )}

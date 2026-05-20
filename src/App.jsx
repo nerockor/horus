@@ -30,23 +30,33 @@ function PublicApp() {
     setActiveBookings((prev) => prev.filter((b) => b.id !== bookingId))
   }
 
-  // Create floating golden sparks
-  const sparks = Array.from({ length: 15 }).map((_, i) => {
-    const size = Math.random() * 8 + 4 // 4px to 12px
+  // Create floating golden sparks and hieroglyphs
+  const sparks = Array.from({ length: 25 }).map((_, i) => {
+    const isHieroglyph = i % 4 === 0;
+    const size = isHieroglyph ? Math.random() * 20 + 30 : Math.random() * 8 + 4; // 30px-50px for symbols
     const left = Math.random() * 100 // 0% to 100%
-    const duration = Math.random() * 12 + 8 // 8s to 20s
+    const duration = Math.random() * 12 + 10 // 10s to 22s
     const delay = Math.random() * 10 // 0s to 10s
     return (
       <div 
         key={i} 
-        className="gold-spark" 
+        className={isHieroglyph ? "gold-spark hieroglyph" : "gold-spark"} 
         style={{
           '--spark-size': `${size}px`,
           '--spark-left': `${left}%`,
           '--spark-dur': `${duration}s`,
-          '--spark-delay': `${delay}s`
+          '--spark-delay': `${delay}s`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: `${size}px`,
+          color: 'var(--gold)',
+          opacity: isHieroglyph ? 0.04 : 0.5,
+          background: isHieroglyph ? 'transparent' : 'var(--gold)'
         }}
-      />
+      >
+        {isHieroglyph ? ['☥', '𓊵', '𓄤', '𓂀'][i % 4] : ''}
+      </div>
     )
   })
 
