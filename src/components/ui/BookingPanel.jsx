@@ -699,6 +699,31 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
           e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
           e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
         }}
+        onMouseDown={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+          e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+        }}
+        onTouchMove={(e) => {
+          if (e.touches && e.touches[0]) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+            e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+          }
+        }}
+        onTouchStart={(e) => {
+          if (e.touches && e.touches[0]) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+            e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+          }
+        }}
       >
         <div className="category-nav-bar">
           {CATEGORIES.map((cat) => {

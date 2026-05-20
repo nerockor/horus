@@ -1,6 +1,17 @@
 /* App.css - Tropical Summer Design System & Golden Animations */
 @import "./theme.css";
 
+@property --bg-x {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 50%;
+}
+@property --bg-y {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 50%;
+}
+
 /* Base Wrapper for Tropical Theme */
 .tropical-app-wrapper {
   background: var(--oyster-white);
@@ -87,10 +98,11 @@
   background: 
     linear-gradient(#0053e5, #0056dd) padding-box,
     radial-gradient(
-      800px circle at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), 
-      var(--gold), 
-      var(--palette-vivid-orange) 30%, 
-      transparent 50%
+      800px circle at var(--bg-x, 50%) var(--bg-y, 50%), 
+      #ffe600 0%, 
+      var(--gold) 20%, 
+      var(--palette-vivid-orange) 45%, 
+      transparent 70%
     ) border-box !important;
   
   box-shadow: 0 10px 30px rgba(29, 44, 51, 0.2) !important;
@@ -98,6 +110,21 @@
   border-radius: 0 0 16px 16px !important;
   transition: background 0.3s ease !important;
   overflow: visible !important;
+  animation: moveGradientAuto 10s linear infinite !important;
+}
+
+.sticky-category-container:hover,
+.sticky-category-container:active {
+  animation: none !important;
+  background: 
+    linear-gradient(#0053e5, #0056dd) padding-box,
+    radial-gradient(
+      800px circle at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), 
+      #ffe600 0%, 
+      var(--gold) 20%, 
+      var(--palette-vivid-orange) 45%, 
+      transparent 70%
+    ) border-box !important;
 }
 
 .sticky-category-container::before {
@@ -559,4 +586,28 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Animación para el degradado automático del menú */
+@keyframes moveGradientAuto {
+  0% {
+    --bg-x: 0%;
+    --bg-y: 50%;
+  }
+  25% {
+    --bg-x: 50%;
+    --bg-y: 100%;
+  }
+  50% {
+    --bg-x: 100%;
+    --bg-y: 50%;
+  }
+  75% {
+    --bg-x: 50%;
+    --bg-y: 0%;
+  }
+  100% {
+    --bg-x: 0%;
+    --bg-y: 50%;
+  }
 }
