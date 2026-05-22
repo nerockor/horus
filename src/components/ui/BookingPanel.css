@@ -87,8 +87,168 @@
 }
 
 .category-tab.active .category-tab-icon {
-  transform: translateY(-2px);
   stroke: #2dd4bf;
+}
+
+/* 1. Alojamientos - BedDouble */
+.category-tab-alojamientos.active .category-tab-icon {
+  animation: looptiloop-bed 2.5s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* 2. Vuelos - Plane */
+.category-tab-vuelos.active .category-tab-icon {
+  animation: looptiloop-plane 2s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+/* 3. Paquetes - Luggage */
+.category-tab-paquetes.active .category-tab-icon {
+  animation: looptiloop-luggage 1.8s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* 4. Actividades - Ticket */
+.category-tab-actividades.active .category-tab-icon {
+  animation: looptiloop-ticket 2.2s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+/* 5. Conciertos - Music */
+.category-tab-conciertos.active .category-tab-icon {
+  animation: looptiloop-music 1.6s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* 6. Autos - Car */
+.category-tab-autos.active .category-tab-icon {
+  animation: looptiloop-car 1.2s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* 7. Disney - DisneyIcon */
+.category-tab-disney.active .category-tab-icon {
+  animation: looptiloop-disney 2.4s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+/* 8. Universal - Globe */
+.category-tab-universal.active .category-tab-icon {
+  animation: looptiloop-globe 8s infinite linear;
+  transform-origin: center center;
+}
+
+/* 9. Circuitos - Route */
+.category-tab-circuitos.active .category-tab-icon {
+  animation: looptiloop-route 3s infinite ease-in-out;
+  transform-origin: center center;
+}
+
+/* 10. Cruceros - Ship */
+.category-tab-cruceros.active .category-tab-icon {
+  animation: looptiloop-cruceros 2.8s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* --- KEYFRAMES --- */
+
+@keyframes looptiloop-bed {
+  0%, 100% {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+@keyframes looptiloop-plane {
+  0%, 100% {
+    transform: translateY(-2px) rotate(-10deg) translate(0, 0);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-14deg) translate(0.5px, -0.5px);
+  }
+}
+
+@keyframes looptiloop-luggage {
+  0%, 100% {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(4deg);
+  }
+}
+
+@keyframes looptiloop-ticket {
+  0%, 100% {
+    transform: translateY(-2px) scale(1);
+  }
+  50% {
+    transform: translateY(-3.5px) scale(1.08) rotate(3deg);
+  }
+}
+
+@keyframes looptiloop-music {
+  0%, 100% {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-3.5px) rotate(6deg);
+  }
+}
+
+@keyframes looptiloop-car {
+  0%, 100% {
+    transform: translateY(-2px) scaleY(1);
+  }
+  25% {
+    transform: translateY(-3.5px) scaleY(0.95);
+  }
+  50% {
+    transform: translateY(-2px) scaleY(1.03);
+  }
+  75% {
+    transform: translateY(-3px) scaleY(0.97);
+  }
+}
+
+@keyframes looptiloop-disney {
+  0%, 100% {
+    transform: translateY(-2px) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.06) rotate(4deg);
+  }
+}
+
+@keyframes looptiloop-globe {
+  0% {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-2px) rotate(360deg);
+  }
+}
+
+@keyframes looptiloop-route {
+  0%, 100% {
+    transform: translateY(-2px) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.08) rotate(2deg);
+  }
+}
+
+@keyframes looptiloop-cruceros {
+  0%, 100% {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-3deg);
+  }
 }
 
 /* Top Section within Forms */

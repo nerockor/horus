@@ -734,7 +734,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                 onClick={() => {
                   setActiveCategory(cat.id)
                 }}
-                className={`category-tab ${activeCategory === cat.id ? 'active' : ''}`}
+                className={`category-tab category-tab-${cat.id} ${activeCategory === cat.id ? 'active' : ''}`}
               >
                 <Icon className="category-tab-icon" />
                 <span>{cat.label}</span>
