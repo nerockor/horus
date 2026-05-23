@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign, Clock, Image as ImageIcon } from 'lucide-react'
+import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign, Clock, Image as ImageIcon, Download } from 'lucide-react'
 
 const SEED_PACKAGES = [
   // 1. Paquetes
@@ -305,6 +305,7 @@ export default function PackagesView() {
   const [price, setPrice] = useState('')
   const [bonus, setBonus] = useState('')
   const [targetAudience, setTargetAudience] = useState('Solo adultos')
+  const [status, setStatus] = useState('Activo')
   const [editingId, setEditingId] = useState(null)
 
   useEffect(() => {
@@ -329,14 +330,14 @@ export default function PackagesView() {
         const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
         defaultConsultations = 5 + (code % 25);
       }
-      return { ...pkg, consultations: defaultConsultations };
+      return { ...pkg, consultations: defaultConsultations, status: pkg.status || 'Activo' };
     };
 
     if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo') || !data.some(p => p.id === 'p-dubai-vip')) {
       const seeded = SEED_PACKAGES.map(addDefaultConsultations)
       localStorage.setItem('horus_packages', JSON.stringify(seeded))
       setPackages(seeded)
-    } else if (data.some(p => p.consultations === undefined)) {
+    } else if (data.some(p => p.consultations === undefined || p.status === undefined)) {
       const migrated = data.map(addDefaultConsultations)
       localStorage.setItem('horus_packages', JSON.stringify(migrated))
       setPackages(migrated)
@@ -357,6 +358,7 @@ export default function PackagesView() {
         if (p.id === editingId) {
           return {
             ...p, category, name, location, startDate, endDate, duration, imageUrl, price, bonus: bonus || '0', targetAudience,
+            status,
             lastModifiedBy: author
           }
         }
@@ -378,6 +380,7 @@ export default function PackagesView() {
         price,
         bonus: bonus || '0',
         targetAudience,
+        status,
         consultations: 0,
         lastModifiedBy: author
       }
@@ -397,6 +400,7 @@ export default function PackagesView() {
     setPrice('')
     setBonus('')
     setTargetAudience('Solo adultos')
+    setStatus('Activo')
   }
 
   const deletePackage = (id) => {
@@ -419,6 +423,7 @@ export default function PackagesView() {
     setPrice(pkg.price || '')
     setBonus(pkg.bonus || '')
     setTargetAudience(pkg.targetAudience || 'Solo adultos')
+    setStatus(pkg.status || 'Activo')
     window.scrollTo(0, 0)
   }
   
@@ -433,13 +438,57 @@ export default function PackagesView() {
     setPrice('')
     setBonus('')
     setTargetAudience('Solo adultos')
+    setStatus('Activo')
+  }
+
+  const downloadCSV = () => {
+    if (packages.length === 0) return
+
+    const headers = ['ID', 'Categoría', 'Nombre', 'Destino', 'Fecha Inicio', 'Fecha Fin', 'Duración', 'Precio (USD)', 'Bono (%)', 'Público Objetivo', 'Estado', 'Consultas']
+    
+    const rows = packages.map(p => [
+      p.id,
+      p.category || '',
+      `"${(p.name || '').replace(/"/g, '""')}"`,
+      `"${(p.location || '').replace(/"/g, '""')}"`,
+      p.startDate || '',
+      p.endDate || '',
+      `"${(p.duration || '').replace(/"/g, '""')}"`,
+      p.price || '0',
+      p.bonus || '0',
+      p.targetAudience || '',
+      p.status || 'Activo',
+      p.consultations || 0
+    ])
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n')
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `base_paquetes_${new Date().toISOString().split('T')[0]}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
     <div>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Package size={24} /> Gestión de Servicios y Ofertas
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Package size={24} /> Gestión de Servicios y Ofertas
+        </h1>
+        <button 
+          onClick={downloadCSV}
+          style={{ backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', padding: '0.625rem 1rem', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <Download size={16} /> Descargar CSV
+        </button>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
         {/* Form to create package */}
@@ -579,16 +628,30 @@ export default function PackagesView() {
               </div>
             </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Público Objetivo</label>
-              <select
-                value={targetAudience}
-                onChange={(e) => setTargetAudience(e.target.value)}
-                style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
-              >
-                <option value="Solo adultos">Solo adultos</option>
-                <option value="Familiares">Familiares</option>
-              </select>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Público Objetivo</label>
+                <select
+                  value={targetAudience}
+                  onChange={(e) => setTargetAudience(e.target.value)}
+                  style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                >
+                  <option value="Solo adultos">Solo adultos</option>
+                  <option value="Familiares">Familiares</option>
+                </select>
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>Estado</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box', backgroundColor: status === 'Activo' ? '#f0fdf4' : '#fef2f2', color: status === 'Activo' ? '#166534' : '#991b1b' }}
+                >
+                  <option value="Activo">Activo (Visible)</option>
+                  <option value="Pausado">Pausado (Oculto)</option>
+                </select>
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
@@ -626,13 +689,14 @@ export default function PackagesView() {
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Duración</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Precio Final</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Público</th>
+                <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Estado</th>
                 <th style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {packages.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay paquetes creados.</td>
+                  <td colSpan="8" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay paquetes creados.</td>
                 </tr>
               ) : (
                 packages.map(p => {
@@ -674,6 +738,18 @@ export default function PackagesView() {
                       <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#475569' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                           <Users size={14} style={{ color: '#64748b' }} /> {p.targetAudience}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          backgroundColor: (p.status || 'Activo') === 'Activo' ? '#dcfce7' : '#fee2e2',
+                          color: (p.status || 'Activo') === 'Activo' ? '#166534' : '#991b1b'
+                        }}>
+                          {p.status || 'Activo'}
                         </span>
                       </td>
                       <td style={{ padding: '1rem' }}>
