@@ -4,6 +4,8 @@ import { MapPin, Smartphone, CreditCard, BadgePercent } from 'lucide-react'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
 import AdminApp from './components/admin/AdminApp'
+import Footer from './components/ui/Footer'
+import FooterPlaceholderPage from './components/ui/FooterPlaceholderPage'
 import './App.css'
 
 function PublicApp() {
@@ -158,15 +160,23 @@ function PublicApp() {
 
       <main style={{ pointerEvents: 'none', position: 'relative', zIndex: 10, width: '100%' }}>
         {view === 'landing' ? (
-          <>
+          <div style={{ 
+            height: '100vh', 
+            width: '100vw',
+            overflowY: 'auto',
+            display: 'flex', 
+            flexDirection: 'column',
+            pointerEvents: 'auto'
+          }} className="hide-scrollbar">
             {/* Seccion 1: Landing Intro */}
             <section style={{ 
-              height: '100vh', 
+              minHeight: '100vh', 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center', 
               justifyContent: 'center',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              flexShrink: 0
             }}>
               <h1 
                 onClick={() => setView('booking')}
@@ -244,13 +254,14 @@ function PublicApp() {
                 Ingresar al Buscador
               </button>
             </section>
-          </>
+            <Footer />
+          </div>
         ) : (
           <section style={{ 
             height: '100vh', 
             width: '100vw',
             overflowY: 'auto',
-            padding: '3.8rem 2rem 4rem 2rem', 
+            padding: '3.8rem 2rem 0 2rem', 
             display: 'flex', 
             flexDirection: 'column',
             alignItems: 'center', 
@@ -258,8 +269,10 @@ function PublicApp() {
             boxSizing: 'border-box',
             animation: 'fadeIn 0.5s ease-out'
           }} className="hide-scrollbar">
-            
-            <BookingPanel activeBookings={activeBookings} onAddBooking={handleAddBooking} setView={setView} />
+            <div style={{ flexGrow: 1, width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '3rem' }}>
+              <BookingPanel activeBookings={activeBookings} onAddBooking={handleAddBooking} setView={setView} />
+            </div>
+            <Footer />
           </section>
         )}
       </main>
@@ -271,6 +284,21 @@ export default function App() {
   return (
     <Routes>
       <Route path="/admin/*" element={<AdminApp />} />
+      
+      {/* Footer Placeholder Routes */}
+      <Route path="/terminos-y-condiciones" element={<FooterPlaceholderPage title="Términos y condiciones" />} />
+      <Route path="/terminos-de-uso" element={<FooterPlaceholderPage title="Términos de uso" />} />
+      <Route path="/quienes-somos" element={<FooterPlaceholderPage title="Quiénes somos" />} />
+      <Route path="/privacidad" element={<FooterPlaceholderPage title="Privacidad" />} />
+      <Route path="/informacion-legal" element={<FooterPlaceholderPage title="Información legal" />} />
+      <Route path="/empleos" element={<FooterPlaceholderPage title="Empleos" />} />
+      <Route path="/seguridad" element={<FooterPlaceholderPage title="Seguridad" />} />
+      <Route path="/derechos-del-pasajero" element={<FooterPlaceholderPage title="Derechos del pasajero" />} />
+      <Route path="/alertas-de-viaje" element={<FooterPlaceholderPage title="Alertas de viaje" />} />
+      <Route path="/prensa" element={<FooterPlaceholderPage title="Prensa" />} />
+      <Route path="/declaracion-esclavitud-moderna" element={<FooterPlaceholderPage title="Declaración esclavitud moderna" />} />
+      <Route path="/ideas-no-solicitadas" element={<FooterPlaceholderPage title="Ideas no solicitadas" />} />
+
       <Route path="/*" element={<PublicApp />} />
     </Routes>
   )
