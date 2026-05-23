@@ -6,6 +6,7 @@ import BookingPanel from './components/ui/BookingPanel'
 import AdminApp from './components/admin/AdminApp'
 import Footer from './components/ui/Footer'
 import FooterPlaceholderPage from './components/ui/FooterPlaceholderPage'
+import QuienesSomosPage from './components/ui/QuienesSomosPage'
 import './App.css'
 
 function PublicApp() {
@@ -288,7 +289,7 @@ export default function App() {
       {/* Footer Placeholder Routes */}
       <Route path="/terminos-y-condiciones" element={<FooterPlaceholderPage title="Términos y condiciones" />} />
       <Route path="/terminos-de-uso" element={<FooterPlaceholderPage title="Términos de uso" />} />
-      <Route path="/quienes-somos" element={<FooterPlaceholderPage title="Quiénes somos" />} />
+      <Route path="/quienes-somos" element={<QuienesSomosPage />} />
       <Route path="/privacidad" element={<FooterPlaceholderPage title="Privacidad" />} />
       <Route path="/informacion-legal" element={<FooterPlaceholderPage title="Información legal" />} />
       <Route path="/empleos" element={<FooterPlaceholderPage title="Empleos" />} />
