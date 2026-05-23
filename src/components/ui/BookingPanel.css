@@ -992,7 +992,7 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 }
 
 .despegar-rating-badge {
-  background: #2563eb;
+  background: var(--header-blue);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -1023,7 +1023,7 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 .despegar-includes {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #2563eb;
+  color: var(--header-blue);
   margin: 0.25rem 0 0.5rem 0;
 }
 
@@ -1035,8 +1035,8 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 }
 
 .despegar-tag.purple {
-  background: #f3e8ff;
-  color: #7e22ce;
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .despegar-tag.green {

@@ -347,7 +347,7 @@ const SEED_PACKAGES = [
   }
 ]
 
-export default function BookingPanel({ activeBookings = [], onAddBooking }) {
+export default function BookingPanel({ activeBookings = [], onAddBooking, setView }) {
   const [activeCategory, setActiveCategory] = useState('vuelos')
   const [searching, setSearching] = useState(false)
   const [results, setResults] = useState(null)
@@ -725,22 +725,56 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
           }
         }}
       >
-        <div className="category-nav-bar">
-          {CATEGORIES.map((cat) => {
-            const Icon = cat.icon
-            return (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.id)
-                }}
-                className={`category-tab category-tab-${cat.id} ${activeCategory === cat.id ? 'active' : ''}`}
-              >
-                <Icon className="category-tab-icon" />
-                <span>{cat.label}</span>
-              </button>
-            )
-          })}
+        <div className="category-nav-bar" style={{ display: 'flex', alignItems: 'center', borderBottom: 'none', marginBottom: 0, paddingBottom: 0 }}>
+          {/* HORUS TRAVEL Logo acting as Home/Inicio Button */}
+          <div 
+            onClick={() => setView && setView('landing')}
+            style={{ 
+              fontSize: '1.25rem', 
+              fontWeight: '900', 
+              letterSpacing: '2px', 
+              color: '#ffffff', 
+              fontFamily: 'Outfit, sans-serif',
+              cursor: 'pointer',
+              marginRight: '2rem',
+              marginLeft: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              userSelect: 'none',
+              transition: 'all 0.2s',
+              flexShrink: 0
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = 0.8;
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = 1;
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+            title="Volver al Inicio"
+          >
+            HORUS TRAVEL
+          </div>
+
+          {/* Categories Tab Group */}
+          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', flexGrow: 1, paddingBottom: '0.25rem' }} className="hide-scrollbar">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setActiveCategory(cat.id)
+                  }}
+                  className={`category-tab category-tab-${cat.id} ${activeCategory === cat.id ? 'active' : ''}`}
+                >
+                  <Icon className="category-tab-icon" />
+                  <span>{cat.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
@@ -1737,7 +1771,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
         <div className="search-results-wrapper">
           <div className="booking-glass-card">
             <h4 className="results-header-title">
-              <CheckCircle2 size={18} color="#2dd4bf" />
+              <CheckCircle2 size={18} color="var(--header-blue)" />
               Verificá y confirmá las opciones disponibles:
             </h4>
             
@@ -1779,7 +1813,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                             </span>
                           )}
                           {result.verified && (
-                            <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
+                            <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
                               ✓ Verificado
                             </span>
                           )}
@@ -1826,16 +1860,16 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                   <div 
                     key={result.id} 
                     className={`result-item-card ${result.promoted ? 'promoted' : ''}`}
-                    style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(45, 212, 191, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%)', borderColor: 'rgba(45, 212, 191, 0.3)' }}
+                    style={{ position: 'relative', overflow: 'hidden' }}
                   >
                     <div style={{ position: 'absolute', bottom: '-20px', right: '-10px', fontSize: '140px', opacity: 0.05, pointerEvents: 'none', zIndex: 0, color: 'var(--sea-blue)', lineHeight: 1 }}>
                       {['☥', '𓊵', '𓄤', '𓂀'][result.id.charCodeAt(result.id.length - 1) % 4]}
                     </div>
                     <div style={{ position: 'relative', zIndex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span className="card-header-badge" style={{ backgroundColor: 'rgba(45, 212, 191, 0.2)', color: '#2dd4bf' }}>CONSULTA PERSONALIZADA</span>
+                        <span className="card-header-badge" style={{ backgroundColor: 'rgba(0, 83, 229, 0.08)', color: 'var(--header-blue)' }}>CONSULTA PERSONALIZADA</span>
                         {result.verified && (
-                          <span style={{ color: '#2dd4bf', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                          <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
                             ✓ Enviada
                           </span>
                         )}
@@ -1848,7 +1882,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking }) {
                     <div className="card-price-container">
                       <div>
                         <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Cotización</span>
-                        <div className="card-price-value" style={{ color: '#2dd4bf' }}>{result.price}</div>
+                        <div className="card-price-value" style={{ color: 'var(--header-blue)' }}>{result.price}</div>
                       </div>
                       <button 
                         type="button" 

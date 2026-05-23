@@ -91,12 +91,12 @@
 /* Sticky Category Tab Container */
 .sticky-category-container {
   position: sticky !important;
-  top: 0px !important;
+  top: 38px !important;
   z-index: 40 !important;
   /* Fondo azul oscuro con borde de degradado mágico interactivo */
   border: 4px solid transparent !important;
   background: 
-    linear-gradient(#0053e5, #0056dd) padding-box,
+    linear-gradient(var(--header-blue), var(--header-blue-hover)) padding-box,
     radial-gradient(
       800px circle at var(--bg-x, 50%) var(--bg-y, 50%), 
       #ffe600 0%, 
@@ -117,7 +117,7 @@
 .sticky-category-container:active {
   animation: none !important;
   background: 
-    linear-gradient(#0053e5, #0056dd) padding-box,
+    linear-gradient(var(--header-blue), var(--header-blue-hover)) padding-box,
     radial-gradient(
       800px circle at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), 
       #ffe600 0%, 
@@ -299,7 +299,7 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
   position: relative !important;
   border: 2px solid transparent !important;
   border-radius: 8px !important;
-  background: linear-gradient(135deg, var(--vivid-red), #e11d48) padding-box,
+  background: linear-gradient(135deg, var(--header-blue), var(--header-blue-hover)) padding-box,
               linear-gradient(90deg, #ffe600, #ffc800, #ff8800, #ffe600) border-box !important;
   background-size: 200% auto !important;
   color: #ffffff !important;
@@ -401,16 +401,6 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
   filter: brightness(0.95) !important;
 }
 
-@keyframes casinoSweep {
-  0%   { left: -100%; opacity: 1; }
-  100% { left: 130%;  opacity: 0.5; }
-}
-
-@keyframes casinoGlow {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .search-submit-btn:disabled,
 .despegar-consult-btn:disabled,
 .card-verify-btn:disabled {
@@ -431,6 +421,16 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
 .card-verify-btn {
   padding: 0.5rem 1rem !important;
   font-size: 0.85rem !important;
+}
+
+@keyframes casinoSweep {
+  0%   { left: -100%; opacity: 1; }
+  100% { left: 130%;  opacity: 0.5; }
+}
+
+@keyframes casinoGlow {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes moveGoldBorder {
@@ -612,4 +612,30 @@ input[type="date"].input-block-value::-webkit-calendar-picker-indicator {
     --bg-x: 0%;
     --bg-y: 50%;
   }
+}
+
+/* Top Utility Bar */
+.top-utility-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 38px;
+  background: #eff3fa;
+  border-bottom: 1px solid rgba(0, 83, 229, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 100;
+  box-sizing: border-box;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 1.5rem;
+}
+
+.top-utility-bar::-webkit-scrollbar {
+  display: none;
 }

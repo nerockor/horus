@@ -16,6 +16,10 @@
   --palette-navy-slate: #1d2c33;
   --palette-charcoal-black: #0a0f12;
 
+  /* Colores de marca y header */
+  --header-blue: #0053e5;
+  --header-blue-hover: #004acb;
+
   /* Mapeo del sistema de diseño de Horus */
   --oyster-white: var(--palette-warm-ivory);
   --sea-blue: var(--palette-deep-ocean-blue);

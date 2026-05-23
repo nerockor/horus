@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { MapPin, Smartphone, CreditCard, BadgePercent } from 'lucide-react'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
 import AdminApp from './components/admin/AdminApp'
@@ -62,6 +63,85 @@ function PublicApp() {
 
   return (
     <div className="tropical-app-wrapper" style={{ width: '100vw', position: 'relative' }}>
+
+      {/* Top Utility Bar */}
+      <div className="top-utility-bar">
+        {/* Left Info */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: '500' }}>
+            <span>🇻🇪</span>
+            <span style={{ color: '#0f2d4a', fontWeight: '600' }}>Agencia de viajes en Venezuela</span>
+          </div>
+          <span style={{ color: 'rgba(0, 83, 229, 0.15)' }}>|</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: '500' }}>
+            <MapPin size={13} color="#0053e5" />
+            <span style={{ color: '#0f2d4a', fontWeight: '600' }}>Atención personalizada 24/7</span>
+          </div>
+        </div>
+
+        {/* Right Info */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <span style={{ color: '#718096', fontWeight: '500' }}>Paga como prefieras:</span>
+          
+          {/* Zinli */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ 
+              background: '#501e88', 
+              color: '#ffffff', 
+              padding: '1px 4px', 
+              borderRadius: '3px', 
+              fontSize: '0.55rem', 
+              fontWeight: '900',
+              lineHeight: 1
+            }}>
+              zi
+            </span>
+            <span style={{ fontWeight: '600', color: '#0f2d4a' }}>Zinli</span>
+          </div>
+
+          {/* Binance Pay */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F0B90B" style={{ display: 'block' }}>
+              <path d="M12 0L3.6 8.4L6 10.8L12 4.8L18 10.8L20.4 8.4L12 0ZM3.6 15.6L12 24L20.4 15.6L18 13.2L12 19.2L6 13.2L3.6 15.6ZM0 12L3.6 8.4L6 10.8L2.4 14.4L6 18L3.6 20.4L0 12ZM20.4 8.4L24 12L20.4 20.4L18 18L21.6 14.4L18 10.8L20.4 8.4Z" />
+            </svg>
+            <span style={{ fontWeight: '600', color: '#0f2d4a' }}>Binance Pay</span>
+          </div>
+
+          {/* Pago Móvil */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <Smartphone size={13} color="#0053e5" />
+            <span style={{ fontWeight: '600', color: '#0f2d4a' }}>Pago Móvil</span>
+          </div>
+
+          {/* Zelle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <span style={{ 
+              color: '#ffffff', 
+              background: '#7414ca', 
+              padding: '1px 4px', 
+              borderRadius: '3px', 
+              fontSize: '0.55rem', 
+              fontWeight: '950', 
+              lineHeight: 1 
+            }}>
+              z
+            </span>
+            <span style={{ fontWeight: '750', color: '#7414ca' }}>Zelle</span>
+          </div>
+
+          {/* Tarjeta Internacional */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <CreditCard size={13} color="#0053e5" />
+            <span style={{ fontWeight: '600', color: '#0f2d4a' }}>Tarjeta Internacional</span>
+          </div>
+
+          {/* Cuotas disponibles */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <BadgePercent size={13} color="#0053e5" />
+            <span style={{ fontWeight: '600', color: '#0f2d4a' }}>Cuotas disponibles</span>
+          </div>
+        </div>
+      </div>
 
       {/* Animated Golden Sparks */}
       <div className="golden-sparks-bg">
@@ -166,12 +246,11 @@ function PublicApp() {
             </section>
           </>
         ) : (
-          /* Seccion de Buscador (Página Independiente) */
           <section style={{ 
             height: '100vh', 
             width: '100vw',
             overflowY: 'auto',
-            padding: '6rem 2rem 4rem 2rem', 
+            padding: '3.8rem 2rem 4rem 2rem', 
             display: 'flex', 
             flexDirection: 'column',
             alignItems: 'center', 
@@ -180,40 +259,7 @@ function PublicApp() {
             animation: 'fadeIn 0.5s ease-out'
           }} className="hide-scrollbar">
             
-            {/* Back Button inside the Page */}
-            <div style={{ width: '100%', maxWidth: '1200px', marginBottom: '1rem', display: 'flex', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setView('landing')}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.8)',
-                  border: '1px solid rgba(2, 132, 199, 0.2)',
-                  color: '#0f2d4a',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-                  transition: 'all 0.2s',
-                  fontFamily: 'Inter, sans-serif'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--sea-blue)'
-                  e.currentTarget.style.color = '#ffffff'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)'
-                  e.currentTarget.style.color = '#0f2d4a'
-                }}
-              >
-                ← Volver al Inicio
-              </button>
-            </div>
-
-            <BookingPanel activeBookings={activeBookings} onAddBooking={handleAddBooking} />
+            <BookingPanel activeBookings={activeBookings} onAddBooking={handleAddBooking} setView={setView} />
           </section>
         )}
       </main>

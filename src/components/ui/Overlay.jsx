@@ -15,7 +15,7 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
       pointerEvents: 'none',
       zIndex: 10,
       color: '#0f2d4a',
-      padding: '2rem',
+      padding: '4.5rem 2rem 2rem 2rem',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between'
@@ -28,44 +28,48 @@ export default function Overlay({ activeBookings = [], onCancelBooking, view = '
         pointerEvents: 'auto'
       }}>
         {/* Clickable Logo serving as Router */}
-        <div 
-          onClick={() => setView(view === 'landing' ? 'booking' : 'landing')}
-          style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: 'bold', 
-            letterSpacing: '2px', 
-            color: '#0f2d4a', 
-            fontFamily: 'Outfit, sans-serif',
-            cursor: 'pointer',
-            transition: 'all 0.3s',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            userSelect: 'none'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.textShadow = '0 0 15px rgba(2,132,199,0.3)'
-            e.currentTarget.style.transform = 'scale(1.02)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.textShadow = 'none'
-            e.currentTarget.style.transform = 'scale(1)'
-          }}
-        >
-          <span>HORUS TRAVEL</span>
-          <span style={{ 
-            fontSize: '0.65rem', 
-            color: view === 'landing' ? 'white' : '#0284c7', 
-            background: view === 'landing' ? 'var(--vivid-red)' : 'rgba(2, 132, 199, 0.12)', 
-            border: view === 'landing' ? '1px solid var(--vivid-red)' : '1px solid rgba(2, 132, 199, 0.3)',
-            padding: '0.25rem 0.6rem', 
-            borderRadius: '20px', 
-            letterSpacing: '0.05em',
-            fontWeight: 'bold'
-          }}>
-            {view === 'landing' ? '➔ RESERVAR' : '➔ INICIO'}
-          </span>
-        </div>
+        {view === 'landing' ? (
+          <div 
+            onClick={() => setView('booking')}
+            style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: 'bold', 
+              letterSpacing: '2px', 
+              color: '#0f2d4a', 
+              fontFamily: 'Outfit, sans-serif',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.8rem',
+              userSelect: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textShadow = '0 0 15px rgba(2,132,199,0.3)'
+              e.currentTarget.style.transform = 'scale(1.02)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textShadow = 'none'
+              e.currentTarget.style.transform = 'scale(1)'
+            }}
+          >
+            <span>HORUS TRAVEL</span>
+            <span style={{ 
+              fontSize: '0.65rem', 
+              color: 'white', 
+              background: 'var(--vivid-red)', 
+              border: '1px solid var(--vivid-red)',
+              padding: '0.25rem 0.6rem', 
+              borderRadius: '20px', 
+              letterSpacing: '0.05em',
+              fontWeight: 'bold'
+            }}>
+              ➔ RESERVAR
+            </span>
+          </div>
+        ) : (
+          <div></div>
+        )}
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {activeBookings.length > 0 && (
