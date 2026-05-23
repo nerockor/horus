@@ -272,7 +272,7 @@ function PublicApp() {
             height: '100vh', 
             width: '100vw',
             overflowY: 'auto',
-            padding: '3.8rem 2rem 0 2rem', 
+            padding: '38px 2rem 0 2rem', 
             display: 'flex', 
             flexDirection: 'column',
             alignItems: 'center', 
