@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import { 
   Contact, Plus, Search, Edit2, Trash2, Eye, EyeOff, User, 
   Mail, Phone, MapPin, Calendar, CreditCard, ShieldAlert, 
-  CheckCircle, AlertTriangle, AlertCircle, HelpCircle, Utensils, Bed, PlaneTakeoff, Award, Briefcase, PlusCircle
+  CheckCircle, AlertTriangle, AlertCircle, HelpCircle, Utensils, Bed, PlaneTakeoff, Award, Briefcase, PlusCircle,
+  DollarSign
 } from 'lucide-react'
 
 export default function ClientsView() {
@@ -14,6 +15,8 @@ export default function ClientsView() {
   // Search and Filter State
   const [searchTerm, setSearchTerm] = useState('')
   const [passportFilter, setPassportFilter] = useState('todos') // todos, vigentes, alerta, vencidos
+  const [approvalFilter, setApprovalFilter] = useState('todos')
+  const [paymentFilter, setPaymentFilter] = useState('todos')
 
   // Form State
   const [isEditing, setIsEditing] = useState(false)
@@ -30,6 +33,9 @@ export default function ClientsView() {
   const [frequentFlyerNumber, setFrequentFlyerNumber] = useState('')
   const [dietaryRestrictions, setDietaryRestrictions] = useState('Sin restricciones')
   const [preferredBed, setPreferredBed] = useState('Matrimonial')
+  const [approvalStatus, setApprovalStatus] = useState('approved')
+  const [paymentStatus, setPaymentStatus] = useState('paid')
+  const [debtAmount, setDebtAmount] = useState('0')
 
   // Manual Trip Form State (inside detail view)
   const [newTripDest, setNewTripDest] = useState('')
@@ -58,6 +64,9 @@ export default function ClientsView() {
           frequentFlyerNumber: 'AR-992100',
           dietaryRestrictions: 'Sin restricciones',
           preferredBed: 'Matrimonial',
+          approvalStatus: 'approved',
+          paymentStatus: 'paid',
+          debtAmount: 0,
           manualTrips: [
             { id: 'mt-1', destination: 'Madrid, España', date: '2025-10-10', price: '1200 USD', status: 'Realizado' }
           ]
@@ -76,6 +85,9 @@ export default function ClientsView() {
           frequentFlyerNumber: 'LA-778811',
           dietaryRestrictions: 'Vegetariana',
           preferredBed: 'King',
+          approvalStatus: 'pending',
+          paymentStatus: 'paid',
+          debtAmount: 0,
           manualTrips: []
         },
         {
@@ -92,15 +104,50 @@ export default function ClientsView() {
           frequentFlyerNumber: 'IB-121212',
           dietaryRestrictions: 'Sin TACC (Celíaco)',
           preferredBed: 'Twin',
+          approvalStatus: 'approved',
+          paymentStatus: 'debt',
+          debtAmount: 450,
           manualTrips: [
             { id: 'mt-2', destination: 'México DF', date: '1986-06-29', price: '500 USD', status: 'Realizado' }
           ]
+        },
+        {
+          id: 'c-4',
+          name: 'Diego Maradona',
+          email: 'diego@10.com',
+          phone: '+54 11 1010-1010',
+          address: 'Villa Fiorito, Buenos Aires',
+          passportNumber: 'ARG10101010',
+          passportIssueDate: '2020-10-30',
+          passportExpiryDate: '2030-10-30',
+          birthDate: '1960-10-30',
+          frequentFlyerAirline: 'Napoli Airways',
+          frequentFlyerNumber: 'NAP-1010',
+          dietaryRestrictions: 'Sin restricciones',
+          preferredBed: 'King',
+          approvalStatus: 'pending',
+          paymentStatus: 'debt',
+          debtAmount: 1500,
+          manualTrips: []
         }
       ]
       localStorage.setItem('horus_clients', JSON.stringify(mockClients))
       setClients(mockClients)
     } else {
-      setClients(data)
+      // Migrate existing clients if they don't have approvalStatus
+      const needsMigration = data.some(c => !c.approvalStatus)
+      if (needsMigration) {
+        const migrated = data.map((c, index) => ({
+          ...c,
+          approvalStatus: c.approvalStatus || (index === 1 || index === 3 ? 'pending' : 'approved'),
+          paymentStatus: c.paymentStatus || (index === 2 || index === 3 ? 'debt' : 'paid'),
+          debtAmount: c.debtAmount !== undefined ? c.debtAmount : (index === 2 ? 450 : (index === 3 ? 1500 : 0))
+        }))
+        localStorage.setItem('horus_clients', JSON.stringify(migrated))
+        setClients(migrated)
+      } else {
+        setClients(data)
+      }
     }
 
     // Prefill check from search params (e.g. from QueriesView quick action)
@@ -199,7 +246,10 @@ export default function ClientsView() {
             ...c,
             name, email, phone, address,
             passportNumber, passportIssueDate, passportExpiryDate, birthDate,
-            frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed
+            frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed,
+            approvalStatus,
+            paymentStatus,
+            debtAmount: paymentStatus === 'debt' ? parseFloat(debtAmount || '0') : 0
           }
         }
         return c
@@ -213,6 +263,9 @@ export default function ClientsView() {
         name, email, phone, address,
         passportNumber, passportIssueDate, passportExpiryDate, birthDate,
         frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed,
+        approvalStatus,
+        paymentStatus,
+        debtAmount: paymentStatus === 'debt' ? parseFloat(debtAmount || '0') : 0,
         manualTrips: []
       }
       saveClientsList([newClient, ...clients])
@@ -231,6 +284,9 @@ export default function ClientsView() {
     setFrequentFlyerNumber('')
     setDietaryRestrictions('Sin restricciones')
     setPreferredBed('Matrimonial')
+    setApprovalStatus('approved')
+    setPaymentStatus('paid')
+    setDebtAmount('0')
   }
 
   // Start edit flow
@@ -249,6 +305,9 @@ export default function ClientsView() {
     setFrequentFlyerNumber(client.frequentFlyerNumber || '')
     setDietaryRestrictions(client.dietaryRestrictions || 'Sin restricciones')
     setPreferredBed(client.preferredBed || 'Matrimonial')
+    setApprovalStatus(client.approvalStatus || 'approved')
+    setPaymentStatus(client.paymentStatus || 'paid')
+    setDebtAmount(client.debtAmount?.toString() || '0')
     
     // Scroll to top/form in small screens
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -270,6 +329,9 @@ export default function ClientsView() {
     setFrequentFlyerNumber('')
     setDietaryRestrictions('Sin restricciones')
     setPreferredBed('Matrimonial')
+    setApprovalStatus('approved')
+    setPaymentStatus('paid')
+    setDebtAmount('0')
   }
 
   // Delete client profile
@@ -361,12 +423,24 @@ export default function ClientsView() {
     if (!matchesSearch) return false
 
     // 2. Passport Status match
-    if (passportFilter === 'todos') return true
-    
-    const status = getPassportStatus(c.passportExpiryDate)
-    if (passportFilter === 'vigentes') return status.code === 'valid'
-    if (passportFilter === 'alerta') return status.code === 'warning'
-    if (passportFilter === 'vencidos') return status.code === 'expired'
+    if (passportFilter !== 'todos') {
+      const status = getPassportStatus(c.passportExpiryDate)
+      if (passportFilter === 'vigentes' && status.code !== 'valid') return false
+      if (passportFilter === 'alerta' && status.code !== 'warning') return false
+      if (passportFilter === 'vencidos' && status.code !== 'expired') return false
+    }
+
+    // 3. Approval status match
+    if (approvalFilter !== 'todos') {
+      const status = c.approvalStatus || 'approved'
+      if (approvalFilter !== status) return false
+    }
+
+    // 4. Payment status match
+    if (paymentFilter !== 'todos') {
+      const status = c.paymentStatus || 'paid'
+      if (paymentFilter !== status) return false
+    }
     
     return true
   })
@@ -572,6 +646,53 @@ export default function ClientsView() {
                 </div>
               </div>
 
+              {/* Sección 4: Estado y Financiamiento */}
+              <div style={{ marginBottom: '1rem' }}>
+                <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#2563eb', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.25rem', marginBottom: '0.75rem', fontWeight: '600' }}>
+                  Estado y Finanzas
+                </h4>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#4b5563', marginBottom: '0.25rem' }}>Aprobación</label>
+                      <select 
+                        value={approvalStatus} 
+                        onChange={(e) => setApprovalStatus(e.target.value)} 
+                        style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', backgroundColor: 'white', boxSizing: 'border-box' }}
+                      >
+                        <option value="approved">Aprobado</option>
+                        <option value="pending">Pendiente</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#4b5563', marginBottom: '0.25rem' }}>Estado de Pago</label>
+                      <select 
+                        value={paymentStatus} 
+                        onChange={(e) => setPaymentStatus(e.target.value)} 
+                        style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', backgroundColor: 'white', boxSizing: 'border-box' }}
+                      >
+                        <option value="paid">Al día / Abonado</option>
+                        <option value="debt">Con Deuda</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {paymentStatus === 'debt' && (
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#4b5563', marginBottom: '0.25rem' }}>Monto Adeudado (USD)</label>
+                      <input 
+                        type="number" 
+                        value={debtAmount} 
+                        onChange={(e) => setDebtAmount(e.target.value)} 
+                        placeholder="Ej. 450" 
+                        style={{ width: '100%', padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Botones de acción del formulario */}
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                 <button 
@@ -631,6 +752,34 @@ export default function ClientsView() {
                 </select>
               </div>
 
+              {/* Approval status filter */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: '500', color: '#4b5563' }}>Aprobación:</label>
+                <select 
+                  value={approvalFilter}
+                  onChange={(e) => setApprovalFilter(e.target.value)}
+                  style={{ padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', backgroundColor: 'white' }}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="approved">Aprobados</option>
+                  <option value="pending">Pendientes</option>
+                </select>
+              </div>
+
+              {/* Payment status filter */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: '500', color: '#4b5563' }}>Estado Pago:</label>
+                <select 
+                  value={paymentFilter}
+                  onChange={(e) => setPaymentFilter(e.target.value)}
+                  style={{ padding: '0.625rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem', backgroundColor: 'white' }}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="paid">Al día / Abonado</option>
+                  <option value="debt">Con Deuda</option>
+                </select>
+              </div>
+
             </div>
 
             {/* Main Table Card */}
@@ -667,6 +816,28 @@ export default function ClientsView() {
                                 <div style={{ fontWeight: '600', color: '#1e293b' }}>{c.name}</div>
                                 <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                                   {c.birthDate ? getAge(c.birthDate).split(' (')[0] : 'Edad no registrada'}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem' }}>
+                                  <span style={{
+                                    padding: '0.15rem 0.35rem',
+                                    borderRadius: '4px',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '700',
+                                    backgroundColor: (c.approvalStatus || 'approved') === 'approved' ? '#dcfce7' : '#fef3c7',
+                                    color: (c.approvalStatus || 'approved') === 'approved' ? '#166534' : '#854d0e'
+                                  }}>
+                                    {(c.approvalStatus || 'approved') === 'approved' ? 'Aprobado' : 'Pendiente'}
+                                  </span>
+                                  <span style={{
+                                    padding: '0.15rem 0.35rem',
+                                    borderRadius: '4px',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '700',
+                                    backgroundColor: (c.paymentStatus || 'paid') === 'paid' ? '#e0f2fe' : '#fee2e2',
+                                    color: (c.paymentStatus || 'paid') === 'paid' ? '#0369a1' : '#991b1b'
+                                  }}>
+                                    {(c.paymentStatus || 'paid') === 'paid' ? 'Al día' : `Deuda: $${c.debtAmount || 0}`}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -825,6 +996,50 @@ export default function ClientsView() {
                   <Calendar size={16} style={{ color: '#9ca3af' }} />
                   <span>Edad: {getAge(selectedClient.birthDate)}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Estado y Finanzas Card */}
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#111827', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
+                <DollarSign size={18} style={{ color: '#2563eb' }} /> Estado y Financiamiento
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
+                  <span style={{ color: '#64748b' }}>Estado Aprobación:</span>
+                  <span style={{
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    backgroundColor: (selectedClient.approvalStatus || 'approved') === 'approved' ? '#dcfce7' : '#fef3c7',
+                    color: (selectedClient.approvalStatus || 'approved') === 'approved' ? '#166534' : '#854d0e'
+                  }}>
+                    {(selectedClient.approvalStatus || 'approved') === 'approved' ? 'APROBADO' : 'PENDIENTE'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
+                  <span style={{ color: '#64748b' }}>Estado Pago:</span>
+                  <span style={{
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    backgroundColor: (selectedClient.paymentStatus || 'paid') === 'paid' ? '#e0f2fe' : '#fee2e2',
+                    color: (selectedClient.paymentStatus || 'paid') === 'paid' ? '#0369a1' : '#991b1b'
+                  }}>
+                    {(selectedClient.paymentStatus || 'paid') === 'paid' ? 'AL DÍA' : 'CON DEUDA'}
+                  </span>
+                </div>
+                {(selectedClient.paymentStatus || 'paid') === 'debt' && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem' }}>
+                    <span style={{ color: '#64748b', fontWeight: 'bold' }}>Monto Deuda:</span>
+                    <span style={{ fontWeight: 'bold', color: '#ef4444' }}>
+                      USD ${selectedClient.debtAmount || 0}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 

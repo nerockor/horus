@@ -356,9 +356,37 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   // Get latest created package/service for active category to show as quick access
   const storedPackagesList = (() => {
     let list = JSON.parse(localStorage.getItem('horus_packages') || '[]');
+    
+    const addDefaultConsultations = (pkg) => {
+      if (pkg.consultations !== undefined) return pkg;
+      let defaultConsultations = 10;
+      if (pkg.id === 'p-buzios') defaultConsultations = 45;
+      else if (pkg.id === 'p-paris') defaultConsultations = 38;
+      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
+      else if (pkg.id === 'p-rio') defaultConsultations = 29;
+      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
+      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
+      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
+      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
+      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
+      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
+      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
+      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
+      else {
+        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
+        defaultConsultations = 5 + (code % 25);
+      }
+      return { ...pkg, consultations: defaultConsultations };
+    };
+
     if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g') || !list.some(p => p.id === 'p-vuelo-miami-promo') || !list.some(p => p.id === 'p-dubai-vip')) {
-      list = SEED_PACKAGES;
-      localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES));
+      const seeded = SEED_PACKAGES.map(addDefaultConsultations);
+      localStorage.setItem('horus_packages', JSON.stringify(seeded));
+      list = seeded;
+    } else if (list.some(p => p.consultations === undefined)) {
+      const migrated = list.map(addDefaultConsultations);
+      localStorage.setItem('horus_packages', JSON.stringify(migrated));
+      list = migrated;
     }
     return list;
   })()
@@ -443,10 +471,37 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   useEffect(() => {
     let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
     
+    const addDefaultConsultations = (pkg) => {
+      if (pkg.consultations !== undefined) return pkg;
+      let defaultConsultations = 10;
+      if (pkg.id === 'p-buzios') defaultConsultations = 45;
+      else if (pkg.id === 'p-paris') defaultConsultations = 38;
+      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
+      else if (pkg.id === 'p-rio') defaultConsultations = 29;
+      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
+      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
+      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
+      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
+      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
+      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
+      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
+      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
+      else {
+        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
+        defaultConsultations = 5 + (code % 25);
+      }
+      return { ...pkg, consultations: defaultConsultations };
+    };
+
     // Seed database with mock packages if it's empty
     if (storedPackages.length === 0) {
-      storedPackages = SEED_PACKAGES
-      localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
+      const seeded = SEED_PACKAGES.map(addDefaultConsultations)
+      localStorage.setItem('horus_packages', JSON.stringify(seeded))
+      storedPackages = seeded
+    } else if (storedPackages.some(p => p.consultations === undefined)) {
+      const migrated = storedPackages.map(addDefaultConsultations)
+      localStorage.setItem('horus_packages', JSON.stringify(migrated))
+      storedPackages = migrated
     }
 
     const categoryPackages = storedPackages.filter(p => (p.category || 'paquetes') === activeCategory)
@@ -605,6 +660,19 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   // Open checklist popup
   const handleVerifyOpen = (result) => {
     setSelectedResult(result)
+    
+    // Increment consultations count in local storage if result is a package
+    if (result && result.id && !result.isCustomQuery) {
+      const stored = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+      const updated = stored.map(p => {
+        if (p.id === result.id) {
+          return { ...p, consultations: (p.consultations || 0) + 1 }
+        }
+        return p
+      })
+      localStorage.setItem('horus_packages', JSON.stringify(updated))
+    }
+
     // Reset checklist state
     setChecklist({
       identity: false,

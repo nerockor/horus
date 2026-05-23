@@ -309,9 +309,37 @@ export default function PackagesView() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    
+    const addDefaultConsultations = (pkg) => {
+      if (pkg.consultations !== undefined) return pkg;
+      let defaultConsultations = 10;
+      if (pkg.id === 'p-buzios') defaultConsultations = 45;
+      else if (pkg.id === 'p-paris') defaultConsultations = 38;
+      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
+      else if (pkg.id === 'p-rio') defaultConsultations = 29;
+      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
+      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
+      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
+      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
+      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
+      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
+      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
+      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
+      else {
+        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
+        defaultConsultations = 5 + (code % 25);
+      }
+      return { ...pkg, consultations: defaultConsultations };
+    };
+
     if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo') || !data.some(p => p.id === 'p-dubai-vip')) {
-      localStorage.setItem('horus_packages', JSON.stringify(SEED_PACKAGES))
-      setPackages(SEED_PACKAGES)
+      const seeded = SEED_PACKAGES.map(addDefaultConsultations)
+      localStorage.setItem('horus_packages', JSON.stringify(seeded))
+      setPackages(seeded)
+    } else if (data.some(p => p.consultations === undefined)) {
+      const migrated = data.map(addDefaultConsultations)
+      localStorage.setItem('horus_packages', JSON.stringify(migrated))
+      setPackages(migrated)
     } else {
       setPackages(data)
     }
@@ -350,6 +378,7 @@ export default function PackagesView() {
         price,
         bonus: bonus || '0',
         targetAudience,
+        consultations: 0,
         lastModifiedBy: author
       }
 
