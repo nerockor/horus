@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { MapPin, Smartphone, CreditCard, BadgePercent } from 'lucide-react'
 import Overlay from './components/ui/Overlay'
 import BookingPanel from './components/ui/BookingPanel'
@@ -12,6 +12,16 @@ import './App.css'
 function PublicApp() {
   const [activeBookings, setActiveBookings] = useState([])
   const [view, setView] = useState('landing') // 'landing' or 'booking'
+  const location = useLocation()
+
+  // Open booking view when redirected from other pages with state
+  useEffect(() => {
+    if (location.state?.activeView) {
+      setView(location.state.activeView)
+      // Clean history state so refreshes behave normally
+      window.history.replaceState({}, document.title)
+    }
+  }, [location])
 
   // Manage body scroll based on active view to prevent 3D scroll while in booking mode
   useEffect(() => {
