@@ -1826,7 +1826,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         overflow: 'hidden',
                         height: isSelected ? '510px' : '380px',
                         cursor: 'pointer',
-                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                         display: 'flex',
                         flexDirection: 'column'
                       }}
@@ -1840,7 +1840,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                           position: 'relative', 
                           zIndex: 1,
                           height: isSelected ? '160px' : '80%',
-                          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                          transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
                         }}
                       >
@@ -1857,7 +1857,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: isSelected ? 'flex-start' : 'center',
-                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                          transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           flexGrow: isSelected ? 1 : 0
                         }}
                       >
