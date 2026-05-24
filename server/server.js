@@ -5,6 +5,8 @@ import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import db from './db.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 dotenv.config()
 
@@ -480,6 +482,21 @@ app.post('/api/content', verifyToken, asyncHandler(async (req, res) => {
 
   res.json({ heroImage, aboutImage })
 }))
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Serve frontend static files from the compiled 'dist' folder
+const distPath = path.resolve(__dirname, '../dist')
+app.use(express.static(distPath))
+
+// Route all other requests (except /api) to index.html for React Router SPA
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next()
+  }
+  res.sendFile(path.join(distPath, 'index.html'))
+})
 
 // Global Error Handler
 app.use((err, req, res, next) => {
