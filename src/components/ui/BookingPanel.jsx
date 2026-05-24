@@ -1840,7 +1840,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         style={{ 
                           position: 'relative', 
                           zIndex: 1,
-                          height: isSelected ? '160px' : '340px',
+                          height: isSelected ? '160px' : '400px',
                           transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
                         }}
@@ -1853,8 +1853,8 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                       <div 
                         className="despegar-content"
                         style={{
-                          height: isSelected ? '420px' : '240px',
-                          padding: '1.25rem',
+                          height: isSelected ? '420px' : '180px',
+                          padding: isSelected ? '1.25rem' : '1rem',
                           display: 'flex',
                           flexDirection: 'column',
                           transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
