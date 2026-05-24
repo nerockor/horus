@@ -52,6 +52,42 @@ export default function BlogView() {
       color: '#0f2d4a',
       overflowX: 'hidden'
     }}>
+      <style>{`
+        .blog-card {
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .blog-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 25px 50px rgba(0, 83, 229, 0.12) !important;
+          border-color: rgba(0, 83, 229, 0.3) !important;
+        }
+        .blog-card-summary {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          margin: 0 !important;
+        }
+        .blog-card:hover .blog-card-summary {
+          max-height: 150px;
+          opacity: 1;
+          margin-top: 0.5rem !important;
+        }
+        .blog-card-img {
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .blog-card:hover .blog-card-img {
+          transform: scale(1.08);
+        }
+        .blog-card-readmore {
+          transition: all 0.3s ease !important;
+        }
+        .blog-card:hover .blog-card-readmore {
+          color: #003db3 !important;
+          transform: translateX(4px);
+        }
+      `}</style>
+
       {/* 1. Top Utility Bar */}
       <div className="top-utility-bar" style={{ position: 'relative', zIndex: 10 }}>
         {/* Left Info */}
@@ -314,27 +350,16 @@ export default function BlogView() {
                     onClick={() => handleReadPost(post)}
                     style={{
                       background: '#ffffff',
-                      border: '1px solid rgba(15, 45, 74, 0.08)',
+                      border: '1px solid rgba(0, 83, 229, 0.15)',
                       borderRadius: '24px',
                       overflow: 'hidden',
-                      boxShadow: '0 4px 20px rgba(15, 45, 74, 0.02)',
+                      boxShadow: '0 15px 35px rgba(15, 45, 74, 0.08)',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
-                      transition: 'all 0.3s ease',
                       position: 'relative'
                     }}
                     className="blog-card"
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-6px)'
-                      e.currentTarget.style.boxShadow = '0 15px 35px rgba(15, 45, 74, 0.08)'
-                      e.currentTarget.style.borderColor = 'rgba(0, 83, 229, 0.2)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'none'
-                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 45, 74, 0.02)'
-                      e.currentTarget.style.borderColor = 'rgba(15, 45, 74, 0.08)'
-                    }}
                   >
                     {/* Card Cover Image */}
                     <div style={{ height: '200px', width: '100%', overflow: 'hidden', position: 'relative', backgroundColor: '#f1f5f9' }}>
@@ -390,9 +415,10 @@ export default function BlogView() {
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        flex: 1
-                      }}>
+                        WebkitBoxOrient: 'vertical'
+                      }}
+                        className="blog-card-summary"
+                      >
                         {post.summary || post.content}
                       </p>
 
@@ -406,7 +432,9 @@ export default function BlogView() {
                         marginTop: '0.5rem',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
-                      }}>
+                      }}
+                        className="blog-card-readmore"
+                      >
                         Leer artículo completo
                         <ChevronRight size={14} />
                       </div>
