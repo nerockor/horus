@@ -540,12 +540,15 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
       const c = activeCategory
       let filtered = packages.filter(p => (p.category || 'paquetes') === c)
 
-      // Filter by destination search query if typed
-      const searchDest = formData.destination.trim().toLowerCase()
-      if (searchDest) {
+      // Filter by destination search query if typed (stripping parenthesized airport codes like "(MAD)")
+      let searchDest = formData.destination.trim().toLowerCase()
+      const cityMatch = searchDest.match(/^([^(]+)/)
+      const cleanSearchDest = cityMatch ? cityMatch[1].trim() : searchDest
+
+      if (cleanSearchDest) {
         filtered = filtered.filter(p => 
-          (p.location && p.location.toLowerCase().includes(searchDest)) ||
-          (p.name && p.name.toLowerCase().includes(searchDest))
+          (p.location && p.location.toLowerCase().includes(cleanSearchDest)) ||
+          (p.name && p.name.toLowerCase().includes(cleanSearchDest))
         )
       }
       
