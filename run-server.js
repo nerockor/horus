@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
 
 const logFile = path.resolve('./server-crash.log')
 
@@ -9,9 +9,7 @@ try {
   console.error('Failed to write to log file:', e)
 }
 
-try {
-  await import('./server/server.js')
-} catch (error) {
+import('./server/server.js').catch((error) => {
   try {
     fs.appendFileSync(logFile, `[${new Date().toISOString()}] FATAL CRASH DURING BOOT:\n${error.stack || error}\n`)
   } catch (e) {
@@ -19,4 +17,4 @@ try {
   }
   console.error('Fatal crash during boot:', error)
   process.exit(1)
-}
+})
