@@ -346,6 +346,25 @@ const SEED_PACKAGES = [
     price: '1850000',
     bonus: '8',
     targetAudience: 'Familiares'
+  },
+  {
+    id: 'p-humboldt',
+    category: 'paquetes',
+    name: 'Hospedaje en el Humboldt + actividades',
+    location: 'Caracas, Venezuela',
+    startDate: '2024-07-29',
+    endDate: '2024-08-18',
+    duration: '20 Días / 19 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1598062548091-a6fb6ac082f9?auto=format&fit=crop&w=600&q=80',
+    price: '1059',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    description: 'Caracas, ubicada en el norte de Venezuela, es la capital y ciudad más grande de Venezuela. La ciudad está rodeada de enormes y majestuosas montañas pasados por el Monte Ávila, una montaña impresionante que separa la ciudad del mar Caribe, y altas laderas verdes hermosas se pueden ver por toda la ciudad. Hospedaje en el Hotel Humboldt (cima del parque nacional Waraira Repano / El Ávila), Suite con desayuno incluido.',
+    checklistDetails: {
+      baggage: 'Equipaje de mano y bolso personal incluidos. Ascenso y traslado en teleférico incluidos.',
+      identity: 'Cédula de Identidad o Pasaporte vigente obligatorio al momento del check-in.',
+      cancelation: 'Cancelación sin cargo hasta 7 días antes de la fecha de salida.'
+    }
   }
 ]
 
@@ -468,10 +487,18 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
       const originalPrice = parseFloat(p.price || '0')
       const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
 
+      const seedPkg = SEED_PACKAGES.find(sp => sp.id === p.id)
+      const checklistDetails = seedPkg?.checklistDetails || {
+        baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+        identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+        cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+      }
+      const description = seedPkg?.description || p.description || `Servicio en ${p.location}`
+
       mockResults.push({
         id: p.id,
         title: p.name,
-        description: `Servicio en ${p.location}`,
+        description,
         meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
         price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
         originalPriceRaw: originalPrice,
@@ -483,11 +510,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
         audienceRaw: p.targetAudience,
         category: p.category || 'paquetes',
         promoted: discount > 0,
-        checklistDetails: {
-          baggage: 'Sujeto a las conditions particulares del servicio adquirido.',
-          identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
-          cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
-        }
+        checklistDetails
       })
     })
 
@@ -557,10 +580,18 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
         const originalPrice = parseFloat(p.price || '0')
         const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice
 
+        const seedPkg = SEED_PACKAGES.find(sp => sp.id === p.id)
+        const checklistDetails = seedPkg?.checklistDetails || {
+          baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+          identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+          cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+        }
+        const description = seedPkg?.description || p.description || `Servicio en ${p.location}`
+
         mockResults.push({
           id: p.id,
           title: p.name,
-          description: `Servicio en ${p.location}`,
+          description,
           meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
           price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
           originalPriceRaw: originalPrice,
@@ -572,11 +603,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
           audienceRaw: p.targetAudience,
           category: p.category || 'paquetes',
           promoted: discount > 0,
-          checklistDetails: {
-            baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
-            identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
-            cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
-          }
+          checklistDetails
         })
       })
 
@@ -1697,10 +1724,18 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                     const originalPrice = parseFloat(p.price || '0');
                     const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice;
 
+                    const seedPkg = SEED_PACKAGES.find(sp => sp.id === p.id);
+                    const checklistDetails = seedPkg?.checklistDetails || {
+                      baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+                      identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+                      cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+                    };
+                    const description = seedPkg?.description || p.description || `Servicio en ${p.location}`;
+
                     mockResults.push({
                       id: p.id,
                       title: p.name,
-                      description: `Servicio en ${p.location}`,
+                      description,
                       meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
                       price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
                       originalPriceRaw: originalPrice,
@@ -1712,11 +1747,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                       audienceRaw: p.targetAudience,
                       category: p.category || 'paquetes',
                       promoted: discount > 0,
-                      checklistDetails: {
-                        baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
-                        identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
-                        cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
-                      }
+                      checklistDetails
                     });
                   });
 

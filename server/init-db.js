@@ -330,6 +330,22 @@ const SEED_PACKAGES = [
     status: 'Activo',
     consultations: 31,
     lastModifiedBy: 'Sistema'
+  },
+  {
+    id: 'p-humboldt',
+    category: 'paquetes',
+    name: 'Hospedaje en el Humboldt + actividades',
+    location: 'Caracas, Venezuela',
+    startDate: '2024-07-29',
+    endDate: '2024-08-18',
+    duration: '20 Días / 19 Noches',
+    imageUrl: 'https://images.unsplash.com/photo-1598062548091-a6fb6ac082f9?auto=format&fit=crop&w=600&q=80',
+    price: '1059',
+    bonus: '0',
+    targetAudience: 'Todo Público',
+    status: 'Activo',
+    consultations: 12,
+    lastModifiedBy: 'Sistema'
   }
 ]
 
