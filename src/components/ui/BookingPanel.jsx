@@ -1824,7 +1824,8 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                       style={{ 
                         position: 'relative', 
                         overflow: 'hidden',
-                        height: isSelected ? '510px' : '380px',
+                        height: '580px',
+                        width: '365px',
                         cursor: 'pointer',
                         transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                         display: 'flex',
@@ -1839,7 +1840,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         style={{ 
                           position: 'relative', 
                           zIndex: 1,
-                          height: isSelected ? '160px' : '80%',
+                          height: isSelected ? '160px' : '380px',
                           transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
                         }}
@@ -1852,8 +1853,8 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                       <div 
                         className="despegar-content"
                         style={{
-                          height: isSelected ? 'auto' : '20%',
-                          padding: isSelected ? '1.25rem' : '0.5rem 1rem',
+                          height: isSelected ? '420px' : '200px',
+                          padding: '1.25rem',
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: isSelected ? 'flex-start' : 'center',
@@ -1862,13 +1863,16 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         }}
                       >
                         {!isSelected ? (
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                            <h5 className="despegar-title" style={{ margin: 0, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%', fontFamily: 'Outfit, sans-serif', fontWeight: '700', color: '#0f172a' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', gap: '0.5rem', width: '100%' }}>
+                            <h5 className="despegar-title" style={{ margin: 0, fontSize: '1.15rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%', fontFamily: 'Outfit, sans-serif', fontWeight: '700', color: '#0f172a' }}>
                               {result.title}
                             </h5>
-                            <div className="despegar-final-price" style={{ fontSize: '1.2rem', margin: 0, fontWeight: '800', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
-                              <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
-                              {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                            <div className="despegar-price-section" style={{ borderTop: 'none', paddingTop: 0, marginTop: '0.25rem' }}>
+                              <span className="despegar-price-label" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Precio final por persona</span>
+                              <div className="despegar-final-price" style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', lineHeight: '1.1', margin: '0.2rem 0', fontFamily: 'Outfit, sans-serif' }}>
+                                <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
+                                {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                              </div>
                             </div>
                           </div>
                         ) : (
