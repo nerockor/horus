@@ -1819,13 +1819,14 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                     <div 
                       key={result.id} 
                       className="despegar-package-card" 
-                      onClick={() => setSelectedCardId(prev => prev === result.id ? null : result.id)}
+                      onMouseEnter={() => setSelectedCardId(result.id)}
+                      onMouseLeave={() => setSelectedCardId(null)}
                       style={{ 
                         position: 'relative', 
                         overflow: 'hidden',
-                        height: isSelected ? 'auto' : '380px',
+                        height: isSelected ? '510px' : '380px',
                         cursor: 'pointer',
-                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                         display: 'flex',
                         flexDirection: 'column'
                       }}
@@ -1838,8 +1839,8 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         style={{ 
                           position: 'relative', 
                           zIndex: 1,
-                          height: isSelected ? '180px' : '80%',
-                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                          height: isSelected ? '160px' : '80%',
+                          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                           background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
                         }}
                       >
