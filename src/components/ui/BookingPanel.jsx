@@ -21,6 +21,8 @@ import {
   Music
 } from 'lucide-react'
 import './BookingPanel.css'
+import { api } from '../../api'
+
 
 // Custom SVG Mickey Ears Icon for Disney
 function DisneyIcon({ className = '', size = 20 }) {
@@ -353,44 +355,15 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   const [results, setResults] = useState(null)
   const [selectedResult, setSelectedResult] = useState(null)
 
-  // Get latest created package/service for active category to show as quick access
-  const storedPackagesList = (() => {
-    let list = JSON.parse(localStorage.getItem('horus_packages') || '[]');
-    
-    const addDefaultConsultations = (pkg) => {
-      if (pkg.consultations !== undefined) return pkg;
-      let defaultConsultations = 10;
-      if (pkg.id === 'p-buzios') defaultConsultations = 45;
-      else if (pkg.id === 'p-paris') defaultConsultations = 38;
-      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
-      else if (pkg.id === 'p-rio') defaultConsultations = 29;
-      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
-      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
-      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
-      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
-      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
-      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
-      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
-      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
-      else {
-        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
-        defaultConsultations = 5 + (code % 25);
-      }
-      return { ...pkg, consultations: defaultConsultations };
-    };
+  const [packages, setPackages] = useState([])
 
-    if (list.length === 0 || list.some(p => p.category === 'assistcard') || !list.some(p => p.id === 'p-karol-g') || !list.some(p => p.id === 'p-vuelo-miami-promo') || !list.some(p => p.id === 'p-dubai-vip')) {
-      const seeded = SEED_PACKAGES.map(addDefaultConsultations);
-      localStorage.setItem('horus_packages', JSON.stringify(seeded));
-      list = seeded;
-    } else if (list.some(p => p.consultations === undefined)) {
-      const migrated = list.map(addDefaultConsultations);
-      localStorage.setItem('horus_packages', JSON.stringify(migrated));
-      list = migrated;
-    }
-    return list;
-  })()
-  const categoryPackagesList = storedPackagesList.filter(p => (p.category || 'paquetes') === activeCategory)
+  useEffect(() => {
+    api.getPackages()
+      .then(data => setPackages(data))
+      .catch(err => console.error('Error fetching packages in BookingPanel:', err))
+  }, [])
+
+  const categoryPackagesList = packages.filter(p => (p.category || 'paquetes') === activeCategory)
   const latestPkg = categoryPackagesList.length > 0 ? categoryPackagesList[categoryPackagesList.length - 1] : null
 
   // Package inquiry calculator states
@@ -469,42 +442,9 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
 
   // Update default destination and fields based on the latest package of the active category, and load previews automatically
   useEffect(() => {
-    let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-    
-    const addDefaultConsultations = (pkg) => {
-      if (pkg.consultations !== undefined) return pkg;
-      let defaultConsultations = 10;
-      if (pkg.id === 'p-buzios') defaultConsultations = 45;
-      else if (pkg.id === 'p-paris') defaultConsultations = 38;
-      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
-      else if (pkg.id === 'p-rio') defaultConsultations = 29;
-      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
-      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
-      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
-      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
-      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
-      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
-      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
-      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
-      else {
-        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
-        defaultConsultations = 5 + (code % 25);
-      }
-      return { ...pkg, consultations: defaultConsultations };
-    };
+    if (packages.length === 0) return
 
-    // Seed database with mock packages if it's empty
-    if (storedPackages.length === 0) {
-      const seeded = SEED_PACKAGES.map(addDefaultConsultations)
-      localStorage.setItem('horus_packages', JSON.stringify(seeded))
-      storedPackages = seeded
-    } else if (storedPackages.some(p => p.consultations === undefined)) {
-      const migrated = storedPackages.map(addDefaultConsultations)
-      localStorage.setItem('horus_packages', JSON.stringify(migrated))
-      storedPackages = migrated
-    }
-
-    const categoryPackages = storedPackages.filter(p => (p.category || 'paquetes') === activeCategory)
+    const categoryPackages = packages.filter(p => (p.category || 'paquetes') === activeCategory)
     
     if (categoryPackages.length > 0) {
       const latest = categoryPackages[categoryPackages.length - 1]
@@ -539,7 +479,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
         category: p.category || 'paquetes',
         promoted: discount > 0,
         checklistDetails: {
-          baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+          baggage: 'Sujeto a las conditions particulares del servicio adquirido.',
           identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
           cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
         }
@@ -564,7 +504,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
     })
 
     setResults(mockResults)
-  }, [activeCategory])
+  }, [activeCategory, packages])
 
   // Swap function for Flight/Package origin & destination
   const handleSwap = () => {
@@ -591,13 +531,9 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
     
     setTimeout(() => {
       setSearching(false)
-      
-      // Search results depending on the active category
       const mockResults = []
       const c = activeCategory
-      
-      let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-      let filtered = storedPackages.filter(p => (p.category || 'paquetes') === c)
+      let filtered = packages.filter(p => (p.category || 'paquetes') === c)
 
       // Filter by destination search query if typed
       const searchDest = formData.destination.trim().toLowerCase()
@@ -660,19 +596,10 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   // Open checklist popup
   const handleVerifyOpen = (result) => {
     setSelectedResult(result)
-    
-    // Increment consultations count in local storage if result is a package
+    // Increment consultations count in database if result is a package
     if (result && result.id && !result.isCustomQuery) {
-      const stored = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-      const updated = stored.map(p => {
-        if (p.id === result.id) {
-          return { ...p, consultations: (p.consultations || 0) + 1 }
-        }
-        return p
-      })
-      localStorage.setItem('horus_packages', JSON.stringify(updated))
+      api.consultPackage(result.id).catch(err => console.error('Error incrementing consultations:', err))
     }
-
     // Reset checklist state
     setChecklist({
       identity: false,
@@ -723,25 +650,26 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
     }
 
     onAddBooking(newBooking)
+    // Save to database for Admin Panel
+    api.createBooking({
+      title: newBooking.title,
+      description: newBooking.description,
+      meta: newBooking.meta,
+      price: newBooking.price,
+      category: newBooking.category,
+      paymentStatus: 'unpaid',
+      tripStatus: 'pending'
+    }).catch(err => console.error('Booking save error:', err))
 
-    // Save to localStorage for Admin Panel
-    const existingBookings = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
-    localStorage.setItem('horus_bookings', JSON.stringify([newBooking, ...existingBookings]))
-
-    // Add query to Admin Panel
-    const newQuery = {
-      id: `q-p-${Date.now()}`,
+    // Add query to database
+    api.createQuery({
       clientName: `Reserva / Consulta Cliente`,
       contact: `Sugerido por buscador`,
       message: selectedResult.isCustomQuery
         ? `Solicita consulta personalizada para la categoría ${selectedResult.category.toUpperCase()}.`
         : `Consulta por "${selectedResult.title}" para ${passengerCount} pasajeros. Total cotizado: ${finalPriceVal}.`,
-      date: new Date().toLocaleString('es-ES'),
-      status: 'Pendiente',
       category: selectedResult.category
-    }
-    const existingQueries = JSON.parse(localStorage.getItem('horus_queries') || '[]')
-    localStorage.setItem('horus_queries', JSON.stringify([newQuery, ...existingQueries]))
+    }).catch(err => console.error('Query save error:', err))
 
     setSelectedResult(null) // close popup
     
@@ -1742,71 +1670,68 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                 setSearching(true);
                 setResults(null);
                 
-                setTimeout(() => {
-                  setSearching(false);
-                  const mockResults = [];
-                  const c = activeCategory;
+
+
+
+
                   
-                  let storedPackages = JSON.parse(localStorage.getItem('horus_packages') || '[]');
-                  let filtered = storedPackages.filter(p => (p.category || 'paquetes') === c);
 
-                  const searchDest = (latestPkg.location || latestPkg.name).trim().toLowerCase();
-                  if (searchDest) {
-                    filtered = filtered.filter(p => 
-                      (p.location && p.location.toLowerCase().includes(searchDest)) ||
-                      (p.name && p.name.toLowerCase().includes(searchDest))
-                    );
-                  }
 
-                  filtered.forEach(p => {
-                    const discount = parseFloat(p.bonus || '0');
-                    const originalPrice = parseFloat(p.price || '0');
-                    const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice;
 
-                    mockResults.push({
-                      id: p.id,
-                      title: p.name,
-                      description: `Servicio en ${p.location}`,
-                      meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
-                      price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
-                      originalPriceRaw: originalPrice,
-                      finalPriceRaw: finalPrice,
-                      discountRaw: discount,
-                      durationRaw: p.duration,
-                      imageUrlRaw: p.imageUrl,
-                      locationRaw: p.location,
-                      audienceRaw: p.targetAudience,
-                      category: p.category || 'paquetes',
-                      promoted: discount > 0,
-                      checklistDetails: {
-                        baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
-                        identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
-                        cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
-                      }
-                    });
-                  });
 
-                  mockResults.push({
-                    id: `custom-query-${c}`,
-                    title: `¿No encontrás lo que buscás?`,
-                    description: `Hacé una consulta personalizada para la categoría ${c.toUpperCase()} y un agente te contactará a la brevedad con una cotización a tu medida.`,
-                    meta: `Respuesta rápida (Menos de 24hs)`,
-                    price: 'A cotizar',
-                    category: c,
-                    promoted: false,
-                    isCustomQuery: true,
-                    checklistDetails: {
-                      baggage: 'A coordinar con el agente de ventas.',
-                      identity: 'Los datos requeridos se informarán en la cotización.',
-                      cancelation: 'Condiciones sujetas al servicio que contrates.'
-                    }
-                  });
 
-                  setResults(mockResults);
-                }, 1000);
-              }}
-              style={{
-                background: 'rgba(255, 215, 0, 0.12)',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 border: '1px solid rgba(255, 215, 0, 0.3)',
                 color: '#ffd700',
                 padding: '0.3rem 0.8rem',

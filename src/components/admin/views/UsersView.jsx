@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../../../api'
 
 export default function UsersView() {
   const [users, setUsers] = useState([])
@@ -6,29 +7,36 @@ export default function UsersView() {
   const [newPassword, setNewPassword] = useState('')
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_users') || '[]')
-    setUsers(data)
+    api.getUsers()
+      .then(data => setUsers(data))
+      .catch(err => console.error('Error fetching users:', err))
   }, [])
 
-  const handleAddUser = (e) => {
+  const handleAddUser = async (e) => {
     e.preventDefault()
     if (!newUsername || !newPassword) return
 
-    const newUser = { id: Date.now().toString(), username: newUsername, password: newPassword, role: 'vendedor' }
-    const updatedUsers = [...users, newUser]
-    setUsers(updatedUsers)
-    localStorage.setItem('horus_users', JSON.stringify(updatedUsers))
-    setNewUsername('')
-    setNewPassword('')
-  }
-
-  const deleteUser = (id) => {
-    if (confirm('¿Seguro que deseas eliminar este usuario?')) {
-      const updated = users.filter(u => u.id !== id)
-      setUsers(updated)
-      localStorage.setItem('horus_users', JSON.stringify(updated))
+    try {
+      const newUser = await api.createUser({ username: newUsername, password: newPassword, role: 'vendedor' })
+      setUsers([...users, newUser])
+      setNewUsername('')
+      setNewPassword('')
+    } catch (err) {
+      alert(err.message || 'Error al crear usuario')
     }
   }
+
+  const deleteUser = async (id) => {
+    if (confirm('¿Seguro que deseas eliminar este usuario?')) {
+      try {
+        await api.deleteUser(id)
+        setUsers(users.filter(u => u.id !== id))
+      } catch (err) {
+        alert(err.message || 'Error al eliminar usuario')
+      }
+    }
+  }
+
 
   return (
     <div>

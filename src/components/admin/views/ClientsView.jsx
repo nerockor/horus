@@ -8,12 +8,17 @@ import { getPassportStatus, getAge, MOCK_CLIENTS } from './clientsUtils'
 import { downloadClientsCSV, downloadActiveTripsCSV } from './clientsCSV'
 import ClientForm from './ClientForm'
 import ClientDetail from './ClientDetail'
+import { api } from '../../../api'
 
 export default function ClientsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [clients, setClients] = useState([])
   const [selectedClient, setSelectedClient] = useState(null)
   
+  // Link states
+  const [queries, setQueries] = useState([])
+  const [bookings, setBookings] = useState([])
+
   // Search and Filter State
   const [searchTerm, setSearchTerm] = useState('')
   const [passportFilter, setPassportFilter] = useState('todos')
@@ -46,26 +51,20 @@ export default function ClientsView() {
   const [newTripStatus, setNewTripStatus] = useState('Realizado')
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_clients') || '[]')
-    
-    if (data.length === 0) {
-      localStorage.setItem('horus_clients', JSON.stringify(MOCK_CLIENTS))
-      setClients(MOCK_CLIENTS)
-    } else {
-      const needsMigration = data.some(c => !c.approvalStatus)
-      if (needsMigration) {
-        const migrated = data.map((c, index) => ({
-          ...c,
-          approvalStatus: c.approvalStatus || (index === 1 || index === 3 ? 'pending' : 'approved'),
-          paymentStatus: c.paymentStatus || (index === 2 || index === 3 ? 'debt' : 'paid'),
-          debtAmount: c.debtAmount !== undefined ? c.debtAmount : (index === 2 ? 450 : (index === 3 ? 1500 : 0))
-        }))
-        localStorage.setItem('horus_clients', JSON.stringify(migrated))
-        setClients(migrated)
-      } else {
-        setClients(data)
-      }
-    }
+    // Fetch clients
+    api.getClients()
+      .then(data => setClients(data))
+      .catch(err => console.error('Error fetching clients:', err))
+
+    // Fetch queries
+    api.getQueries()
+      .then(data => setQueries(data))
+      .catch(err => console.error('Error fetching queries:', err))
+
+    // Fetch bookings
+    api.getBookings()
+      .then(data => setBookings(data))
+      .catch(err => console.error('Error fetching bookings:', err))
 
     const queryName = searchParams.get('prefill_name')
     const queryContact = searchParams.get('prefill_contact')
@@ -79,44 +78,49 @@ export default function ClientsView() {
     }
   }, [searchParams, setSearchParams])
 
-  const saveClientsList = (updatedClients) => {
+  const updateLocalClients = (updatedClients) => {
     setClients(updatedClients)
-    localStorage.setItem('horus_clients', JSON.stringify(updatedClients))
     if (selectedClient) {
       const currentSelected = updatedClients.find(c => c.id === selectedClient.id)
       setSelectedClient(currentSelected || null)
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name) return
 
     if (isEditing) {
-      const updated = clients.map(c => {
-        if (c.id === editId) {
-          return {
-            ...c, name, email, phone, address, passportNumber, passportIssueDate, passportExpiryDate, birthDate,
-            frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed,
-            approvalStatus, paymentStatus, debtAmount: paymentStatus === 'debt' ? parseFloat(debtAmount || '0') : 0
-          }
-        }
-        return c
-      })
-      saveClientsList(updated)
-      setIsEditing(false)
-      setEditId(null)
+      const updatedClient = {
+        name, email, phone, address, passportNumber, passportIssueDate, passportExpiryDate, birthDate,
+        frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed,
+        approvalStatus, paymentStatus, debtAmount: paymentStatus === 'debt' ? parseFloat(debtAmount || '0') : 0
+      }
+      try {
+        const res = await api.updateClient(editId, updatedClient)
+        const updated = clients.map(c => c.id === editId ? res : c)
+        updateLocalClients(updated)
+        setIsEditing(false)
+        setEditId(null)
+        handleCancelEdit()
+      } catch (err) {
+        alert(err.message || 'Error al actualizar pasajero')
+      }
     } else {
       const newClient = {
-        id: `c-${Date.now()}`, name, email, phone, address, passportNumber, passportIssueDate, passportExpiryDate, birthDate,
+        name, email, phone, address, passportNumber, passportIssueDate, passportExpiryDate, birthDate,
         frequentFlyerAirline, frequentFlyerNumber, dietaryRestrictions, preferredBed,
         approvalStatus, paymentStatus, debtAmount: paymentStatus === 'debt' ? parseFloat(debtAmount || '0') : 0,
         manualTrips: []
       }
-      saveClientsList([newClient, ...clients])
+      try {
+        const res = await api.createClient(newClient)
+        updateLocalClients([res, ...clients])
+        handleCancelEdit()
+      } catch (err) {
+        alert(err.message || 'Error al guardar pasajero')
+      }
     }
-
-    handleCancelEdit()
   }
 
   const handleEdit = (client) => {
@@ -160,43 +164,53 @@ export default function ClientsView() {
     setDebtAmount('0')
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('¿Seguro que deseas eliminar la ficha de este pasajero? Todo su historial se borrará.')) {
-      const updated = clients.filter(c => c.id !== id)
-      saveClientsList(updated)
-      if (selectedClient && selectedClient.id === id) setSelectedClient(null)
+      try {
+        await api.deleteClient(id)
+        const updated = clients.filter(c => c.id !== id)
+        updateLocalClients(updated)
+        if (selectedClient && selectedClient.id === id) setSelectedClient(null)
+      } catch (err) {
+        alert(err.message || 'Error al eliminar pasajero')
+      }
     }
   }
 
-  const handleAddManualTrip = (e) => {
+  const handleAddManualTrip = async (e) => {
     e.preventDefault()
     if (!newTripDest || !newTripDate || !newTripPrice) return
 
     const trip = { id: `mt-${Date.now()}`, destination: newTripDest, date: newTripDate, price: newTripPrice, status: newTripStatus }
-    const updated = clients.map(c => {
-      if (c.id === selectedClient.id) return { ...c, manualTrips: [trip, ...(c.manualTrips || [])] }
-      return c
-    })
-    saveClientsList(updated)
-    setNewTripDest('')
-    setNewTripDate('')
-    setNewTripPrice('')
-    setNewTripStatus('Realizado')
+    const updatedClient = { ...selectedClient, manualTrips: [trip, ...(selectedClient.manualTrips || [])] }
+    try {
+      const res = await api.updateClient(selectedClient.id, updatedClient)
+      const updated = clients.map(c => c.id === selectedClient.id ? res : c)
+      updateLocalClients(updated)
+      setNewTripDest('')
+      setNewTripDate('')
+      setNewTripPrice('')
+      setNewTripStatus('Realizado')
+    } catch (err) {
+      alert(err.message || 'Error al agregar viaje')
+    }
   }
 
-  const handleRemoveManualTrip = (tripId) => {
+  const handleRemoveManualTrip = async (tripId) => {
     if (confirm('¿Deseas eliminar este registro de viaje del historial?')) {
-      const updated = clients.map(c => {
-        if (c.id === selectedClient.id) return { ...c, manualTrips: (c.manualTrips || []).filter(t => t.id !== tripId) }
-        return c
-      })
-      saveClientsList(updated)
+      const updatedClient = { ...selectedClient, manualTrips: (selectedClient.manualTrips || []).filter(t => t.id !== tripId) }
+      try {
+        await api.updateClient(selectedClient.id, updatedClient)
+        const updated = clients.map(c => c.id === selectedClient.id ? updatedClient : c)
+        updateLocalClients(updated)
+      } catch (err) {
+        alert(err.message || 'Error al eliminar viaje')
+      }
     }
   }
 
   const getLinkedQueries = (client) => {
-    const allQueries = JSON.parse(localStorage.getItem('horus_queries') || '[]')
-    return allQueries.filter(q => 
+    return queries.filter(q => 
       (client.email && q.contact && q.contact.toLowerCase() === client.email.toLowerCase()) ||
       (client.phone && q.contact && q.contact.includes(client.phone)) ||
       (client.name && q.clientName && q.clientName.toLowerCase().includes(client.name.toLowerCase()))
@@ -204,8 +218,7 @@ export default function ClientsView() {
   }
 
   const getLinkedBookings = (client) => {
-    const allBookings = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
-    return allBookings.filter(b => 
+    return bookings.filter(b => 
       (client.name && b.title && b.title.toLowerCase().includes(client.name.toLowerCase())) ||
       (client.name && b.description && b.description.toLowerCase().includes(client.name.toLowerCase()))
     )

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { api } from '../../api'
 import Login from './Login'
 import AdminLayout from './AdminLayout'
 import DashboardView from './views/DashboardView'
@@ -27,10 +28,16 @@ export default function AdminApp() {
     navigate('/admin')
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.logout()
+    } catch (e) {
+      console.error('Logout error:', e)
+    }
     setUser(null)
     localStorage.removeItem('horus_admin_session')
   }
+
 
   if (!user) {
     return <Login onLogin={handleLogin} />

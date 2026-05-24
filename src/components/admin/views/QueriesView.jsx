@@ -1,59 +1,40 @@
 import { useState, useEffect } from 'react'
 import { Check, Trash2, Mail, MessageSquare, UserPlus } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { api } from '../../../api'
 
 export default function QueriesView() {
   const [queries, setQueries] = useState([])
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_queries') || '[]')
-    // Seed some mock queries if empty so it has data initially
-    if (data.length === 0) {
-      const mockQueries = [
-        {
-          id: 'q-1',
-          clientName: 'Juan Pérez',
-          contact: 'juan.perez@example.com',
-          message: 'Hola, quería consultar sobre el paquete a Madrid. ¿Tienen disponibilidad para la segunda semana de junio?',
-          date: '19/05/2026, 10:15',
-          status: 'Pendiente',
-          category: 'paquetes'
-        },
-        {
-          id: 'q-2',
-          clientName: 'María Gomez',
-          contact: '+54 11 5555-1234',
-          message: 'Buenas tardes. ¿El seguro de viaje Assist Card cubre emergencias de deportes extremos?',
-          date: '18/05/2026, 16:45',
-          status: 'Contestada',
-          category: 'assist_card'
-        }
-      ]
-      localStorage.setItem('horus_queries', JSON.stringify(mockQueries))
-      setQueries(mockQueries)
-    } else {
-      setQueries(data)
-    }
+    api.getQueries()
+      .then(data => setQueries(data))
+      .catch(err => console.error('Error fetching queries:', err))
   }, [])
 
-  const toggleStatus = (id) => {
-    const updated = queries.map(q => {
-      if (q.id === id) {
-        return { ...q, status: q.status === 'Pendiente' ? 'Contestada' : 'Pendiente' }
-      }
-      return q
-    })
-    setQueries(updated)
-    localStorage.setItem('horus_queries', JSON.stringify(updated))
-  }
-
-  const deleteQuery = (id) => {
-    if (confirm('¿Seguro que deseas eliminar esta consulta?')) {
-      const updated = queries.filter(q => q.id !== id)
-      setQueries(updated)
-      localStorage.setItem('horus_queries', JSON.stringify(updated))
+  const toggleStatus = async (id) => {
+    const query = queries.find(q => q.id === id)
+    if (!query) return
+    const newStatus = query.status === 'Pendiente' ? 'Contestada' : 'Pendiente'
+    try {
+      await api.updateQuery(id, newStatus)
+      setQueries(queries.map(q => q.id === id ? { ...q, status: newStatus } : q))
+    } catch (err) {
+      alert(err.message || 'Error al actualizar el estado de la consulta')
     }
   }
+
+  const deleteQuery = async (id) => {
+    if (confirm('¿Seguro que deseas eliminar esta consulta?')) {
+      try {
+        await api.deleteQuery(id)
+        setQueries(queries.filter(q => q.id !== id))
+      } catch (err) {
+        alert(err.message || 'Error al eliminar la consulta')
+      }
+    }
+  }
+
 
   return (
     <div>

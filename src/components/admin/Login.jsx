@@ -1,27 +1,20 @@
 import { useState } from 'react'
+import { api } from '../../api'
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     
-    // Default admin
-    if (username === 'samir' && password === 'Supersamir') {
-      onLogin({ username: 'samir', role: 'admin' })
-      return
-    }
-
-    // Check localStorage for other sellers
-    const users = JSON.parse(localStorage.getItem('horus_users') || '[]')
-    const user = users.find(u => u.username === username && u.password === password)
-    
-    if (user) {
-      onLogin({ username: user.username, role: 'vendedor' })
-    } else {
-      setError('Credenciales inválidas')
+    try {
+      const userData = await api.login(username, password)
+      onLogin(userData)
+    } catch (err) {
+      setError(err.message || 'Credenciales inválidas')
     }
   }
 

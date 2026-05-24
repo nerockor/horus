@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Download, Search, Calendar, CreditCard, Plane, Trash2 } from 'lucide-react'
+import { api } from '../../../api'
 
 export default function BookingsView() {
   const [bookings, setBookings] = useState([])
@@ -10,38 +11,32 @@ export default function BookingsView() {
   const [tripFilter, setTripFilter] = useState('todos')
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
-    // Migrate existing bookings to have default statuses if they don't exist
-    const migrated = data.map(b => ({
-      ...b,
-      paymentStatus: b.paymentStatus || 'unpaid', // unpaid, paid, installments
-      tripStatus: b.tripStatus || 'pending' // pending, active, completed
-    }))
-    setBookings(migrated)
-    // Only rewrite to local storage if changes were made
-    if (JSON.stringify(data) !== JSON.stringify(migrated)) {
-      localStorage.setItem('horus_bookings', JSON.stringify(migrated))
-    }
+    api.getBookings()
+      .then(data => setBookings(data))
+      .catch(err => console.error('Error fetching bookings:', err))
   }, [])
 
-  const deleteBooking = (id) => {
+  const deleteBooking = async (id) => {
     if (confirm('¿Seguro que deseas eliminar esta reserva?')) {
-      const updated = bookings.filter(b => b.id !== id)
-      setBookings(updated)
-      localStorage.setItem('horus_bookings', JSON.stringify(updated))
+      try {
+        await api.deleteBooking(id)
+        setBookings(bookings.filter(b => b.id !== id))
+      } catch (err) {
+        alert(err.message || 'Error al eliminar la reserva')
+      }
     }
   }
 
-  const updateBookingStatus = (id, field, value) => {
-    const updated = bookings.map(b => {
-      if (b.id === id) {
-        return { ...b, [field]: value }
-      }
-      return b
-    })
-    setBookings(updated)
-    localStorage.setItem('horus_bookings', JSON.stringify(updated))
+  const updateBookingStatus = async (id, field, value) => {
+    try {
+      const payload = field === 'paymentStatus' ? { paymentStatus: value } : { tripStatus: value }
+      await api.updateBooking(id, payload)
+      setBookings(bookings.map(b => b.id === id ? { ...b, [field]: value } : b))
+    } catch (err) {
+      alert(err.message || 'Error al actualizar el estado de la reserva')
+    }
   }
+
 
   // Generate CSV based on filtered data (or all data if preferred)
   const downloadCSV = () => {

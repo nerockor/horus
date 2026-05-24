@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Package, Plus, Percent, Users, Calendar, MapPin, DollarSign, Clock, Image as ImageIcon, Download } from 'lucide-react'
+import { api } from '../../../api'
+
 
 const SEED_PACKAGES = [
   // 1. Paquetes
@@ -309,105 +311,67 @@ export default function PackagesView() {
   const [editingId, setEditingId] = useState(null)
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_packages') || '[]')
-    
-    const addDefaultConsultations = (pkg) => {
-      if (pkg.consultations !== undefined) return pkg;
-      let defaultConsultations = 10;
-      if (pkg.id === 'p-buzios') defaultConsultations = 45;
-      else if (pkg.id === 'p-paris') defaultConsultations = 38;
-      else if (pkg.id === 'p-disney-pack') defaultConsultations = 52;
-      else if (pkg.id === 'p-rio') defaultConsultations = 29;
-      else if (pkg.id === 'p-madrid-pack') defaultConsultations = 31;
-      else if (pkg.id === 'p-vuelo-miami-promo') defaultConsultations = 64;
-      else if (pkg.id === 'p-vuelo-miami') defaultConsultations = 18;
-      else if (pkg.id === 'p-vuelo-madrid') defaultConsultations = 22;
-      else if (pkg.id === 'p-dubai-vip') defaultConsultations = 57;
-      else if (pkg.id === 'p-karol-g') defaultConsultations = 73;
-      else if (pkg.id === 'p-circ-europa') defaultConsultations = 39;
-      else if (pkg.id === 'p-cruc-royal') defaultConsultations = 34;
-      else {
-        const code = pkg.id ? pkg.id.charCodeAt(pkg.id.length - 1) : 0;
-        defaultConsultations = 5 + (code % 25);
-      }
-      return { ...pkg, consultations: defaultConsultations, status: pkg.status || 'Activo' };
-    };
-
-    if (data.length === 0 || data.some(p => p.category === 'assistcard') || !data.some(p => p.id === 'p-karol-g') || !data.some(p => p.id === 'p-vuelo-miami-promo') || !data.some(p => p.id === 'p-dubai-vip')) {
-      const seeded = SEED_PACKAGES.map(addDefaultConsultations)
-      localStorage.setItem('horus_packages', JSON.stringify(seeded))
-      setPackages(seeded)
-    } else if (data.some(p => p.consultations === undefined || p.status === undefined)) {
-      const migrated = data.map(addDefaultConsultations)
-      localStorage.setItem('horus_packages', JSON.stringify(migrated))
-      setPackages(migrated)
-    } else {
-      setPackages(data)
-    }
+    api.getPackages()
+      .then(data => setPackages(data))
+      .catch(err => console.error('Error fetching packages:', err))
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name || !location || !startDate || !endDate || !price || !duration || !imageUrl) return
 
-    const currentUser = JSON.parse(localStorage.getItem('horus_admin_session') || '{}')
-    const author = currentUser.username || 'Sistema'
-
-    if (editingId) {
-      const updated = packages.map(p => {
-        if (p.id === editingId) {
-          return {
-            ...p, category, name, location, startDate, endDate, duration, imageUrl, price, bonus: bonus || '0', targetAudience,
-            status,
-            lastModifiedBy: author
-          }
-        }
-        return p
-      })
-      setPackages(updated)
-      localStorage.setItem('horus_packages', JSON.stringify(updated))
-      setEditingId(null)
-    } else {
-      const newPackage = {
-        id: `p-${Date.now()}`,
-        category,
-        name,
-        location,
-        startDate,
-        endDate,
-        duration,
-        imageUrl,
-        price,
-        bonus: bonus || '0',
-        targetAudience,
-        status,
-        consultations: 0,
-        lastModifiedBy: author
-      }
-
-      const updated = [newPackage, ...packages]
-      setPackages(updated)
-      localStorage.setItem('horus_packages', JSON.stringify(updated))
+    const pkgData = {
+      category, name, location, startDate, endDate, duration, imageUrl, price, bonus: bonus || '0', targetAudience, status
     }
 
-    // Reset fields
-    setName('')
-    setLocation('')
-    setStartDate('')
-    setEndDate('')
-    setDuration('')
-    setImageUrl('')
-    setPrice('')
-    setBonus('')
-    setTargetAudience('Solo adultos')
-    setStatus('Activo')
+    if (editingId) {
+      try {
+        const res = await api.updatePackage(editingId, pkgData)
+        setPackages(packages.map(p => p.id === editingId ? res : p))
+        setEditingId(null)
+        // Reset fields
+        setName('')
+        setLocation('')
+        setStartDate('')
+        setEndDate('')
+        setDuration('')
+        setImageUrl('')
+        setPrice('')
+        setBonus('')
+        setTargetAudience('Solo adultos')
+        setStatus('Activo')
+      } catch (err) {
+        alert(err.message || 'Error al actualizar el servicio/paquete')
+      }
+    } else {
+      try {
+        const res = await api.createPackage(pkgData)
+        setPackages([res, ...packages])
+        // Reset fields
+        setName('')
+        setLocation('')
+        setStartDate('')
+        setEndDate('')
+        setDuration('')
+        setImageUrl('')
+        setPrice('')
+        setBonus('')
+        setTargetAudience('Solo adultos')
+        setStatus('Activo')
+      } catch (err) {
+        alert(err.message || 'Error al guardar el servicio/paquete')
+      }
+    }
   }
 
-  const deletePackage = (id) => {
+  const deletePackage = async (id) => {
     if (confirm('¿Seguro que deseas eliminar este paquete?')) {
-      const updated = packages.filter(p => p.id !== id)
-      setPackages(updated)
-      localStorage.setItem('horus_packages', JSON.stringify(updated))
+      try {
+        await api.deletePackage(id)
+        setPackages(packages.filter(p => p.id !== id))
+      } catch (err) {
+        alert(err.message || 'Error al eliminar el paquete')
+      }
     }
   }
 

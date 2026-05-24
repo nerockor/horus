@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../../../api'
 
 export default function ContentView() {
   const [content, setContent] = useState({
@@ -7,15 +8,21 @@ export default function ContentView() {
   })
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('horus_content') || '{"heroImage":"", "aboutImage":""}')
-    setContent(data)
+    api.getContent()
+      .then(data => setContent(data))
+      .catch(err => console.error('Error fetching content:', err))
   }, [])
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault()
-    localStorage.setItem('horus_content', JSON.stringify(content))
-    alert('Contenido guardado exitosamente. Los cambios se verán en la vista pública (simulación).')
+    try {
+      await api.saveContent(content)
+      alert('Contenido guardado exitosamente. Los cambios se verán en la vista pública.')
+    } catch (err) {
+      alert(err.message || 'Error al guardar el contenido')
+    }
   }
+
 
   return (
     <div>

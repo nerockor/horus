@@ -4,6 +4,7 @@ import {
   Package, CalendarDays, TrendingUp, ArrowUpRight, Award, MapPin, Inbox
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { api } from '../../../api'
 
 export default function DashboardView() {
   const [stats, setStats] = useState({
@@ -19,38 +20,40 @@ export default function DashboardView() {
   const [popularPackages, setPopularPackages] = useState([])
 
   useEffect(() => {
-    // Fetch data from local storage
-    const bookings = JSON.parse(localStorage.getItem('horus_bookings') || '[]')
-    const users = JSON.parse(localStorage.getItem('horus_users') || '[]')
-    const clients = JSON.parse(localStorage.getItem('horus_clients') || '[]')
-    const packages = JSON.parse(localStorage.getItem('horus_packages') || '[]')
+    Promise.all([
+      api.getBookings(),
+      api.getUsers(),
+      api.getClients(),
+      api.getPackages()
+    ]).then(([bookings, users, clients, packages]) => {
+      // Calculations for Clients
+      const clientsCount = clients.length
+      const paidClientsCount = clients.filter(c => (c.paymentStatus || 'paid') === 'paid').length
+      const pendingApprovalCount = clients.filter(c => (c.approvalStatus || 'approved') === 'pending').length
+      const debtClients = clients.filter(c => (c.paymentStatus || 'paid') === 'debt')
+      const debtClientsCount = debtClients.length
+      const totalDebtAmount = debtClients.reduce((sum, c) => sum + parseFloat(c.debtAmount || 0), 0)
 
-    // Calculations for Clients
-    const clientsCount = clients.length
-    const paidClientsCount = clients.filter(c => (c.paymentStatus || 'paid') === 'paid').length
-    const pendingApprovalCount = clients.filter(c => (c.approvalStatus || 'approved') === 'pending').length
-    const debtClients = clients.filter(c => (c.paymentStatus || 'paid') === 'debt')
-    const debtClientsCount = debtClients.length
-    const totalDebtAmount = debtClients.reduce((sum, c) => sum + parseFloat(c.debtAmount || 0), 0)
+      setStats({
+        bookingsCount: bookings.length,
+        usersCount: users.length,
+        clientsCount,
+        paidClientsCount,
+        pendingApprovalCount,
+        debtClientsCount,
+        totalDebtAmount
+      })
 
-    setStats({
-      bookingsCount: bookings.length,
-      usersCount: users.length + 1, // Default admin
-      clientsCount,
-      paidClientsCount,
-      pendingApprovalCount,
-      debtClientsCount,
-      totalDebtAmount
-    })
+      // Sort packages by consultations descending
+      const sortedPackages = [...packages]
+        .filter(p => p.consultations !== undefined)
+        .sort((a, b) => (b.consultations || 0) - (a.consultations || 0))
+        .slice(0, 5) // Show top 5
 
-    // Sort packages by consultations descending
-    const sortedPackages = [...packages]
-      .filter(p => p.consultations !== undefined)
-      .sort((a, b) => (b.consultations || 0) - (a.consultations || 0))
-      .slice(0, 5) // Show top 5
-
-    setPopularPackages(sortedPackages)
+      setPopularPackages(sortedPackages)
+    }).catch(err => console.error('Error fetching dashboard statistics:', err))
   }, [])
+
 
   // Find max consultations for progress bar scale
   const maxConsultations = popularPackages.length > 0 
