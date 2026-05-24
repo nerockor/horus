@@ -354,8 +354,13 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
   const [searching, setSearching] = useState(false)
   const [results, setResults] = useState(null)
   const [selectedResult, setSelectedResult] = useState(null)
-
+  const [selectedCardId, setSelectedCardId] = useState(null)
   const [packages, setPackages] = useState([])
+
+  useEffect(() => {
+    setSelectedCardId(null)
+  }, [activeCategory, results])
+
 
   useEffect(() => {
     api.getPackages()
@@ -1666,72 +1671,73 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                   returnDate: latestPkg.endDate || prev.returnDate,
                 }));
                 
-                // Automatically run handleSearchSubmit
                 setSearching(true);
                 setResults(null);
                 
-
-
-
-
+                setTimeout(() => {
+                  setSearching(false);
+                  const mockResults = [];
+                  const c = activeCategory;
                   
+                  let filtered = packages.filter(p => (p.category || 'paquetes') === c);
 
+                  const searchDest = (latestPkg.location || latestPkg.name).trim().toLowerCase();
+                  if (searchDest) {
+                    filtered = filtered.filter(p => 
+                      (p.location && p.location.toLowerCase().includes(searchDest)) ||
+                      (p.name && p.name.toLowerCase().includes(searchDest))
+                    );
+                  }
 
+                  filtered.forEach(p => {
+                    const discount = parseFloat(p.bonus || '0');
+                    const originalPrice = parseFloat(p.price || '0');
+                    const finalPrice = discount > 0 ? originalPrice * (1 - discount/100) : originalPrice;
 
+                    mockResults.push({
+                      id: p.id,
+                      title: p.name,
+                      description: `Servicio en ${p.location}`,
+                      meta: `Duración: ${p.duration} | Promoción hasta: ${p.endDate} | Público: ${p.targetAudience}`,
+                      price: `$ ${finalPrice.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+                      originalPriceRaw: originalPrice,
+                      finalPriceRaw: finalPrice,
+                      discountRaw: discount,
+                      durationRaw: p.duration,
+                      imageUrlRaw: p.imageUrl,
+                      locationRaw: p.location,
+                      audienceRaw: p.targetAudience,
+                      category: p.category || 'paquetes',
+                      promoted: discount > 0,
+                      checklistDetails: {
+                        baggage: 'Sujeto a las condiciones particulares del servicio adquirido.',
+                        identity: 'Es obligatorio presentar DNI o Pasaporte vigente al momento de viajar.',
+                        cancelation: 'Verificar políticas de cancelación específicas para esta tarifa.'
+                      }
+                    });
+                  });
 
+                  mockResults.push({
+                    id: `custom-query-${c}`,
+                    title: `¿No encontrás lo que buscás?`,
+                    description: `Hacé una consulta personalizada para la categoría ${c.toUpperCase()} y un agente te contactará a la brevedad con una cotización a tu medida.`,
+                    meta: `Respuesta rápida (Menos de 24hs)`,
+                    price: 'A cotizar',
+                    category: c,
+                    promoted: false,
+                    isCustomQuery: true,
+                    checklistDetails: {
+                      baggage: 'A coordinar con el agente de ventas.',
+                      identity: 'Los datos requeridos se informarán en la cotización.',
+                      cancelation: 'Condiciones sujetas al servicio que contrates.'
+                    }
+                  });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                  setResults(mockResults);
+                }, 1000);
+              }}
+              style={{
+                background: 'rgba(255, 215, 0, 0.12)',
                 border: '1px solid rgba(255, 215, 0, 0.3)',
                 color: '#ffd700',
                 padding: '0.3rem 0.8rem',
@@ -1771,79 +1777,158 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
             <div className="results-grid">
               {results.map((result) => {
                 if (!result.isCustomQuery) {
+                  const isSelected = selectedCardId === result.id;
+                  const displayTitle = result.title.includes('🌴') ? result.title : `🌴 ${result.title} 🌴`;
+                  const points = (result.finalPriceRaw * 1.5).toFixed(0);
+
                   return (
-                    <div key={result.id} className="despegar-package-card" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <div 
+                      key={result.id} 
+                      className="despegar-package-card" 
+                      onClick={() => setSelectedCardId(prev => prev === result.id ? null : result.id)}
+                      style={{ 
+                        position: 'relative', 
+                        overflow: 'hidden',
+                        height: isSelected ? 'auto' : '380px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        display: 'flex',
+                        flexDirection: 'column'
+                      }}
+                    >
                       <div style={{ position: 'absolute', bottom: '-20px', right: '-10px', fontSize: '140px', opacity: 0.03, pointerEvents: 'none', zIndex: 0, color: 'var(--dark-text)', lineHeight: 1 }}>
                         {['☥', '𓊵', '𓄤', '𓂀'][result.id.charCodeAt(result.id.length - 1) % 4]}
                       </div>
-                      <div className="despegar-img-container" style={{ position: 'relative', zIndex: 1 }}>
+                      <div 
+                        className="despegar-img-container" 
+                        style={{ 
+                          position: 'relative', 
+                          zIndex: 1,
+                          height: isSelected ? '180px' : '80%',
+                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                          background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
+                        }}
+                      >
                         <img src={result.imageUrlRaw || 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=600&q=80'} alt={result.title} className="despegar-img" />
-                        <div className="despegar-duration-badge">{(result.durationRaw || 'Consultar').toUpperCase()}</div>
+                        <div className="despegar-duration-badge" style={{ bottom: '12px', left: '12px' }}>
+                          {(result.durationRaw || 'Consultar').toUpperCase()}
+                        </div>
                       </div>
-                      <div className="despegar-content">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span className="despegar-label">{result.category ? result.category.toUpperCase() : 'PAQUETE'}</span>
-                          <div className="despegar-rating-container">
-                            <span className="despegar-rating-badge">8.8</span>
-                            <span className="despegar-stars">★★★</span>
+                      <div 
+                        className="despegar-content"
+                        style={{
+                          height: isSelected ? 'auto' : '20%',
+                          padding: isSelected ? '1.25rem' : '0.5rem 1rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: isSelected ? 'flex-start' : 'center',
+                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                          flexGrow: isSelected ? 1 : 0
+                        }}
+                      >
+                        {!isSelected ? (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                            <h5 className="despegar-title" style={{ margin: 0, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%', fontFamily: 'Outfit, sans-serif', fontWeight: '700', color: '#0f172a' }}>
+                              {result.title}
+                            </h5>
+                            <div className="despegar-final-price" style={{ fontSize: '1.2rem', margin: 0, fontWeight: '800', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
+                              <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
+                              {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                            </div>
                           </div>
-                        </div>
-                        <h5 className="despegar-title">{result.title}</h5>
-                        <p className="despegar-location">Saliendo desde {result.locationRaw || 'Buenos Aires'}</p>
-                        <p className="despegar-includes">
-                          {result.category === 'paquetes' ? 'Hotel + Vuelo' : 
-                           result.category === 'vuelos' ? 'Vuelo Directo / Escalas' :
-                           result.category === 'alojamientos' ? 'Estadía Completa' : 
-                           result.category === 'actividades' ? 'Actividad / Tour' : 
-                           `${result.category ? result.category.charAt(0).toUpperCase() + result.category.slice(1) : 'Servicio Especial'}`}
-                        </p>
-                        
-                        <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
-                          <span className="despegar-tag purple">Oferta Imbatible</span>
-                          {result.discountRaw > 0 && (
-                            <span className="despegar-tag green">
-                              Ahorrás $ {(result.originalPriceRaw - result.finalPriceRaw).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
-                            </span>
-                          )}
-                          {result.verified && (
-                            <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
-                              ✓ Verificado
-                            </span>
-                          )}
-                        </div>
+                        ) : (
+                          <>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span className="despegar-label" style={{ color: '#64748b', fontWeight: '800', fontSize: '0.65rem', letterSpacing: '0.08em' }}>
+                                {result.category ? result.category.toUpperCase() : 'PAQUETE'}
+                              </span>
+                              <div className="despegar-rating-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <span className="despegar-rating-badge" style={{ backgroundColor: '#0053e5', color: '#ffffff', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.15rem 0.35rem', borderRadius: '4px' }}>8.8</span>
+                                <span className="despegar-stars" style={{ color: '#f59e0b', fontSize: '0.8rem' }}>★★★</span>
+                              </div>
+                            </div>
+                            
+                            <h5 className="despegar-title" style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0f172a', margin: '0.5rem 0 0.25rem 0', fontFamily: 'Outfit, sans-serif' }}>
+                              {displayTitle}
+                            </h5>
+                            
+                            <p className="despegar-location" style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                              Saliendo desde {result.locationRaw || 'Buenos Aires'}
+                            </p>
+                            
+                            <p className="despegar-includes" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#0053e5', margin: '0.35rem 0 0.5rem 0', textDecoration: 'none' }}>
+                              {result.category === 'paquetes' ? 'Hotel + Vuelo' : 
+                               result.category === 'vuelos' ? 'Vuelo Directo / Escalas' :
+                               result.category === 'alojamientos' ? 'Estadía Completa' : 
+                               result.category === 'actividades' ? 'Actividad / Tour' : 
+                               'Vuelo Directo / Escalas'}
+                            </p>
+                            
+                            <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
+                              <span className="despegar-tag purple" style={{ backgroundColor: '#dcfce7', color: '#15803d', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 'bold' }}>
+                                Oferta Imbatible
+                              </span>
+                              {result.verified && (
+                                <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
+                                  ✓ Verificado
+                                </span>
+                              )}
+                            </div>
 
-                        <div className="despegar-price-section">
-                          <span className="despegar-price-label">Precio final por persona</span>
-                          {result.discountRaw > 0 && (
-                            <span className="despegar-old-price">$ {result.originalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
-                          )}
-                          <div className="despegar-final-price">
-                            <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
-                            {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
-                          </div>
-                          <p className="despegar-tax-notice">No vas a pagar Percepción RG5617</p>
-                        </div>
+                            <hr style={{ border: 'none', borderTop: '1px solid #f1f5f9', margin: '0.75rem 0' }} />
 
-                        <div className="despegar-points-footer">
-                          <span className="despegar-passport-icon">🎟</span>
-                          <span>Pasaporte Horus: Sumarías <strong>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? (result.finalPriceRaw * 1.5).toFixed(0) : (result.finalPriceRaw / 1000).toFixed(0)} puntos</strong></span>
-                        </div>
+                            <div className="despegar-price-section" style={{ borderTop: 'none', paddingTop: 0, marginTop: 'auto' }}>
+                              <span className="despegar-price-label" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Precio final por persona</span>
+                              <div className="despegar-final-price" style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', lineHeight: '1.1', margin: '0.2rem 0', fontFamily: 'Outfit, sans-serif' }}>
+                                <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>USD $</span>
+                                {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                              </div>
+                              <p className="despegar-tax-notice" style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: '600', margin: 0 }}>
+                                No vas a pagar Percepción RG5617
+                              </p>
+                            </div>
 
-                        <button 
-                          type="button" 
-                          onClick={() => {
-                            setPassengerCount(2);
-                            handleVerifyOpen(result);
-                          }}
-                          className="despegar-consult-btn"
-                          disabled={result.verified}
-                          style={{
-                            width: '100%',
-                            marginTop: '0.75rem',
-                          }}
-                        >
-                          {result.verified ? 'Verificado' : 'Consultar'}
-                        </button>
+                            <div className="despegar-points-footer" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.5rem', padding: '0.4rem', backgroundColor: '#f8fafc', borderRadius: '6px', fontSize: '0.7rem', color: '#475569' }}>
+                              <span className="despegar-passport-icon">🎟️</span>
+                              <span>Pasaporte Horus: Sumarías <strong>{points} puntos</strong></span>
+                            </div>
+
+                            <button 
+                              type="button" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPassengerCount(2);
+                                handleVerifyOpen(result);
+                              }}
+                              className="despegar-consult-btn"
+                              disabled={result.verified}
+                              style={{
+                                width: '100%',
+                                marginTop: '0.75rem',
+                                backgroundColor: '#0053e5',
+                                color: '#ffffff',
+                                border: 'none',
+                                padding: '0.8rem',
+                                borderRadius: '8px',
+                                fontWeight: 'bold',
+                                fontSize: '0.9rem',
+                                cursor: 'pointer',
+                                boxShadow: '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)',
+                                transition: 'all 0.2s'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#003bb3'
+                                e.currentTarget.style.boxShadow = '0 0 0 3px #ffd700, 0 6px 16px rgba(0, 83, 229, 0.4)'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#0053e5'
+                                e.currentTarget.style.boxShadow = '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)'
+                              }}
+                            >
+                              {result.verified ? 'Verificado' : 'Consultar'}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   )
