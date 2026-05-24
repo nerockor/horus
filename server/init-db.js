@@ -9,6 +9,27 @@ const dbPath = path.resolve(__dirname, 'database.sqlite')
 
 const db = new (sqlite3.verbose().Database)(dbPath)
 
+const SEED_BLOG_POSTS = [
+  {
+    id: 'egipto-misterios-y-antigravedad',
+    title: 'Los Misterios de Egipto y sus Templos Sagrados',
+    summary: 'Embárcate en un viaje a través del tiempo y descubre los secretos mejores guardados de las pirámides y templos de Luxor y Karnak.',
+    content: 'Egipto es mucho más que un destino turístico; es una experiencia que transforma tu percepción de la historia y el mundo.\n\nDesde el imponente conjunto de las Pirámides de Giza hasta los misteriosos jeroglíficos tallados en las columnas del Templo de Karnak, cada rincón de esta tierra milenaria respira mística y grandeza.\n\n### Recomendaciones para tu viaje:\n1. Visita las pirámides temprano en la mañana para evitar las altas temperaturas.\n2. Dedica al menos un día completo para recorrer el Valle de los Reyes en Luxor.\n3. Disfruta de un crucero nocturno por el Nilo; la vista de los templos iluminados es simplemente incomparable.\n\nEn Horus Travel diseñamos itinerarios a medida para que vivas esta aventura con total comodidad y el máximo nivel de exclusividad.',
+    date: '2026-05-24',
+    imageUrl: 'https://images.unsplash.com/photo-1503177119275-0aa32b31d468?auto=format&fit=crop&w=800&q=80',
+    author: 'Administrador'
+  },
+  {
+    id: 'guia-buzios-playas-paradisiacas',
+    title: 'Guía Completa de Búzios: Playas, Gastronomía y Aventura',
+    summary: 'Conoce las mejores playas de la península de Búzios y planifica tu escape perfecto al caribe brasileño.',
+    content: 'Búzios, originalmente una pequeña aldea de pescadores, se convirtió en uno de los destinos más codiciados de Brasil tras la mítica visita de Brigitte Bardot en los años 60.\n\nEsta encantadora península ofrece más de 20 playas únicas, cada una con su propia personalidad. Desde las aguas tranquilas y cristalinas de João Fernandes, ideales para hacer snorkel, hasta el oleaje aventurero de Geribá, perfecto para los amantes del surf.\n\n### Qué no te puedes perder:\n- **Rua das Pedras:** El corazón comercial de Búzios, repleto de boutiques premium, galerías de arte y una gastronomía internacional exquisita.\n- **Orla Bardot:** Ideal para un paseo al atardecer, donde podrás tomarte fotos con la famosa estatua de bronce de Brigitte.\n- **Paseo en Escuna:** Una excursión en barco que te llevará a recorrer las islas y bahías más hermosas de la región.\n\nPrepara las maletas y déjanos asesorarte en Horus para encontrar los mejores alojamientos frente al mar.',
+    date: '2026-05-20',
+    imageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80',
+    author: 'Administrador'
+  }
+]
+
 // Default seed data
 const SEED_PACKAGES = [
   {
@@ -499,6 +520,19 @@ db.serialize(async () => {
     )
   `)
 
+  // 7. Blog Posts table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS blog_posts (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      summary TEXT,
+      date TEXT NOT NULL,
+      imageUrl TEXT,
+      author TEXT
+    )
+  `)
+
   console.log('Tables created. Seeding initial data...')
 
   // Seed default admin with bcrypt password hashing
@@ -606,6 +640,17 @@ db.serialize(async () => {
   )
   bookingStmt.finalize()
   console.log('Seeded bookings.')
+
+  // Seed blog posts
+  const blogStmt = db.prepare(`
+    INSERT OR IGNORE INTO blog_posts (id, title, content, summary, date, imageUrl, author)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `)
+  for (const post of SEED_BLOG_POSTS) {
+    blogStmt.run(post.id, post.title, post.content, post.summary, post.date, post.imageUrl, post.author)
+  }
+  blogStmt.finalize()
+  console.log('Seeded blog posts.')
 
   console.log('Database seeding completed successfully.')
   db.close()

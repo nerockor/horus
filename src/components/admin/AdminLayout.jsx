@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, CalendarDays, Users, Image as ImageIcon, LogOut, ShieldAlert, MessageSquare, Package, Contact } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, Users, Image as ImageIcon, LogOut, ShieldAlert, MessageSquare, Package, Contact, BookOpen } from 'lucide-react'
 
 export default function AdminLayout({ user, onLogout, children }) {
   const location = useLocation()
@@ -12,6 +12,7 @@ export default function AdminLayout({ user, onLogout, children }) {
     { path: '/admin/paquetes', label: 'Servicios / Ofertas', icon: Package, roles: ['admin', 'vendedor'] },
     { path: '/admin/usuarios', label: 'Usuarios Vendedores', icon: Users, roles: ['admin'] },
     { path: '/admin/contenido', label: 'Imágenes y Contenido', icon: ImageIcon, roles: ['admin', 'vendedor'] },
+    { path: '/admin/blog', label: 'Gestión Blog', icon: BookOpen, roles: ['admin'] },
   ]
 
   return (

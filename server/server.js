@@ -11,6 +11,19 @@ import fs from 'fs'
 
 dotenv.config()
 
+// Ensure blog_posts table exists at startup
+db.run(`
+  CREATE TABLE IF NOT EXISTS blog_posts (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    summary TEXT,
+    date TEXT NOT NULL,
+    imageUrl TEXT,
+    author TEXT
+  )
+`).catch(err => console.error('Error creating blog_posts table on startup:', err))
+
 const app = express()
 const PORT = process.env.PORT || 5000
 const JWT_SECRET = process.env.JWT_SECRET || 'horus-jwt-super-secret-key-12345!'
@@ -482,6 +495,91 @@ app.post('/api/content', verifyToken, asyncHandler(async (req, res) => {
   )
 
   res.json({ heroImage, aboutImage })
+}))
+
+// ----------------------------------------------------
+// 8. Blog Endpoints (CRUD)
+// ----------------------------------------------------
+app.get('/api/blog', asyncHandler(async (req, res) => {
+  const posts = await db.all('SELECT * FROM blog_posts ORDER BY date DESC')
+  res.json(posts)
+}))
+
+app.get('/api/blog/:id', asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const post = await db.get('SELECT * FROM blog_posts WHERE id = ?', [id])
+  if (!post) {
+    return res.status(404).json({ error: 'Entrada de blog no encontrada' })
+  }
+  res.json(post)
+}))
+
+app.post('/api/blog', verifyToken, asyncHandler(async (req, res) => {
+  const { id, title, content, summary, date, imageUrl, author } = req.body
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'No tienes permisos para gestionar el blog' })
+  }
+
+  if (!title || !content) {
+    return res.status(400).json({ error: 'El título y el contenido son obligatorios' })
+  }
+
+  const postId = id || `blog-${Date.now()}`
+  const postDate = date || new Date().toISOString().split('T')[0]
+  const postAuthor = author || req.user.username || 'Administrador'
+
+  await db.run(`
+    INSERT INTO blog_posts (id, title, content, summary, date, imageUrl, author)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `, [postId, title, content, summary || '', postDate, imageUrl || '', postAuthor])
+
+  res.status(201).json({ id: postId, title, content, summary, date: postDate, imageUrl, author: postAuthor })
+}))
+
+app.put('/api/blog/:id', verifyToken, asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const { title, content, summary, date, imageUrl, author } = req.body
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'No tienes permisos para gestionar el blog' })
+  }
+
+  if (!title || !content) {
+    return res.status(400).json({ error: 'El título y el contenido son obligatorios' })
+  }
+
+  const postExists = await db.get('SELECT id FROM blog_posts WHERE id = ?', [id])
+  if (!postExists) {
+    return res.status(404).json({ error: 'Entrada de blog no encontrada' })
+  }
+
+  const postDate = date || new Date().toISOString().split('T')[0]
+  const postAuthor = author || req.user.username || 'Administrador'
+
+  await db.run(`
+    UPDATE blog_posts SET
+      title = ?, content = ?, summary = ?, date = ?, imageUrl = ?, author = ?
+    WHERE id = ?
+  `, [title, content, summary || '', postDate, imageUrl || '', postAuthor, id])
+
+  res.json({ id, title, content, summary, date: postDate, imageUrl, author: postAuthor })
+}))
+
+app.delete('/api/blog/:id', verifyToken, asyncHandler(async (req, res) => {
+  const { id } = req.params
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'No tienes permisos para gestionar el blog' })
+  }
+
+  const postExists = await db.get('SELECT id FROM blog_posts WHERE id = ?', [id])
+  if (!postExists) {
+    return res.status(404).json({ error: 'Entrada de blog no encontrada' })
+  }
+
+  await db.run('DELETE FROM blog_posts WHERE id = ?', [id])
+  res.json({ message: 'Entrada de blog eliminada exitosamente' })
 }))
 
 const __filename = fileURLToPath(import.meta.url)

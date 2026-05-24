@@ -198,5 +198,41 @@ export const api = {
       body: JSON.stringify(contentData)
     })
     return handleResponse(res)
+  },
+
+  // 8. Blog Management (CRUD)
+  async getBlogPosts() {
+    const res = await fetch('/api/blog')
+    return handleResponse(res)
+  },
+
+  async getBlogPost(id) {
+    const res = await fetch(`/api/blog/${id}`)
+    return handleResponse(res)
+  },
+
+  async createBlogPost(postData) {
+    const res = await fetch('/api/blog', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(postData)
+    })
+    return handleResponse(res)
+  },
+
+  async updateBlogPost(id, postData) {
+    const res = await fetch(`/api/blog/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(postData)
+    })
+    return handleResponse(res)
+  },
+
+  async deleteBlogPost(id) {
+    const res = await fetch(`/api/blog/${id}`, {
+      method: 'DELETE'
+    })
+    return handleResponse(res)
   }
 }

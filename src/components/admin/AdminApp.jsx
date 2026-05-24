@@ -10,6 +10,7 @@ import ContentView from './views/ContentView'
 import QueriesView from './views/QueriesView'
 import PackagesView from './views/PackagesView'
 import ClientsView from './views/ClientsView'
+import BlogAdmin from '../blog/BlogAdmin'
 
 export default function AdminApp() {
   const [user, setUser] = useState(null)
@@ -53,6 +54,9 @@ export default function AdminApp() {
         <Route path="/paquetes" element={<PackagesView />} />
         {user.role === 'admin' && (
           <Route path="/usuarios" element={<UsersView />} />
+        )}
+        {user.role === 'admin' && (
+          <Route path="/blog" element={<BlogAdmin />} />
         )}
         <Route path="/contenido" element={<ContentView />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />

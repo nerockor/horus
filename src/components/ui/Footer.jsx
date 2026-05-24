@@ -39,7 +39,7 @@ export default function Footer() {
     { label: 'Términos y condiciones', path: '/terminos-y-condiciones' },
     { label: 'Términos de uso', path: '/terminos-de-uso' },
     { label: 'Quiénes somos', path: '/quienes-somos' },
-    { label: 'Privacidad', path: '/privacidad' },
+    { label: 'Blog', path: '/blog' },
     { label: 'Información legal', path: '/informacion-legal' },
     { label: 'Empleos', path: '/empleos' },
     { label: 'Seguridad', path: '/seguridad' },
