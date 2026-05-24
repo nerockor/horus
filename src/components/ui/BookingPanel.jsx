@@ -1840,7 +1840,7 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                         style={{ 
                           position: 'relative', 
                           zIndex: 1,
-                          height: isSelected ? '160px' : '450px',
+                          height: isSelected ? '160px' : '340px',
                           transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%)'
                         }}
@@ -1853,121 +1853,138 @@ export default function BookingPanel({ activeBookings = [], onAddBooking, setVie
                       <div 
                         className="despegar-content"
                         style={{
-                          height: isSelected ? '420px' : '130px',
+                          height: isSelected ? '420px' : '240px',
                           padding: '1.25rem',
                           display: 'flex',
                           flexDirection: 'column',
-                          justifyContent: isSelected ? 'flex-start' : 'center',
                           transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                           flexGrow: isSelected ? 1 : 0
                         }}
                       >
-                        {!isSelected ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', gap: '0.5rem', width: '100%' }}>
-                            <h5 className="despegar-title" style={{ margin: 0, fontSize: '1.15rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%', fontFamily: 'Outfit, sans-serif', fontWeight: '700', color: '#0f172a' }}>
-                              {result.title}
-                            </h5>
-                            <div className="despegar-price-section" style={{ borderTop: 'none', paddingTop: 0, marginTop: '0.25rem' }}>
-                              <span className="despegar-price-label" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Precio final por persona</span>
-                              <div className="despegar-final-price" style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', lineHeight: '1.1', margin: '0.2rem 0', fontFamily: 'Outfit, sans-serif' }}>
-                                <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
-                                {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
-                              </div>
+                        {/* 1. Header (Only on hover) */}
+                        {isSelected && (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span className="despegar-label" style={{ color: '#64748b', fontWeight: '800', fontSize: '0.65rem', letterSpacing: '0.08em' }}>
+                              {result.category ? result.category.toUpperCase() : 'PAQUETE'}
+                            </span>
+                            <div className="despegar-rating-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <span className="despegar-rating-badge" style={{ backgroundColor: '#0053e5', color: '#ffffff', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.15rem 0.35rem', borderRadius: '4px' }}>8.8</span>
+                              <span className="despegar-stars" style={{ color: '#f59e0b', fontSize: '0.8rem' }}>★★★</span>
                             </div>
                           </div>
-                        ) : (
-                          <>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span className="despegar-label" style={{ color: '#64748b', fontWeight: '800', fontSize: '0.65rem', letterSpacing: '0.08em' }}>
-                                {result.category ? result.category.toUpperCase() : 'PAQUETE'}
-                              </span>
-                              <div className="despegar-rating-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                <span className="despegar-rating-badge" style={{ backgroundColor: '#0053e5', color: '#ffffff', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.15rem 0.35rem', borderRadius: '4px' }}>8.8</span>
-                                <span className="despegar-stars" style={{ color: '#f59e0b', fontSize: '0.8rem' }}>★★★</span>
-                              </div>
-                            </div>
-                            
-                            <h5 className="despegar-title" style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0f172a', margin: '0.5rem 0 0.25rem 0', fontFamily: 'Outfit, sans-serif' }}>
-                              {displayTitle}
-                            </h5>
-                            
-                            <p className="despegar-location" style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
-                              Saliendo desde {result.locationRaw || 'Buenos Aires'}
-                            </p>
-                            
-                            <p className="despegar-includes" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#0053e5', margin: '0.35rem 0 0.5rem 0', textDecoration: 'none' }}>
-                              {result.category === 'paquetes' ? 'Hotel + Vuelo' : 
-                               result.category === 'vuelos' ? 'Vuelo Directo / Escalas' :
-                               result.category === 'alojamientos' ? 'Estadía Completa' : 
-                               result.category === 'actividades' ? 'Actividad / Tour' : 
-                               'Vuelo Directo / Escalas'}
-                            </p>
-                            
-                            <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
-                              <span className="despegar-tag purple" style={{ backgroundColor: '#dcfce7', color: '#15803d', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 'bold' }}>
-                                Oferta Imbatible
-                              </span>
-                              {result.verified && (
-                                <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
-                                  ✓ Verificado
-                                </span>
-                              )}
-                            </div>
-
-                            <hr style={{ border: 'none', borderTop: '1px solid #f1f5f9', margin: '0.75rem 0' }} />
-
-                            <div className="despegar-price-section" style={{ borderTop: 'none', paddingTop: 0, marginTop: 'auto' }}>
-                              <span className="despegar-price-label" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Precio final por persona</span>
-                              <div className="despegar-final-price" style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', lineHeight: '1.1', margin: '0.2rem 0', fontFamily: 'Outfit, sans-serif' }}>
-                                <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>USD $</span>
-                                {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
-                              </div>
-                              <p className="despegar-tax-notice" style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: '600', margin: 0 }}>
-                                No vas a pagar Percepción RG5617
-                              </p>
-                            </div>
-
-                            <div className="despegar-points-footer" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.5rem', padding: '0.4rem', backgroundColor: '#f8fafc', borderRadius: '6px', fontSize: '0.7rem', color: '#475569' }}>
-                              <span className="despegar-passport-icon">🎟️</span>
-                              <span>Pasaporte Horus: Sumarías <strong>{points} puntos</strong></span>
-                            </div>
-
-                            <button 
-                              type="button" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setPassengerCount(2);
-                                handleVerifyOpen(result);
-                              }}
-                              className="despegar-consult-btn"
-                              disabled={result.verified}
-                              style={{
-                                width: '100%',
-                                marginTop: '0.75rem',
-                                backgroundColor: '#0053e5',
-                                color: '#ffffff',
-                                border: 'none',
-                                padding: '0.8rem',
-                                borderRadius: '8px',
-                                fontWeight: 'bold',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer',
-                                boxShadow: '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)',
-                                transition: 'all 0.2s'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#003bb3'
-                                e.currentTarget.style.boxShadow = '0 0 0 3px #ffd700, 0 6px 16px rgba(0, 83, 229, 0.4)'
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#0053e5'
-                                e.currentTarget.style.boxShadow = '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)'
-                              }}
-                            >
-                              {result.verified ? 'Verificado' : 'Consultar'}
-                            </button>
-                          </>
                         )}
+                        
+                        {/* 2. Title (Decorated on hover, standard on unhover) */}
+                        <h5 className="despegar-title" style={{ 
+                          fontSize: isSelected ? '1.2rem' : '1.15rem', 
+                          fontWeight: '800', 
+                          color: '#0f172a', 
+                          margin: isSelected ? '0.5rem 0 0.25rem 0' : '0 0 0.25rem 0', 
+                          fontFamily: 'Outfit, sans-serif',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          width: '100%'
+                        }}>
+                          {isSelected ? displayTitle : result.title}
+                        </h5>
+                        
+                        {/* 3. Location (Only on hover) */}
+                        {isSelected && (
+                          <p className="despegar-location" style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                            Saliendo desde {result.locationRaw || 'Buenos Aires'}
+                          </p>
+                        )}
+                        
+                        {/* 4. Features (Always visible!) */}
+                        <p className="despegar-includes" style={{ 
+                          fontSize: '0.75rem', 
+                          fontWeight: 'bold', 
+                          color: '#0053e5', 
+                          margin: isSelected ? '0.35rem 0 0.5rem 0' : '0.15rem 0 0.35rem 0', 
+                          textDecoration: 'none' 
+                        }}>
+                          {result.category === 'paquetes' ? 'Hotel + Vuelo' : 
+                           result.category === 'vuelos' ? 'Vuelo Directo / Escalas' :
+                           result.category === 'alojamientos' ? 'Estadía Completa' : 
+                           result.category === 'actividades' ? 'Actividad / Tour' : 
+                           'Vuelo Directo / Escalas'}
+                        </p>
+                        
+                        {/* 5. Promo Tags (Only on hover) */}
+                        {isSelected && (
+                          <div style={{ display: 'flex', gap: '0.4rem', margin: '0.4rem 0', flexWrap: 'wrap' }}>
+                            <span className="despegar-tag purple" style={{ backgroundColor: '#dcfce7', color: '#15803d', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 'bold' }}>
+                              Oferta Imbatible
+                            </span>
+                            {result.verified && (
+                              <span style={{ color: 'var(--header-blue)', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginLeft: 'auto' }}>
+                                ✓ Verificado
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 6. Divider (Only on hover) */}
+                        {isSelected && <hr style={{ border: 'none', borderTop: '1px solid #f1f5f9', margin: '0.75rem 0' }} />}
+
+                        {/* 7. Price Section (Always visible!) */}
+                        <div className="despegar-price-section" style={{ borderTop: 'none', paddingTop: 0, marginTop: 'auto' }}>
+                          <span className="despegar-price-label" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Precio final por persona</span>
+                          <div className="despegar-final-price" style={{ fontSize: isSelected ? '1.8rem' : '1.5rem', fontWeight: '800', color: '#0f172a', lineHeight: '1.1', margin: '0.2rem 0', fontFamily: 'Outfit, sans-serif' }}>
+                            <span style={{ fontSize: isSelected ? '1.2rem' : '1rem', fontWeight: 'bold' }}>{(result.category === 'conciertos' || result.finalPriceRaw < 5000) ? 'USD $' : '$ '}</span>
+                            {result.finalPriceRaw.toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                          </div>
+                          {isSelected && (
+                            <p className="despegar-tax-notice" style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: '600', margin: 0 }}>
+                              No vas a pagar Percepción RG5617
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 8. Passport Points (Only on hover) */}
+                        {isSelected && (
+                          <div className="despegar-points-footer" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.5rem', padding: '0.4rem', backgroundColor: '#f8fafc', borderRadius: '6px', fontSize: '0.7rem', color: '#475569' }}>
+                            <span className="despegar-passport-icon">🎟️</span>
+                            <span>Pasaporte Horus: Sumarías <strong>{points} puntos</strong></span>
+                          </div>
+                        )}
+
+                        {/* 9. Action Button (Always visible!) */}
+                        <button 
+                          type="button" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPassengerCount(2);
+                            handleVerifyOpen(result);
+                          }}
+                          className="despegar-consult-btn"
+                          disabled={result.verified}
+                          style={{
+                            width: '100%',
+                            marginTop: '0.75rem',
+                            backgroundColor: '#0053e5',
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '0.8rem',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            boxShadow: '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = '#003bb3'
+                            e.currentTarget.style.boxShadow = '0 0 0 3px #ffd700, 0 6px 16px rgba(0, 83, 229, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = '#0053e5'
+                            e.currentTarget.style.boxShadow = '0 0 0 2px #ffd700, 0 4px 12px rgba(0, 83, 229, 0.3)'
+                          }}
+                        >
+                          {result.verified ? 'Verificado' : 'Consultar'}
+                        </button>
                       </div>
                     </div>
                   )
