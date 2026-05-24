@@ -22,6 +22,4 @@ node_modules
 *.sw?
 
 # Database and environment files
-*.sqlite
-server/database.sqlite
 .env
