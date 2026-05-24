@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import db from './db.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 dotenv.config()
 
@@ -495,6 +496,10 @@ app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) {
     return next()
   }
+  // If the request is for a static asset file that was not found, return 404 instead of index.html
+  if (path.extname(req.path)) {
+    return res.status(404).send('Not Found')
+  }
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
@@ -507,4 +512,12 @@ app.use((err, req, res, next) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
+  console.log(`Checking build directory at: ${distPath}`)
+  if (fs.existsSync(distPath)) {
+    console.log(`dist directory exists. Contents:`, fs.readdirSync(distPath))
+    const indexPath = path.join(distPath, 'index.html')
+    console.log(`index.html exists:`, fs.existsSync(indexPath))
+  } else {
+    console.error(`ERROR: dist directory DOES NOT exist at: ${distPath}`)
+  }
 })
