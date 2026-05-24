@@ -61,6 +61,17 @@ export default function BlogView() {
           box-shadow: 0 25px 50px rgba(0, 83, 229, 0.12) !important;
           border-color: rgba(0, 83, 229, 0.3) !important;
         }
+        .blog-card-img-container {
+          height: 220px;
+          width: 100%;
+          overflow: hidden;
+          position: relative;
+          background-color: #f1f5f9;
+          transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .blog-card:hover .blog-card-img-container {
+          height: 120px !important;
+        }
         .blog-card-summary {
           max-height: 0;
           opacity: 0;
@@ -69,7 +80,7 @@ export default function BlogView() {
           margin: 0 !important;
         }
         .blog-card:hover .blog-card-summary {
-          max-height: 150px;
+          max-height: 100px;
           opacity: 1;
           margin-top: 0.5rem !important;
         }
@@ -341,8 +352,9 @@ export default function BlogView() {
               /* Grid layout of posts */
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                gap: '2rem'
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '2rem',
+                justifyItems: 'center'
               }}>
                 {filteredPosts.map(post => (
                   <div
@@ -357,12 +369,15 @@ export default function BlogView() {
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
-                      position: 'relative'
+                      position: 'relative',
+                      height: '430px',
+                      width: '100%',
+                      maxWidth: '375px'
                     }}
                     className="blog-card"
                   >
                     {/* Card Cover Image */}
-                    <div style={{ height: '200px', width: '100%', overflow: 'hidden', position: 'relative', backgroundColor: '#f1f5f9' }}>
+                    <div className="blog-card-img-container">
                       {post.imageUrl ? (
                         <img
                           src={post.imageUrl}
@@ -378,7 +393,7 @@ export default function BlogView() {
                     </div>
 
                     {/* Card Content */}
-                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '0.75rem' }}>
+                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '0.75rem', overflow: 'hidden' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: '#64748b' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                           <Calendar size={12} />
@@ -429,7 +444,7 @@ export default function BlogView() {
                         color: '#0053e5',
                         fontSize: '0.85rem',
                         fontWeight: '700',
-                        marginTop: '0.5rem',
+                        marginTop: 'auto',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
                       }}
