@@ -1,0 +1,17 @@
+# Redirect all traffic to the dist/ build folder
+# This ensures the compiled production build is served, not the raw source files
+
+RewriteEngine On
+RewriteBase /
+
+# Serve the root URL from dist/index.html
+RewriteRule ^$ dist/index.html [L]
+
+# If the request matches a real file inside dist/, serve it from there
+RewriteCond %{DOCUMENT_ROOT}/dist%{REQUEST_URI} -f
+RewriteRule ^(.+)$ dist/$1 [L]
+
+# SPA fallback: anything that's not a real file goes to dist/index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . dist/index.html [L]
